@@ -21,6 +21,11 @@ export const metadata: Metadata = {
     "Cyber Security",
   ],
   authors: [{ name: "Bitto Saha", url: "https://bittosaha.com" }],
+  icons: {
+    icon: "/avatar.png",
+    shortcut: "/avatar.png",
+    apple: "/avatar.png",
+  },
   openGraph: {
     title: "Bitto Saha - Portfolio",
     description:
