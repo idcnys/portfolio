@@ -4,20 +4,44 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ThemeProvider } from "../../../lib/context/ThemeContext";
+import { logActivity } from "../../../lib/firebase";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (username === "bitto" && password === "61770") {
-      localStorage.setItem("isAuthenticated", "true");
-      router.push("/admin/dashboard");
-    } else {
-      setError("Invalid username or password");
+    setIsLoading(true);
+    setError("");
+
+    try {
+      if (username === "bitto" && password === "61770") {
+        localStorage.setItem("isAuthenticated", "true");
+
+        // Log successful login
+        await logActivity("login", "auth", "dashboard", "Admin Login");
+
+        router.push("/admin/dashboard");
+      } else {
+        setError("Invalid username or password");
+
+        // Log failed login attempt
+        await logActivity(
+          "view",
+          "auth",
+          "login-failed",
+          "Failed Login Attempt",
+        );
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("An error occurred during login");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -25,6 +49,9 @@ const Login: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4 transition-colors">
       <div className="max-w-md w-full bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800">
         <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-[#FFDB14] rounded-2xl flex items-center justify-center font-black text-2xl text-gray-900 shadow-lg ring-4 ring-yellow-400/20 mx-auto mb-4">
+            B
+          </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Admin Login
           </h1>
@@ -35,7 +62,8 @@ const Login: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm font-medium">
+            <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm font-medium flex items-center">
+              <i className="fas fa-exclamation-triangle mr-2"></i>
               {error}
             </div>
           )}
@@ -51,6 +79,7 @@ const Login: React.FC = () => {
               className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#FFDB14] focus:border-transparent outline-none transition-all"
               placeholder="Enter username"
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -65,22 +94,35 @@ const Login: React.FC = () => {
               className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#FFDB14] focus:border-transparent outline-none transition-all"
               placeholder="Enter password"
               required
+              disabled={isLoading}
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-[#FFDB14] text-gray-900 font-bold py-4 rounded-xl hover:bg-[#e6c512] transition-colors shadow-lg"
+            disabled={isLoading}
+            className="w-full bg-[#FFDB14] text-gray-900 font-bold py-4 rounded-xl hover:bg-[#e6c512] transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >
-            Sign In
+            {isLoading ? (
+              <>
+                <i className="fas fa-spinner fa-spin mr-2"></i>
+                Signing In...
+              </>
+            ) : (
+              <>
+                <i className="fas fa-sign-in-alt mr-2"></i>
+                Sign In
+              </>
+            )}
           </button>
         </form>
 
         <div className="mt-8 text-center">
           <Link
             href="/"
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-sm"
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-sm flex items-center justify-center"
           >
+            <i className="fas fa-arrow-left mr-2"></i>
             Back to Portfolio
           </Link>
         </div>
