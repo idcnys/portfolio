@@ -83,7 +83,7 @@ const PortfolioClient: React.FC = () => {
                     <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
                       Certificates & Achievements
                     </h2>
-                    <span className="text-xs font-bold text-gray-400 dark:text-gray-500">
+                    <span className="text-xs font-bold text-gray-500 dark:text-gray-300">
                       {INITIAL_CERTIFICATES.length} Total
                     </span>
                   </div>
@@ -111,7 +111,7 @@ const PortfolioClient: React.FC = () => {
                     <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 capitalize">
                       {activeTab}
                     </h2>
-                    <span className="text-xs font-bold text-gray-400 dark:text-gray-500">
+                    <span className="text-xs font-bold text-gray-500 dark:text-gray-300">
                       {
                         (activeTab === "projects" ? projects : activities)
                           .length
@@ -294,7 +294,7 @@ const DetailView: React.FC<{
               className="w-full h-64 md:h-80 object-cover"
             />
           </div>
-          <span className="text-sm text-gray-500 dark:text-gray-400 font-normal mb-2 block">
+          <span className="text-sm text-gray-500 dark:text-gray-300 font-normal mb-2 block">
             {item.date}
           </span>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 leading-tight">
@@ -318,7 +318,7 @@ const DetailView: React.FC<{
             )}
           </div>
 
-          <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6">
+          <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-300 mb-6">
             <span className="flex items-center gap-2">
               <i className="far fa-clock"></i>
               <span>{calculateReadTime(item.description)} min read</span>
@@ -331,21 +331,25 @@ const DetailView: React.FC<{
 
           {item.links && Object.keys(item.links).length > 0 && (
             <div className="flex gap-3 mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                 <i className="fas fa-link text-gray-500 dark:text-gray-400"></i>
                 <span className="font-medium text-gray-700 dark:text-gray-300">
                   Links:
                 </span>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 {item.links.github && (
                   <a
                     href={item.links.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                    className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
                   >
-                    <i className="fab fa-github text-sm"></i>
+                    <img
+                      src="/icons/icons8-github-50.svg"
+                      alt="GitHub"
+                      className="w-6 h-6"
+                    />
                   </a>
                 )}
                 {item.links.website && (
@@ -353,9 +357,9 @@ const DetailView: React.FC<{
                     href={item.links.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                    className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
                   >
-                    <i className="fas fa-globe text-sm"></i>
+                    <i className="fas fa-globe text-lg"></i>
                   </a>
                 )}
                 {item.links.twitter && (
@@ -363,9 +367,13 @@ const DetailView: React.FC<{
                     href={item.links.twitter}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                    className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
                   >
-                    <i className="fab fa-twitter text-sm"></i>
+                    <img
+                      src="/icons/icons8-twitter-bird.svg"
+                      alt="Twitter"
+                      className="w-6 h-6"
+                    />
                   </a>
                 )}
                 {item.links.youtube && (
@@ -373,9 +381,13 @@ const DetailView: React.FC<{
                     href={item.links.youtube}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                    className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
                   >
-                    <i className="fab fa-youtube text-sm"></i>
+                    <img
+                      src="/icons/icons8-youtube-50.svg"
+                      alt="YouTube"
+                      className="w-6 h-6"
+                    />
                   </a>
                 )}
                 {item.links.linkedin && (
@@ -383,9 +395,13 @@ const DetailView: React.FC<{
                     href={item.links.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                    className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
                   >
-                    <i className="fab fa-linkedin text-sm"></i>
+                    <img
+                      src="/icons/icons8-linkedin-50.svg"
+                      alt="LinkedIn"
+                      className="w-6 h-6"
+                    />
                   </a>
                 )}
               </div>
@@ -460,13 +476,13 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
     >
       <div className="flex-1 flex flex-col justify-between min-w-0 order-2 sm:order-1">
         <div>
-          <span className="text-xs text-gray-500 dark:text-gray-400 font-normal mb-2 block">
+          <span className="text-xs text-gray-500 dark:text-gray-300 font-normal mb-2 block">
             {item.date}
           </span>
           <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3 leading-tight">
             {item.title}
           </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed line-clamp-2">
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed line-clamp-2">
             {item.description.replace(/<[^>]*>?/gm, "")}
           </p>
 
@@ -487,7 +503,7 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
             )}
           </div>
 
-          <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 mb-3">
+          <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-300 mb-3">
             <span className="flex items-center gap-1">
               <i className="far fa-heart text-xs"></i> {item.likes || 0}
             </span>
@@ -499,16 +515,20 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
         </div>
 
         {item.links && Object.keys(item.links).length > 0 && (
-          <div className="flex gap-2 mt-2">
+          <div className="flex gap-3 mt-2">
             {item.links.github && (
               <a
                 href={item.links.github}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
               >
-                <i className="fab fa-github text-sm"></i>
+                <img
+                  src="/icons/icons8-github-50.svg"
+                  alt="GitHub"
+                  className="w-6 h-6"
+                />
               </a>
             )}
             {item.links.website && (
@@ -517,9 +537,9 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
               >
-                <i className="fas fa-globe text-sm"></i>
+                <i className="fas fa-globe text-lg"></i>
               </a>
             )}
             {item.links.twitter && (
@@ -528,9 +548,13 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
               >
-                <i className="fab fa-twitter text-sm"></i>
+                <img
+                  src="/icons/icons8-twitter-bird.svg"
+                  alt="Twitter"
+                  className="w-6 h-6"
+                />
               </a>
             )}
             {item.links.youtube && (
@@ -539,9 +563,13 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
               >
-                <i className="fab fa-youtube text-sm"></i>
+                <img
+                  src="/icons/icons8-youtube-50.svg"
+                  alt="YouTube"
+                  className="w-6 h-6"
+                />
               </a>
             )}
             {item.links.linkedin && (
@@ -550,9 +578,13 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
               >
-                <i className="fab fa-linkedin text-sm"></i>
+                <img
+                  src="/icons/icons8-linkedin-50.svg"
+                  alt="LinkedIn"
+                  className="w-6 h-6"
+                />
               </a>
             )}
           </div>
