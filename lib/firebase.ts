@@ -44,6 +44,12 @@ export const logActivity = async (
     userAgent: typeof window !== "undefined" ? window.navigator.userAgent : "",
     ipAddress: "Hidden for privacy",
   });
+
+  // Cleanup old logs periodically (every 10th log to avoid excessive cleanup calls)
+  if (Math.random() < 0.1) {
+    // Run cleanup asynchronously without blocking the log creation
+    cleanupOldLogs().catch(console.error);
+  }
 };
 
 export const subscribeToLogs = (callback: (logs: ActivityLog[]) => void) => {
@@ -55,11 +61,55 @@ export const subscribeToLogs = (callback: (logs: ActivityLog[]) => void) => {
         ...data[key],
         id: key,
       }));
-      callback(logs.reverse()); // Newest first
+      // Sort by timestamp and keep only latest 30
+      const sortedLogs = logs
+        .sort(
+          (a, b) =>
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+        )
+        .slice(0, 30);
+      callback(sortedLogs);
     } else {
       callback([]);
     }
   });
+};
+
+// Cleanup function to keep only latest 30 logs in database
+export const cleanupOldLogs = async () => {
+  try {
+    const logsRef = ref(db, "activity_logs");
+    const { get } = await import("firebase/database");
+    const snapshot = await get(logsRef);
+
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      const logs = Object.keys(data).map((key) => ({
+        ...data[key],
+        id: key,
+      }));
+
+      // Sort by timestamp and identify logs to delete (keep latest 30)
+      const sortedLogs = logs.sort(
+        (a, b) =>
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+      );
+
+      if (sortedLogs.length > 30) {
+        const logsToDelete = sortedLogs.slice(30); // Get logs beyond the latest 30
+
+        // Delete old logs
+        for (const log of logsToDelete) {
+          const logRef = ref(db, `activity_logs/${log.id}`);
+          await remove(logRef);
+        }
+
+        console.log(`Cleaned up ${logsToDelete.length} old activity logs`);
+      }
+    }
+  } catch (error) {
+    console.error("Error cleaning up old logs:", error);
+  }
 };
 
 // Content Functions (Enhanced with Logging)
