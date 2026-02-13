@@ -409,7 +409,7 @@ const DetailView: React.FC<{
           )}
 
           <div
-            className="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-[1.8]"
+            className="prose prose-lg dark:prose-invert max-w-none leading-[1.8]"
             dangerouslySetInnerHTML={{
               __html: item.description.replace(/\n/g, "<br/>"),
             }}
