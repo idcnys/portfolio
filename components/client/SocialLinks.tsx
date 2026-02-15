@@ -1,5 +1,31 @@
 "use client";
 
+import { motion } from "framer-motion";
+
+const socialVariants = {
+  hidden: { opacity: 0, scale: 0.8, y: 20 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: "backOut",
+    },
+  },
+};
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
 export default function SocialLinks() {
   const openSocial = (platform: string) => {
     const urls: Record<string, string> = {
@@ -15,54 +41,60 @@ export default function SocialLinks() {
     }
   };
 
+  const socialLinks = [
+    {
+      platform: "LinkedIn",
+      icon: "/icons/icons8-linkedin-50.svg",
+      alt: "LinkedIn",
+    },
+    { platform: "GitHub", icon: "/icons/icons8-github-50.svg", alt: "GitHub" },
+    {
+      platform: "Twitter",
+      icon: "/icons/icons8-twitter-bird.svg",
+      alt: "Twitter",
+    },
+    {
+      platform: "Facebook",
+      icon: "/icons/icons8-facebook-50.svg",
+      alt: "Facebook",
+    },
+    { platform: "Email", icon: "/icons/icons8-gmail-50.svg", alt: "Email" },
+  ];
+
   return (
-    <ul className="flex gap-4 mb-2">
-      <li
-        onClick={() => openSocial("LinkedIn")}
-        className="cursor-pointer hover:scale-110 transition-transform"
-      >
-        <img
-          src="/icons/icons8-linkedin-50.svg"
-          alt="LinkedIn"
-          className="w-6 h-6"
-        />
-      </li>
-      <li
-        onClick={() => openSocial("GitHub")}
-        className="cursor-pointer hover:scale-110 transition-transform"
-      >
-        <img
-          src="/icons/icons8-github-50.svg"
-          alt="GitHub"
-          className="w-6 h-6"
-        />
-      </li>
-      <li
-        onClick={() => openSocial("Twitter")}
-        className="cursor-pointer hover:scale-110 transition-transform"
-      >
-        <img
-          src="/icons/icons8-twitter-bird.svg"
-          alt="Twitter"
-          className="w-6 h-6"
-        />
-      </li>
-      <li
-        onClick={() => openSocial("Facebook")}
-        className="cursor-pointer hover:scale-110 transition-transform"
-      >
-        <img
-          src="/icons/icons8-facebook-50.svg"
-          alt="Facebook"
-          className="w-6 h-6"
-        />
-      </li>
-      <li
-        onClick={() => openSocial("Email")}
-        className="cursor-pointer hover:scale-110 transition-transform"
-      >
-        <img src="/icons/icons8-gmail-50.svg" alt="Email" className="w-6 h-6" />
-      </li>
-    </ul>
+    <motion.ul
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="flex gap-4 mb-2"
+    >
+      {socialLinks.map((social, index) => (
+        <motion.li
+          key={social.platform}
+          variants={socialVariants}
+          whileHover={{
+            scale: 1.2,
+            y: -5,
+            rotate: [0, -10, 10, 0],
+            transition: {
+              duration: 0.3,
+              rotate: { duration: 0.5 },
+            },
+          }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => openSocial(social.platform)}
+          className="cursor-pointer"
+        >
+          <motion.img
+            src={social.icon}
+            alt={social.alt}
+            className="w-6 h-6"
+            whileHover={{
+              filter: "brightness(1.2) saturate(1.2)",
+            }}
+          />
+        </motion.li>
+      ))}
+    </motion.ul>
   );
 }

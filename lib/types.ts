@@ -49,5 +49,5 @@ export type DashboardTab =
   | "publish-project"
   | "publish-activity"
   | "manage-content"
-  | "logs"  
+  | "logs"
   | "logout";

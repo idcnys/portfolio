@@ -1,7 +1,31 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { getCalApi } from "@calcom/embed-react";
 import { useEffect, useState } from "react";
+
+const buttonVariants = {
+  hover: {
+    scale: 1.05,
+    y: -2,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 20,
+    },
+  },
+  tap: {
+    scale: 0.95,
+    y: 0,
+  },
+};
+
+const iconVariants = {
+  hover: {
+    rotate: 10,
+    scale: 1.1,
+  },
+};
 
 export default function ActionButtons() {
   const [calLoaded, setCalLoaded] = useState(false);
@@ -35,19 +59,35 @@ export default function ActionButtons() {
   };
 
   return (
-    <div className="flex gap-2 mt-8">
-      <button
+    <motion.div
+      className="flex gap-2 mt-8"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.8, duration: 0.5 }}
+    >
+      <motion.button
         onClick={handleScheduleTalk}
-        className="flex-1 bg-gray-900 dark:bg-gray-800 text-white py-2.5 px-3 rounded text-sm font-semibold flex items-center justify-center gap-2 hover:bg-gray-800 dark:hover:bg-gray-700 transition-all shadow-sm"
+        variants={buttonVariants}
+        whileHover="hover"
+        whileTap="tap"
+        className="flex-1 bg-gray-900 dark:bg-gray-800 text-white py-2.5 px-3 rounded text-sm font-semibold flex items-center justify-center gap-2 hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors shadow-sm"
       >
-        <i className="fas fa-calendar-alt text-xs"></i> Schedule Talk
-      </button>
-      <button
+        <motion.i
+          variants={iconVariants}
+          className="fas fa-calendar-alt text-xs"
+        />
+        Schedule Talk
+      </motion.button>
+      <motion.button
         onClick={handleResumeDownload}
-        className="flex-1 bg-[#FFDB14] text-gray-900 py-2.5 px-3 rounded text-sm font-bold flex items-center justify-center gap-2 hover:bg-[#e6c512] transition-all shadow-sm"
+        variants={buttonVariants}
+        whileHover="hover"
+        whileTap="tap"
+        className="flex-1 bg-[#FFDB14] text-gray-900 py-2.5 px-3 rounded text-sm font-bold flex items-center justify-center gap-2 hover:bg-[#e6c512] transition-colors shadow-sm"
       >
-        <i className="fas fa-file-alt text-xs"></i> Resume
-      </button>
-    </div>
+        <motion.i variants={iconVariants} className="fas fa-file-alt text-xs" />
+        Resume
+      </motion.button>
+    </motion.div>
   );
 }

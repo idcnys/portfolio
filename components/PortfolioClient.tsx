@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ContentItem, TabType } from "../lib/types";
 import { INITIAL_CERTIFICATES } from "../lib/constants";
 import { incrementLikes, incrementViews } from "../lib/firebase";
@@ -15,6 +16,79 @@ const calculateReadTime = (text: string): number => {
   const plainText = text.replace(/<[^>]*>?/gm, "");
   const wordCount = plainText.split(/\s+/).length;
   return Math.max(1, Math.ceil(wordCount / wordsPerMinute));
+};
+
+// Animation variants
+const pageVariants = {
+  initial: { opacity: 0, y: 10 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.2,
+      ease: "easeOut",
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -10,
+    transition: {
+      duration: 0.15,
+    },
+  },
+};
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+      duration: 0.1,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: {
+    opacity: 0,
+    y: 10,
+    scale: 0.98,
+  },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.3,
+      ease: "easeOut",
+    },
+  },
+};
+
+const certificateVariants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.9,
+    rotate: -2,
+  },
+  show: {
+    opacity: 1,
+    scale: 1,
+    rotate: 0,
+    transition: {
+      duration: 0.2,
+      ease: "backOut",
+    },
+  },
+  hover: {
+    scale: 1.05,
+    rotate: 1,
+    boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
+    transition: {
+      duration: 0.15,
+    },
+  },
 };
 
 const PortfolioClient: React.FC = () => {
@@ -39,7 +113,10 @@ const PortfolioClient: React.FC = () => {
   };
 
   const ShimmerCard = () => (
-    <div className="flex flex-col sm:flex-row gap-6 p-4 rounded border border-gray-100 dark:border-gray-800">
+    <motion.div
+      variants={cardVariants}
+      className="flex flex-col sm:flex-row gap-6 p-4 rounded border border-gray-100 dark:border-gray-800"
+    >
       <div className="w-full sm:w-32 h-32 flex-shrink-0 rounded shimmer"></div>
       <div className="flex-1 space-y-2">
         <div className="h-6 w-3/4 shimmer rounded"></div>
@@ -47,17 +124,32 @@ const PortfolioClient: React.FC = () => {
         <div className="h-4 w-full shimmer rounded"></div>
         <div className="h-4 w-full shimmer rounded"></div>
       </div>
-    </div>
+    </motion.div>
   );
 
   return (
-    <div className="min-h-screen md:h-screen bg-gray-100 dark:bg-gray-950 flex flex-col md:flex-row p-0 md:p-0 gap-0 max-w-screen transition-colors duration-300 md:overflow-hidden">
+    <motion.div
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      className="min-h-screen md:h-screen bg-gray-100 dark:bg-gray-950 flex flex-col md:flex-row p-0 md:p-0 gap-0 max-w-screen transition-colors duration-300 md:overflow-hidden"
+    >
       <CustomContextMenu />
-      <div className="w-full md:w-[380px] h-auto md:h-full flex flex-col gap-4 md:overflow-y-hidden custom-scrollbar pr-0 md:pr-0">
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="w-full md:w-[380px] h-auto md:h-full flex flex-col gap-4 md:overflow-y-hidden custom-scrollbar pr-0 md:pr-0"
+      >
         <ProfileInfo />
-      </div>
+      </motion.div>
 
-      <div className="flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white dark:bg-gray-900 rounded shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
+      <motion.div
+        initial={{ opacity: 0, x: 50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+        className="flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white dark:bg-gray-900 rounded shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden"
+      >
         <TabSwitcher
           activeTab={activeTab}
           onTabChange={handleTabChange}
@@ -65,106 +157,157 @@ const PortfolioClient: React.FC = () => {
         />
 
         <div className="flex-1 h-auto md:overflow-y-auto custom-scrollbar relative">
-          {viewingDetail ? (
-            <DetailView
-              item={viewingDetail}
-              onBack={() => setViewingDetail(null)}
-            />
-          ) : selectedCertificate ? (
-            <CertificateDetailView
-              imageUrl={selectedCertificate}
-              onBack={() => setSelectedCertificate(null)}
-            />
-          ) : (
-            <div className="p-4 md:p-6 animate-fadeIn">
-              {activeTab === "certificates" && (
-                <div className="animate-fadeIn">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-                      Certificates & Achievements
-                    </h2>
-                    <span className="text-xs font-bold text-gray-500 dark:text-gray-300">
-                      {INITIAL_CERTIFICATES.length} Total
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                    {INITIAL_CERTIFICATES.map((cert) => (
-                      <div
-                        key={cert.id}
-                        className="overflow-hidden rounded border border-gray-100 dark:border-gray-800 group cursor-pointer bg-gray-50 dark:bg-gray-800 transition-all hover:border-[#FFDB14]"
-                      >
-                        <img
-                          src={cert.imageUrl}
-                          alt="Certificate"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          <AnimatePresence mode="wait">
+            {viewingDetail ? (
+              <motion.div
+                key="detail"
+                variants={pageVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                <DetailView
+                  item={viewingDetail}
+                  onBack={() => setViewingDetail(null)}
+                />
+              </motion.div>
+            ) : selectedCertificate ? (
+              <motion.div
+                key="certificate-detail"
+                variants={pageVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                <CertificateDetailView
+                  imageUrl={selectedCertificate}
+                  onBack={() => setSelectedCertificate(null)}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key={activeTab}
+                variants={pageVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                className="p-4 md:p-6"
+              >
+                {activeTab === "certificates" && (
+                  <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="show"
+                  >
+                    <motion.div
+                      variants={cardVariants}
+                      className="flex items-center justify-between mb-6"
+                    >
+                      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+                        Certificates & Achievements
+                      </h2>
+                      <span className="text-xs font-bold text-gray-500 dark:text-gray-300">
+                        {INITIAL_CERTIFICATES.length} Total
+                      </span>
+                    </motion.div>
+                    <motion.div
+                      variants={containerVariants}
+                      className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"
+                    >
+                      {INITIAL_CERTIFICATES.map((cert, index) => (
+                        <motion.div
+                          key={cert.id}
+                          variants={certificateVariants}
+                          whileHover="hover"
+                          whileTap={{ scale: 0.95 }}
+                          className="overflow-hidden rounded border border-gray-100 dark:border-gray-800 group cursor-pointer bg-gray-50 dark:bg-gray-800 transition-colors hover:border-[#FFDB14]"
                           onClick={() => setSelectedCertificate(cert.imageUrl)}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {(activeTab === "projects" || activeTab === "activity") && (
-                <div className="animate-fadeIn space-y-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 capitalize">
-                      {activeTab}
-                    </h2>
-                    <span className="text-xs font-bold text-gray-500 dark:text-gray-300">
-                      {
-                        (activeTab === "projects" ? projects : activities)
-                          .length
-                      }{" "}
-                      Items
-                    </span>
-                  </div>
-
-                  {isLoading
-                    ? Array(3)
-                        .fill(0)
-                        .map((_, i) => <ShimmerCard key={i} />)
-                    : (activeTab === "projects" ? projects : activities).map(
-                        (item) => (
-                          <ContentCard
-                            key={item.id}
-                            item={item}
-                            onReadMore={() => handleOpenDetail(item)}
+                        >
+                          <motion.img
+                            src={cert.imageUrl}
+                            alt="Certificate"
+                            className="w-full h-full object-cover"
+                            whileHover={{ scale: 1.1 }}
+                            transition={{ duration: 0.3 }}
                           />
-                        ),
-                      )}
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  </motion.div>
+                )}
 
-                  {!isLoading &&
-                    (activeTab === "projects" ? projects : activities)
-                      .length === 0 && (
-                      <div className="py-20 text-center">
-                        <i className="fas fa-folder-open text-4xl text-gray-200 dark:text-gray-800 mb-4"></i>
-                        <p className="text-gray-400 dark:text-gray-600 font-medium">
-                          No {activeTab} added yet.
-                        </p>
-                      </div>
-                    )}
-                </div>
-              )}
-            </div>
-          )}
+                {(activeTab === "projects" || activeTab === "activity") && (
+                  <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="show"
+                    className="space-y-4"
+                  >
+                    <motion.div
+                      variants={cardVariants}
+                      className="flex items-center justify-between mb-4"
+                    >
+                      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 capitalize">
+                        {activeTab}
+                      </h2>
+                      <span className="text-xs font-bold text-gray-500 dark:text-gray-300">
+                        {
+                          (activeTab === "projects" ? projects : activities)
+                            .length
+                        }{" "}
+                        Items
+                      </span>
+                    </motion.div>
+
+                    {isLoading
+                      ? Array(3)
+                          .fill(0)
+                          .map((_, i) => <ShimmerCard key={i} />)
+                      : (activeTab === "projects" ? projects : activities).map(
+                          (item, index) => (
+                            <motion.div
+                              key={item.id}
+                              variants={cardVariants}
+                              custom={index}
+                            >
+                              <ContentCard
+                                item={item}
+                                onReadMore={() => handleOpenDetail(item)}
+                              />
+                            </motion.div>
+                          ),
+                        )}
+
+                    {!isLoading &&
+                      (activeTab === "projects" ? projects : activities)
+                        .length === 0 && (
+                        <motion.div
+                          variants={cardVariants}
+                          className="py-20 text-center"
+                        >
+                          <motion.i
+                            className="fas fa-folder-open text-4xl text-gray-200 dark:text-gray-800 mb-4"
+                            animate={{ rotate: [0, 10, -10, 0] }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                              repeatDelay: 3,
+                            }}
+                          />
+                          <p className="text-gray-400 dark:text-gray-600 font-medium">
+                            No {activeTab} added yet.
+                          </p>
+                        </motion.div>
+                      )}
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </div>
+      </motion.div>
 
       <style jsx>{`
-        .animate-fadeIn {
-          animation: fadeIn 0.4s ease-out;
-        }
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
         .custom-scrollbar::-webkit-scrollbar {
           width: 4px;
         }
@@ -203,7 +346,7 @@ const PortfolioClient: React.FC = () => {
           background-size: 200% 100%;
         }
       `}</style>
-    </div>
+    </motion.div>
   );
 };
 
@@ -212,27 +355,51 @@ const CertificateDetailView: React.FC<{
   onBack: () => void;
 }> = ({ imageUrl, onBack }) => {
   return (
-    <div className="animate-fadeIn h-full flex flex-col">
-      <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 px-4 md:px-6 py-4 z-20">
-        <button
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.15 }}
+      className="h-full flex flex-col"
+    >
+      <motion.div
+        initial={{ y: -10, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.05, duration: 0.2 }}
+        className="sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-4 md:px-6 py-4 z-20"
+      >
+        <motion.button
           onClick={onBack}
           className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+          whileHover={{ x: -5, scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <i className="fas fa-arrow-left"></i>
+          <motion.i
+            className="fas fa-arrow-left"
+            animate={{ x: [0, -3, 0] }}
+            transition={{ duration: 0.8, repeat: Infinity, repeatDelay: 2 }}
+          />
           <span className="font-medium">Back</span>
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
 
-      <div className="flex-1 p-4 md:p-6 flex items-center justify-center">
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.1, duration: 0.25, ease: "easeOut" }}
+        className="flex-1 p-4 md:p-6 flex items-center justify-center"
+      >
         <div className="w-full max-w-4xl">
-          <img
+          <motion.img
             src={imageUrl}
             alt="Certificate"
             className="w-full h-auto rounded-lg shadow-lg"
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.3 }}
           />
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
@@ -274,51 +441,101 @@ const DetailView: React.FC<{
   };
 
   return (
-    <div className="animate-fadeIn">
-      <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 px-4 md:px-6 py-4 z-20">
-        <button
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <motion.div
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className="sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-4 md:px-6 py-4 z-20"
+      >
+        <motion.button
           onClick={onBack}
           className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+          whileHover={{ x: -5, scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <i className="fas fa-arrow-left"></i>
+          <motion.i
+            className="fas fa-arrow-left"
+            animate={{ x: [0, -3, 0] }}
+            transition={{ duration: 0.8, repeat: Infinity, repeatDelay: 2 }}
+          />
           <span className="font-medium">Back</span>
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
 
-      <div className="p-4 md:p-6">
+      <motion.div
+        initial={{ y: 30, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.4, duration: 0.6 }}
+        className="p-4 md:p-6"
+      >
         <div className="mb-6">
-          <div className="rounded-xl overflow-hidden mb-6 bg-gray-100 dark:bg-gray-800">
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+            className="rounded-xl overflow-hidden mb-6 bg-gray-100 dark:bg-gray-800"
+            whileHover={{ scale: 1.02 }}
+          >
             <img
               src={item.imageUrl}
               alt={item.title}
               className="w-full h-64 md:h-80 object-cover"
             />
-          </div>
-          <span className="text-sm text-gray-500 dark:text-gray-300 font-normal mb-2 block">
+          </motion.div>
+          <motion.span
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.6 }}
+            className="text-sm text-gray-500 dark:text-gray-300 font-normal mb-2 block"
+          >
             {item.date}
-          </span>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 leading-tight">
+          </motion.span>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 leading-tight"
+          >
             {item.title}
-          </h1>
+          </motion.h1>
 
-          <div className="flex flex-wrap gap-2 mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="flex flex-wrap gap-2 mb-6"
+          >
             {item.tags && item.tags.length > 0 ? (
               item.tags.map((tag, index) => (
-                <span
+                <motion.span
                   key={index}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.9 + index * 0.1 }}
+                  whileHover={{ scale: 1.05 }}
                   className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg border border-gray-200 dark:border-gray-700 font-medium"
                 >
                   {tag}
-                </span>
+                </motion.span>
               ))
             ) : (
               <span className="px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-900 text-gray-400 dark:text-gray-600 rounded-lg border border-gray-200 dark:border-gray-800 italic">
                 no tags
               </span>
             )}
-          </div>
+          </motion.div>
 
-          <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-300 mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.0 }}
+            className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-300 mb-6"
+          >
             <span className="flex items-center gap-2">
               <i className="far fa-clock"></i>
               <span>{calculateReadTime(item.description)} min read</span>
@@ -327,10 +544,15 @@ const DetailView: React.FC<{
               <i className="far fa-eye"></i>
               <span>{item.views || 0} views</span>
             </span>
-          </div>
+          </motion.div>
 
           {item.links && Object.keys(item.links).length > 0 && (
-            <div className="flex gap-3 mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.1 }}
+              className="flex gap-3 mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700"
+            >
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                 <i className="fas fa-link text-gray-500 dark:text-gray-400"></i>
                 <span className="font-medium text-gray-700 dark:text-gray-300">
@@ -405,17 +627,25 @@ const DetailView: React.FC<{
                   </a>
                 )}
               </div>
-            </div>
+            </motion.div>
           )}
 
-          <div
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2 }}
             className="prose prose-lg dark:prose-invert max-w-none leading-[1.8]"
             dangerouslySetInnerHTML={{
               __html: item.description.replace(/\n/g, "<br/>"),
             }}
           />
 
-          <div className="mt-8 pt-4 border-t border-gray-100 dark:border-gray-800">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.3 }}
+            className="mt-8 pt-4 border-t border-gray-100 dark:border-gray-800"
+          >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-6">
                 <button
@@ -458,10 +688,10 @@ const DetailView: React.FC<{
                 </button>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
@@ -470,135 +700,200 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
   onReadMore,
 }) => {
   return (
-    <div
+    <motion.div
+      whileHover={{
+        scale: 1.02,
+        boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+        transition: { duration: 0.2 },
+      }}
+      whileTap={{ scale: 0.98 }}
       className="flex flex-col sm:flex-row gap-4 p-5 rounded-xl border-2 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-all bg-white dark:bg-gray-900 cursor-pointer"
       onClick={onReadMore}
     >
       <div className="flex-1 flex flex-col justify-between min-w-0 order-2 sm:order-1">
         <div>
-          <span className="text-xs text-gray-500 dark:text-gray-300 font-normal mb-2 block">
+          <motion.span
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="text-xs text-gray-500 dark:text-gray-300 font-normal mb-2 block"
+          >
             {item.date}
-          </span>
-          <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3 leading-tight">
+          </motion.span>
+          <motion.h3
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3 leading-tight"
+          >
             {item.title}
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed line-clamp-2">
+          </motion.h3>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed line-clamp-2"
+          >
             {item.description.replace(/<[^>]*>?/gm, "")}
-          </p>
+          </motion.p>
 
-          <div className="flex flex-wrap gap-1.5 mb-3">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-wrap gap-1.5 mb-3"
+          >
             {item.tags && item.tags.length > 0 ? (
               item.tags.map((tag, index) => (
-                <span
+                <motion.span
                   key={index}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4 + index * 0.05 }}
+                  whileHover={{ scale: 1.05 }}
                   className="px-2 py-0.5 text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded border border-gray-200 dark:border-gray-700"
                 >
                   {tag}
-                </span>
+                </motion.span>
               ))
             ) : (
               <span className="px-2 py-0.5 text-xs bg-gray-50 dark:bg-gray-900 text-gray-400 dark:text-gray-600 rounded border border-gray-200 dark:border-gray-800 italic">
                 no tags
               </span>
             )}
-          </div>
+          </motion.div>
 
-          <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-300 mb-3">
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5 }}
+            className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-300 mb-3"
+          >
             <span className="flex items-center gap-1">
-              <i className="far fa-heart text-xs"></i> {item.likes || 0}
+              <motion.i
+                className="far fa-heart text-xs"
+                whileHover={{ scale: 1.2, color: "#e91e63" }}
+              />{" "}
+              {item.likes || 0}
             </span>
             <span className="flex items-center gap-1">
-              <i className="far fa-clock text-xs"></i>{" "}
+              <motion.i
+                className="far fa-clock text-xs"
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity, repeatDelay: 5 }}
+              />{" "}
               {calculateReadTime(item.description)} min
             </span>
-          </div>
+          </motion.div>
         </div>
 
         {item.links && Object.keys(item.links).length > 0 && (
-          <div className="flex gap-3 mt-2">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="flex gap-3 mt-2"
+          >
             {item.links.github && (
-              <a
+              <motion.a
                 href={item.links.github}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                whileHover={{ scale: 1.1, y: -2 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <img
                   src="/icons/icons8-github-50.svg"
                   alt="GitHub"
                   className="w-6 h-6"
                 />
-              </a>
+              </motion.a>
             )}
             {item.links.website && (
-              <a
+              <motion.a
                 href={item.links.website}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                whileHover={{ scale: 1.1, y: -2 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <i className="fas fa-globe text-lg"></i>
-              </a>
+              </motion.a>
             )}
             {item.links.twitter && (
-              <a
+              <motion.a
                 href={item.links.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                whileHover={{ scale: 1.1, y: -2 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <img
                   src="/icons/icons8-twitter-bird.svg"
                   alt="Twitter"
                   className="w-6 h-6"
                 />
-              </a>
+              </motion.a>
             )}
             {item.links.youtube && (
-              <a
+              <motion.a
                 href={item.links.youtube}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                whileHover={{ scale: 1.1, y: -2 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <img
                   src="/icons/icons8-youtube-50.svg"
                   alt="YouTube"
                   className="w-6 h-6"
                 />
-              </a>
+              </motion.a>
             )}
             {item.links.linkedin && (
-              <a
+              <motion.a
                 href={item.links.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                whileHover={{ scale: 1.1, y: -2 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <img
                   src="/icons/icons8-linkedin-50.svg"
                   alt="LinkedIn"
                   className="w-6 h-6"
                 />
-              </a>
+              </motion.a>
             )}
-          </div>
+          </motion.div>
         )}
       </div>
 
-      <div className="w-full sm:w-48 h-32 sm:h-auto flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 order-1 sm:order-2">
-        <img
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.3 }}
+        whileHover={{ scale: 1.05 }}
+        className="w-full sm:w-48 h-32 sm:h-auto flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 order-1 sm:order-2"
+      >
+        <motion.img
           src={item.imageUrl}
           alt={item.title}
           className="w-full h-full object-cover"
+          whileHover={{ scale: 1.1 }}
+          transition={{ duration: 0.3 }}
         />
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

@@ -99,7 +99,16 @@ export default function RootLayout({
               .custom-context-menu {
                 animation: fadeIn 0.15s ease-out;
                 backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                background: rgba(255, 255, 255, 0.85);
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+              }
+              
+              .dark .custom-context-menu {
+                background: rgba(31, 41, 55, 0.85);
+                border: 1px solid rgba(75, 85, 99, 0.3);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.2);
               }
               
               .custom-context-menu button:hover {

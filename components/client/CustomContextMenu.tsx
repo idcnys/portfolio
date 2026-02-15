@@ -83,7 +83,7 @@ export default function CustomContextMenu() {
 
   return (
     <div
-      className="custom-context-menu fixed z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl py-2 min-w-48"
+      className="custom-context-menu fixed z-50 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl py-2 min-w-48"
       style={{
         left: adjustedX,
         top: adjustedY,
