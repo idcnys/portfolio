@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "../lib/context/ThemeContext";
 
@@ -112,10 +111,6 @@ export default function RootLayout({
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-        />
-        <Script
-          src="https://app.cal.com/embed/embed.js"
-          strategy="lazyOnload"
         />
       </head>
       <body

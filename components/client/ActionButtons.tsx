@@ -1,15 +1,28 @@
 "use client";
 
+import { getCalApi } from "@calcom/embed-react";
+import { useEffect, useState } from "react";
+
 export default function ActionButtons() {
+  const [calLoaded, setCalLoaded] = useState(false);
+
+  useEffect(() => {
+    (async function () {
+      const cal = await getCalApi();
+      setCalLoaded(true);
+    })();
+  }, []);
+
   const handleScheduleTalk = () => {
-    // @ts-ignore - Cal is added globally in layout.tsx
-    if (window.Cal && window.Cal.ns && window.Cal.ns["quick-meet"]) {
-      // @ts-ignore
-      window.Cal.ns["quick-meet"]("modal", {
-        calLink: "bittosaha/quick-meet",
-        config: { layout: "month_view" },
+    if (calLoaded) {
+      // Use the Cal API to open the modal
+      getCalApi().then((cal) => {
+        cal("modal", {
+          calLink: "bittosaha/quick-meet",
+        });
       });
     } else {
+      // Fallback to direct link if Cal hasn't loaded yet
       window.open("https://cal.com/bittosaha/quick-meet", "_blank");
     }
   };
