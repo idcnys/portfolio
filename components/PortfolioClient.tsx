@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { ContentItem, TabType } from "../lib/types";
 import { INITIAL_CERTIFICATES } from "../lib/constants";
 import { incrementLikes, incrementViews } from "../lib/firebase";
@@ -19,14 +19,14 @@ const calculateReadTime = (text: string): number => {
 };
 
 // Animation variants
-const pageVariants = {
+const pageVariants: Variants = {
   initial: { opacity: 0, y: 10 },
   animate: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.2,
-      ease: "easeOut",
+      ease: [0.25, 0.46, 0.45, 0.94],
     },
   },
   exit: {
@@ -38,22 +38,22 @@ const pageVariants = {
   },
 };
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
     transition: {
       staggerChildren: 0.05,
-      duration: 0.1,
-    },
-  },
+      duration: 0.1
+    }
+  }
 };
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: {
     opacity: 0,
     y: 10,
-    scale: 0.98,
+    scale: 0.98
   },
   show: {
     opacity: 1,
@@ -61,16 +61,16 @@ const cardVariants = {
     scale: 1,
     transition: {
       duration: 0.3,
-      ease: "easeOut",
-    },
-  },
+      ease: [0.25, 0.46, 0.45, 0.94]
+    }
+  }
 };
 
-const certificateVariants = {
+const certificateVariants: Variants = {
   hidden: {
     opacity: 0,
     scale: 0.9,
-    rotate: -2,
+    rotate: -2
   },
   show: {
     opacity: 1,
@@ -78,17 +78,17 @@ const certificateVariants = {
     rotate: 0,
     transition: {
       duration: 0.2,
-      ease: "backOut",
-    },
+      ease: [0.68, -0.55, 0.265, 1.55]
+    }
   },
   hover: {
     scale: 1.05,
     rotate: 1,
     boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
     transition: {
-      duration: 0.15,
-    },
-  },
+      duration: 0.15
+    }
+  }
 };
 
 const PortfolioClient: React.FC = () => {
@@ -346,6 +346,32 @@ const PortfolioClient: React.FC = () => {
           background-size: 200% 100%;
         }
       `}</style>
+
+      {/* Footer Text */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 0.6, y: 0 }}
+        transition={{ delay: 1, duration: 0.5 }}
+        className="fixed bottom-4 left-4 hidden md:block z-30"
+      >
+        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-lg px-3 py-2 shadow-sm">
+          <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
+            Copyright <span className="text-red-500">&copy;</span> bitto.
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Mobile Footer */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1, duration: 0.5 }}
+        className="block md:hidden w-full bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 py-3"
+      >
+        <p className="text-center text-xs text-gray-600 dark:text-gray-400 font-medium">
+          Copyright <span className="text-red-500">&copy;</span> bitto.
+        </p>
+      </motion.div>
     </motion.div>
   );
 };

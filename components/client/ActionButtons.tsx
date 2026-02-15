@@ -1,15 +1,15 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { getCalApi } from "@calcom/embed-react";
 import { useEffect, useState } from "react";
 
-const buttonVariants = {
+const buttonVariants: Variants = {
   hover: {
     scale: 1.05,
     y: -2,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 300,
       damping: 20,
     },
@@ -20,7 +20,7 @@ const buttonVariants = {
   },
 };
 
-const iconVariants = {
+const iconVariants: Variants = {
   hover: {
     rotate: 10,
     scale: 1.1,

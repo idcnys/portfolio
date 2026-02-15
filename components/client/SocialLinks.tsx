@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 
-const socialVariants = {
+const socialVariants: Variants = {
   hidden: { opacity: 0, scale: 0.8, y: 20 },
   visible: {
     opacity: 1,
@@ -10,12 +10,12 @@ const socialVariants = {
     y: 0,
     transition: {
       duration: 0.4,
-      ease: "backOut",
+      ease: [0.68, -0.55, 0.265, 1.55],
     },
   },
 };
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,

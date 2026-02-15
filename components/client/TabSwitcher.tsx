@@ -23,7 +23,7 @@ export default function TabSwitcher({
         viewingDetail ? "hidden md:flex" : "flex"
       }`}
     >
-      <div className="inline-flex rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent p-1 shadow-sm relative">
+      <div className="inline-flex rounded-lg bg-transparent p-1 shadow-sm relative">
         {(["certificates", "projects", "activity"] as TabType[]).map(
           (tab, index) => (
             <motion.button

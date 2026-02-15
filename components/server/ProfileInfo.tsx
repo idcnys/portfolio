@@ -1,12 +1,12 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import ThemeToggle from "../client/ThemeToggle";
 import SocialLinks from "../client/SocialLinks";
 import AppearingTextAnimation from "../client/AppearingTextAnimation";
 import ActionButtons from "../client/ActionButtons";
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -17,38 +17,38 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.5,
-      ease: "easeOut",
+      ease: [0.25, 0.46, 0.45, 0.94],
     },
   },
 };
 
-const avatarVariants = {
+const avatarVariants: Variants = {
   hidden: { scale: 0.8, opacity: 0 },
   visible: {
     scale: 1,
     opacity: 1,
     transition: {
       duration: 0.6,
-      ease: "backOut",
+      ease: [0.68, -0.55, 0.265, 1.55],
     },
   },
 };
 
-const timelineVariants = {
+const timelineVariants: Variants = {
   hidden: { opacity: 0, x: -20 },
   visible: {
     opacity: 1,
     x: 0,
     transition: {
       duration: 0.5,
-      ease: "easeOut",
+      ease: [0.25, 0.46, 0.45, 0.94],
     },
   },
 };

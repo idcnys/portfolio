@@ -51,6 +51,10 @@ export default function RootLayout({
                 background-color: var(--loading-bg) !important;
                 color: var(--loading-gear-color);
                 transition: background-color 0.8s ease, color 0.8s ease;
+                user-select: none;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
               }
               
               @media (prefers-color-scheme: dark) {
