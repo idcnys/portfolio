@@ -893,7 +893,7 @@ const PortfolioClient: React.FC = () => {
         transition={{ delay: 1, duration: 0.5 }}
         className="fixed bottom-4 left-4 hidden md:block z-30"
       >
-        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-lg px-3 py-2 shadow-sm">
+        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-lg px-3 py-0 shadow-sm">
           <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
             Copyright <span className="text-red-500">&copy;</span> bitto.
           </p>
