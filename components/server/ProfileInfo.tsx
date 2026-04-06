@@ -1,10 +1,74 @@
 "use client";
 
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { motion, Variants } from "framer-motion";
 import ThemeToggle from "../client/ThemeToggle";
 import SocialLinks from "../client/SocialLinks";
 import AppearingTextAnimation from "../client/AppearingTextAnimation";
 import ActionButtons from "../client/ActionButtons";
+
+const TypewriterText: React.FC<{
+  text: string;
+  speed?: number;
+  className?: string;
+  onStart?: () => void;
+  onComplete?: () => void;
+}> = ({ text, speed = 28, className, onStart, onComplete }) => {
+  const [displayedText, setDisplayedText] = useState("");
+  const [canStartTyping, setCanStartTyping] = useState(false);
+  const [delayElapsed, setDelayElapsed] = useState(false);
+  const hasTypedRef = useRef(false);
+  const onStartRef = useRef(onStart);
+  const onCompleteRef = useRef(onComplete);
+
+  useEffect(() => {
+    onStartRef.current = onStart;
+    onCompleteRef.current = onComplete;
+  }, [onStart, onComplete]);
+
+  useEffect(() => {
+    const delayTimer = setTimeout(() => {
+      setDelayElapsed(true);
+    }, 3000);
+
+    return () => clearTimeout(delayTimer);
+  }, []);
+
+  useEffect(() => {
+    if (document.readyState === "complete") {
+      setCanStartTyping(true);
+      return;
+    }
+
+    const handleLoaded = () => setCanStartTyping(true);
+    window.addEventListener("load", handleLoaded);
+
+    return () => window.removeEventListener("load", handleLoaded);
+  }, []);
+
+  useEffect(() => {
+    if (!canStartTyping || !delayElapsed || hasTypedRef.current) return;
+
+    hasTypedRef.current = true;
+    let charIndex = 0;
+    setDisplayedText("");
+    onStartRef.current?.();
+
+    const timer = setInterval(() => {
+      charIndex += 1;
+      setDisplayedText(text.slice(0, charIndex));
+
+      if (charIndex >= text.length) {
+        clearInterval(timer);
+        onCompleteRef.current?.();
+      }
+    }, speed);
+
+    return () => clearInterval(timer);
+  }, [text, speed, canStartTyping, delayElapsed]);
+
+  return <p className={className}>{displayedText}</p>;
+};
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -54,6 +118,16 @@ const timelineVariants: Variants = {
 };
 
 export default function ProfileInfo() {
+  const [hasBottomTypingStarted, setHasBottomTypingStarted] = useState(false);
+  const [hasBottomTypingCompleted, setHasBottomTypingCompleted] = useState(false);
+  const handleBottomTypingStart = useCallback(() => {
+    setHasBottomTypingStarted(true);
+  }, []);
+
+  const handleBottomTypingComplete = useCallback(() => {
+    setHasBottomTypingCompleted(true);
+  }, []);
+
   return (
     <motion.div
       variants={containerVariants}
@@ -186,14 +260,23 @@ export default function ProfileInfo() {
           <motion.img
             src="/avatar.png"
             alt="Avatar"
-            className="w-10 h-10 rounded-full border-2 border-[#FFDB14] flex-shrink-0"
+            className={`w-10 h-10 rounded-full border-2 flex-shrink-0 ${
+              hasBottomTypingCompleted ? "border-[#FFDB14]" : "border-transparent"
+            }`}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{
+              opacity: hasBottomTypingStarted ? 1 : 0,
+              scale: hasBottomTypingStarted ? 1 : 0.95,
+            }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
             whileHover={{ rotate: 2 }}
           />
-          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-            Thanks for visiting my portfolio! Explore my projects, activities,
-            and certificates. Feel free to reach out if you'd like to
-            collaborate or just chat.
-          </p>
+          <TypewriterText
+            text="Thanks for visiting my portfolio! Explore my projects, activities, and certificates. Feel free to reach out if you'd like to collaborate or just chat."
+            className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed"
+            onStart={handleBottomTypingStart}
+            onComplete={handleBottomTypingComplete}
+          />
         </div>
       </motion.div>
     </motion.div>
