@@ -6,12 +6,12 @@ import { useEffect, useState } from "react";
 
 const buttonVariants: Variants = {
   hover: {
-    scale: 1.05,
-    y: -2,
+    scale: 1.02,
+    y: -1,
     transition: {
       type: "spring" as const,
-      stiffness: 300,
-      damping: 20,
+      stiffness: 260,
+      damping: 24,
     },
   },
   tap: {
@@ -22,8 +22,8 @@ const buttonVariants: Variants = {
 
 const iconVariants: Variants = {
   hover: {
-    rotate: 10,
-    scale: 1.1,
+    rotate: 4,
+    scale: 1.03,
   },
 };
 
@@ -70,7 +70,7 @@ export default function ActionButtons() {
         variants={buttonVariants}
         whileHover="hover"
         whileTap="tap"
-        className="flex-1 bg-gray-900 dark:bg-gray-800 text-white py-2.5 px-3 rounded text-sm font-semibold flex items-center justify-center gap-2 hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors shadow-sm"
+        className="flex-1 bg-white dark:bg-gray-100 text-gray-900 dark:text-gray-900 border border-gray-300 dark:border-gray-100 py-2.5 px-3 rounded text-sm font-semibold flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-white transition-colors shadow-sm"
       >
         <motion.i
           variants={iconVariants}

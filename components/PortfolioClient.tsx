@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { ContentItem, TabType } from "../lib/types";
 import { INITIAL_CERTIFICATES } from "../lib/constants";
@@ -82,9 +82,9 @@ const certificateVariants: Variants = {
     }
   },
   hover: {
-    scale: 1.05,
-    rotate: 1,
-    boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
+    scale: 1.02,
+    rotate: 0,
+    boxShadow: "0 6px 16px rgba(0,0,0,0.08)",
     transition: {
       duration: 0.15
     }
@@ -99,6 +99,24 @@ const PortfolioClient: React.FC = () => {
   const [selectedCertificate, setSelectedCertificate] = useState<string | null>(
     null,
   );
+  const [hasAnimatedProjectsTab, setHasAnimatedProjectsTab] = useState(false);
+  const isDetailView = !!viewingDetail || !!selectedCertificate;
+
+  useEffect(() => {
+    if (activeTab === "projects" && !hasAnimatedProjectsTab) {
+      setHasAnimatedProjectsTab(true);
+    }
+  }, [activeTab, hasAnimatedProjectsTab]);
+
+  const handleBack = () => {
+    if (viewingDetail) {
+      setViewingDetail(null);
+      return;
+    }
+    if (selectedCertificate) {
+      setSelectedCertificate(null);
+    }
+  };
 
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
@@ -153,7 +171,8 @@ const PortfolioClient: React.FC = () => {
         <TabSwitcher
           activeTab={activeTab}
           onTabChange={handleTabChange}
-          viewingDetail={!!viewingDetail}
+          showBackButton={isDetailView}
+          onBack={handleBack}
         />
 
         <div className="flex-1 h-auto md:overflow-y-auto custom-scrollbar relative">
@@ -168,7 +187,6 @@ const PortfolioClient: React.FC = () => {
               >
                 <DetailView
                   item={viewingDetail}
-                  onBack={() => setViewingDetail(null)}
                 />
               </motion.div>
             ) : selectedCertificate ? (
@@ -181,7 +199,6 @@ const PortfolioClient: React.FC = () => {
               >
                 <CertificateDetailView
                   imageUrl={selectedCertificate}
-                  onBack={() => setSelectedCertificate(null)}
                 />
               </motion.div>
             ) : (
@@ -227,7 +244,7 @@ const PortfolioClient: React.FC = () => {
                             src={cert.imageUrl}
                             alt="Certificate"
                             className="w-full h-full object-cover"
-                            whileHover={{ scale: 1.1 }}
+                            whileHover={{ scale: 1.03 }}
                             transition={{ duration: 0.3 }}
                           />
                         </motion.div>
@@ -239,7 +256,11 @@ const PortfolioClient: React.FC = () => {
                 {(activeTab === "projects" || activeTab === "activity") && (
                   <motion.div
                     variants={containerVariants}
-                    initial="hidden"
+                    initial={
+                      activeTab === "projects" && hasAnimatedProjectsTab
+                        ? false
+                        : "hidden"
+                    }
                     animate="show"
                     className="space-y-4"
                   >
@@ -378,8 +399,7 @@ const PortfolioClient: React.FC = () => {
 
 const CertificateDetailView: React.FC<{
   imageUrl: string;
-  onBack: () => void;
-}> = ({ imageUrl, onBack }) => {
+}> = ({ imageUrl }) => {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -388,27 +408,6 @@ const CertificateDetailView: React.FC<{
       transition={{ duration: 0.15 }}
       className="h-full flex flex-col"
     >
-      <motion.div
-        initial={{ y: -10, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.05, duration: 0.2 }}
-        className="sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-4 md:px-6 py-4 z-20"
-      >
-        <motion.button
-          onClick={onBack}
-          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-          whileHover={{ x: -5, scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <motion.i
-            className="fas fa-arrow-left"
-            animate={{ x: [0, -3, 0] }}
-            transition={{ duration: 0.8, repeat: Infinity, repeatDelay: 2 }}
-          />
-          <span className="font-medium">Back</span>
-        </motion.button>
-      </motion.div>
-
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -420,7 +419,7 @@ const CertificateDetailView: React.FC<{
             src={imageUrl}
             alt="Certificate"
             className="w-full h-auto rounded-lg shadow-lg"
-            whileHover={{ scale: 1.02 }}
+            whileHover={{ scale: 1.01 }}
             transition={{ duration: 0.3 }}
           />
         </div>
@@ -431,8 +430,7 @@ const CertificateDetailView: React.FC<{
 
 const DetailView: React.FC<{
   item: ContentItem;
-  onBack: () => void;
-}> = ({ item, onBack }) => {
+}> = ({ item }) => {
   const [likes, setLikes] = useState(item.likes || 0);
   const [hasLiked, setHasLiked] = useState(false);
 
@@ -473,27 +471,6 @@ const DetailView: React.FC<{
       exit={{ opacity: 0 }}
     >
       <motion.div
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-4 md:px-6 py-4 z-20"
-      >
-        <motion.button
-          onClick={onBack}
-          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-          whileHover={{ x: -5, scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <motion.i
-            className="fas fa-arrow-left"
-            animate={{ x: [0, -3, 0] }}
-            transition={{ duration: 0.8, repeat: Infinity, repeatDelay: 2 }}
-          />
-          <span className="font-medium">Back</span>
-        </motion.button>
-      </motion.div>
-
-      <motion.div
         initial={{ y: 30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.4, duration: 0.6 }}
@@ -505,7 +482,7 @@ const DetailView: React.FC<{
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.5 }}
             className="rounded-xl overflow-hidden mb-6 bg-gray-100 dark:bg-gray-800"
-            whileHover={{ scale: 1.02 }}
+            whileHover={{ scale: 1.01 }}
           >
             <img
               src={item.imageUrl}
@@ -543,7 +520,7 @@ const DetailView: React.FC<{
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.9 + index * 0.1 }}
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.02 }}
                   className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg border border-gray-200 dark:border-gray-700 font-medium"
                 >
                   {tag}
@@ -728,8 +705,8 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
   return (
     <motion.div
       whileHover={{
-        scale: 1.02,
-        boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+        scale: 1.01,
+        boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
         transition: { duration: 0.2 },
       }}
       whileTap={{ scale: 0.98 }}
@@ -775,7 +752,7 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.4 + index * 0.05 }}
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.02 }}
                   className="px-2 py-0.5 text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded border border-gray-200 dark:border-gray-700"
                 >
                   {tag}
@@ -797,7 +774,7 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
             <span className="flex items-center gap-1">
               <motion.i
                 className="far fa-heart text-xs"
-                whileHover={{ scale: 1.2, color: "#e91e63" }}
+                whileHover={{ scale: 1.05, color: "#e91e63" }}
               />{" "}
               {item.likes || 0}
             </span>
@@ -826,7 +803,7 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
-                whileHover={{ scale: 1.1, y: -2 }}
+                whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <img
@@ -843,7 +820,7 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
-                whileHover={{ scale: 1.1, y: -2 }}
+                whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <i className="fas fa-globe text-lg"></i>
@@ -856,7 +833,7 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
-                whileHover={{ scale: 1.1, y: -2 }}
+                whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <img
@@ -873,7 +850,7 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
-                whileHover={{ scale: 1.1, y: -2 }}
+                whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <img
@@ -890,7 +867,7 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
-                whileHover={{ scale: 1.1, y: -2 }}
+                whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <img
@@ -908,14 +885,14 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.3 }}
-        whileHover={{ scale: 1.05 }}
+        whileHover={{ scale: 1.02 }}
         className="w-full sm:w-48 h-32 sm:h-auto flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 order-1 sm:order-2"
       >
         <motion.img
           src={item.imageUrl}
           alt={item.title}
           className="w-full h-full object-cover"
-          whileHover={{ scale: 1.1 }}
+          whileHover={{ scale: 1.03 }}
           transition={{ duration: 0.3 }}
         />
       </motion.div>

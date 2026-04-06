@@ -73,12 +73,10 @@ export default function SocialLinks() {
           key={social.platform}
           variants={socialVariants}
           whileHover={{
-            scale: 1.2,
-            y: -5,
-            rotate: [0, -10, 10, 0],
+            scale: 1.06,
+            y: -2,
             transition: {
-              duration: 0.3,
-              rotate: { duration: 0.5 },
+              duration: 0.2,
             },
           }}
           whileTap={{ scale: 0.9 }}
@@ -89,9 +87,7 @@ export default function SocialLinks() {
             src={social.icon}
             alt={social.alt}
             className="w-6 h-6"
-            whileHover={{
-              filter: "brightness(1.2) saturate(1.2)",
-            }}
+            whileHover={{ scale: 1.02 }}
           />
         </motion.li>
       ))}

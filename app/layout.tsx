@@ -56,19 +56,9 @@ export default function RootLayout({
                 -moz-user-select: none;
                 -ms-user-select: none;
               }
-              
-              @media (prefers-color-scheme: dark) {
-                html, body {
-                  --loading-bg: #0f0f0f;
-                  --loading-gear-bg: #1f1f1f;
-                  --loading-gear-color: #ffffff;
-                  background-color: var(--loading-bg) !important;
-                  color: var(--loading-gear-color);
-                  transition: background-color 0.8s ease, color 0.8s ease;
-                }
-              }
-              
-              .dark {
+
+              .dark,
+              .dark body {
                 --loading-bg: #0f0f0f !important;
                 --loading-gear-bg: #1f1f1f !important;
                 --loading-gear-color: #ffffff !important;

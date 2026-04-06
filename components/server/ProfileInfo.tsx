@@ -59,7 +59,7 @@ export default function ProfileInfo() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="h-auto md:h-full bg-white dark:bg-gray-900 p-6 rounded shadow-sm border border-gray-200 dark:border-gray-800 relative"
+      className="h-auto md:h-full bg-white dark:bg-gray-900 p-6 rounded shadow-sm border border-gray-200 dark:border-gray-800 relative flex flex-col"
     >
       <motion.div variants={itemVariants}>
         <ThemeToggle />
@@ -72,7 +72,7 @@ export default function ProfileInfo() {
         <motion.div
           variants={avatarVariants}
           className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#FFDB14] flex-shrink-0"
-          whileHover={{ scale: 1.05, rotate: 2 }}
+          whileHover={{ scale: 1.02, rotate: 1 }}
           whileTap={{ scale: 0.95 }}
         >
           <img
@@ -120,12 +120,12 @@ export default function ProfileInfo() {
       </motion.h3>
       <motion.div
         variants={containerVariants}
-        className="space-y-4 relative border-l-2 border-gray-100 dark:border-gray-800 ml-2 pl-6"
+        className="space-y-4 relative border-l-2 border-gray-300 dark:border-gray-700 ml-2 pl-6"
       >
         <motion.div variants={timelineVariants} className="relative">
           <motion.span
             className="absolute -left-[31px] top-1.5 w-3 h-3 bg-[#FFDB14] rounded-full border-2 border-white dark:border-gray-900"
-            whileHover={{ scale: 1.2 }}
+            whileHover={{ scale: 1.08 }}
             transition={{ type: "spring", stiffness: 300 }}
           />
           <span className="inline-block px-2 py-0.5 bg-[#FFDB14] text-[10px] font-bold rounded mb-1 text-gray-900">
@@ -141,7 +141,7 @@ export default function ProfileInfo() {
         <motion.div variants={timelineVariants} className="relative">
           <motion.span
             className="absolute -left-[31px] top-1.5 w-3 h-3 bg-[#FFDB14] rounded-full border-2 border-white dark:border-gray-900"
-            whileHover={{ scale: 1.2 }}
+            whileHover={{ scale: 1.08 }}
             transition={{ type: "spring", stiffness: 300 }}
           />
           <span className="inline-block px-2 py-0.5 bg-[#FFDB14] text-[10px] font-bold rounded mb-1 text-gray-900">
@@ -157,7 +157,7 @@ export default function ProfileInfo() {
         <motion.div variants={timelineVariants} className="relative">
           <motion.span
             className="absolute -left-[31px] top-1.5 w-3 h-3 bg-[#FFDB14] rounded-full border-2 border-white dark:border-gray-900"
-            whileHover={{ scale: 1.2 }}
+            whileHover={{ scale: 1.08 }}
             transition={{ type: "spring", stiffness: 300 }}
           />
           <span className="inline-block px-2 py-0.5 bg-[#FFDB14] text-[10px] font-bold rounded mb-1 text-gray-900">
@@ -172,14 +172,14 @@ export default function ProfileInfo() {
         </motion.div>
       </motion.div>
 
-      <motion.div variants={itemVariants}>
+      <motion.div variants={itemVariants} className="relative z-10 mb-3 shrink-0">
         <ActionButtons />
       </motion.div>
 
       <motion.div
         variants={itemVariants}
-        className="hidden md:block bg-gradient-to-br mt-3 from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-850 p-2 rounded shadow-sm border border-blue-100 dark:border-gray-700 relative"
-        whileHover={{ scale: 1.02 }}
+        className="hidden md:block bg-gradient-to-br mt-auto from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-850 p-2 rounded shadow-sm border border-blue-100 dark:border-gray-700 relative z-0"
+        whileHover={{ scale: 1.01 }}
         transition={{ duration: 0.2 }}
       >
         <div className="flex items-start gap-3 mb-1">
@@ -187,7 +187,7 @@ export default function ProfileInfo() {
             src="/avatar.png"
             alt="Avatar"
             className="w-10 h-10 rounded-full border-2 border-[#FFDB14] flex-shrink-0"
-            whileHover={{ rotate: 5 }}
+            whileHover={{ rotate: 2 }}
           />
           <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
             Thanks for visiting my portfolio! Explore my projects, activities,

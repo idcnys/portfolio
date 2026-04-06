@@ -11,8 +11,8 @@ export default function ThemeToggle() {
       onClick={toggleTheme}
       disabled={isTransitioning}
       whileHover={{
-        scale: 1.1,
-        rotate: 15,
+        scale: 1.03,
+        rotate: 4,
         transition: { duration: 0.2 },
       }}
       whileTap={{ scale: 0.9 }}
@@ -71,8 +71,8 @@ export default function ThemeToggle() {
               transition: { duration: 0.2 },
             }}
             whileHover={{
-              rotate: [0, -10, 10, 0],
-              transition: { duration: 0.5 },
+              scale: 1.03,
+              transition: { duration: 0.2 },
             }}
           />
         )}
