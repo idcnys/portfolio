@@ -53,12 +53,12 @@ export default function TabSwitcher({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="flex items-center p-2 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 shrink-0 sticky top-0 z-10"
+      className="flex items-center p-2 bg-white dark:bg-gray-900 shadow-[0_10px_24px_rgba(15,23,42,0.06)] shrink-0 sticky top-0 z-10"
     >
       {showBackButton && onBack && (
         <motion.button
           onClick={onBack}
-          className="mr-3 h-9 px-3 rounded-md border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2"
+          className="mr-3 h-9 px-3 rounded-md bg-white dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
           whileHover={{ x: -1 }}
           whileTap={{ scale: 0.98 }}
         >
@@ -72,14 +72,14 @@ export default function TabSwitcher({
           <div className="sm:hidden flex items-center gap-2 w-full">
             <motion.button
               onClick={() => onTabChange(prevTab)}
-              className="h-10 flex-1 min-w-0 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 px-2 text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
+              className="h-10 flex-1 min-w-0 rounded-md bg-gray-50 dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] px-2 text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
               whileTap={{ scale: 0.98 }}
               aria-label={`Previous tab: ${prevTab}`}
             >
               {prevTab}
             </motion.button>
 
-            <div className="relative h-10 flex-[1.35] min-w-0 overflow-hidden rounded-md border border-yellow-400/60 bg-[#FFDB14] shadow-sm">
+            <div className="relative h-10 flex-[1.35] min-w-0 overflow-hidden rounded-md bg-[#FFDB14] shadow-[0_6px_16px_rgba(234,179,8,0.34)]">
               <AnimatePresence mode="wait" initial={false} custom={slideDirection}>
                 <motion.button
                   key={activeTab}
@@ -105,7 +105,7 @@ export default function TabSwitcher({
 
             <motion.button
               onClick={() => onTabChange(nextTab)}
-              className="h-10 flex-1 min-w-0 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 px-2 text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
+              className="h-10 flex-1 min-w-0 rounded-md bg-gray-50 dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] px-2 text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
               whileTap={{ scale: 0.98 }}
               aria-label={`Next tab: ${nextTab}`}
             >
@@ -113,7 +113,7 @@ export default function TabSwitcher({
             </motion.button>
           </div>
 
-          <div className="hidden sm:inline-flex rounded-lg bg-gray-100 dark:bg-gray-800 p-1 shadow-sm relative border border-gray-200 dark:border-gray-700">
+          <div className="hidden sm:inline-flex rounded-lg bg-gray-100 dark:bg-gray-800 p-1 shadow-[0_8px_20px_rgba(15,23,42,0.1)] relative">
             {TABS.map((tab) => (
               <motion.button
                 key={tab}

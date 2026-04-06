@@ -444,7 +444,7 @@ const PortfolioClient: React.FC = () => {
   const ShimmerCard = () => (
     <motion.div
       variants={cardVariants}
-      className="flex flex-col sm:flex-row gap-6 p-4 rounded border border-gray-100 dark:border-gray-800"
+      className="flex flex-col sm:flex-row gap-6 p-4 rounded border border-gray-100 dark:border-gray-800 shadow-[0_4px_18px_rgba(15,23,42,0.04)]"
     >
       <div className="w-full sm:w-32 h-32 flex-shrink-0 rounded shimmer"></div>
       <div className="flex-1 space-y-2">
@@ -477,7 +477,7 @@ const PortfolioClient: React.FC = () => {
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
-        className="flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white dark:bg-gray-900 rounded shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden"
+        className="flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white dark:bg-gray-900 rounded shadow-[0_12px_34px_rgba(15,23,42,0.07)] border border-gray-100 dark:border-gray-800 overflow-hidden"
       >
         <TabSwitcher
           activeTab={activeTab}
@@ -757,7 +757,7 @@ const PortfolioClient: React.FC = () => {
                     <motion.div variants={containerVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                       <motion.div
                         variants={cardVariants}
-                        className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5"
+                        className="rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-[0_6px_20px_rgba(15,23,42,0.05)]"
                       >
                         <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-4">
                           Max Ratings
@@ -777,7 +777,7 @@ const PortfolioClient: React.FC = () => {
 
                       <motion.div
                         variants={cardVariants}
-                        className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5"
+                        className="rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-[0_6px_20px_rgba(15,23,42,0.05)]"
                       >
                         <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-4">
                           GitHub Contributions
@@ -816,7 +816,7 @@ const PortfolioClient: React.FC = () => {
                         <motion.div
                           key={group.id}
                           variants={cardVariants}
-                          className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5"
+                          className="rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-[0_6px_20px_rgba(15,23,42,0.05)]"
                         >
                           <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-2">
                             {group.title}
@@ -1243,7 +1243,7 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
         transition: { duration: 0.2 },
       }}
       whileTap={{ scale: 0.98 }}
-      className="flex flex-col sm:flex-row gap-4 p-5 rounded-xl border-2 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-all bg-white dark:bg-gray-900 cursor-pointer"
+      className="flex flex-col sm:flex-row gap-4 p-5 rounded-xl border-2 border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 transition-all bg-white dark:bg-gray-900 shadow-[0_6px_22px_rgba(15,23,42,0.05)] cursor-pointer"
       onClick={onReadMore}
     >
       <div className="flex-1 flex flex-col justify-between min-w-0 order-2 sm:order-1">
@@ -1440,7 +1440,7 @@ const ProjectListCard: React.FC<{ item: ContentItem; onReadMore: () => void }> =
   return (
     <div
       onClick={onReadMore}
-      className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 cursor-pointer hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
+      className="p-4 rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-[0_5px_18px_rgba(15,23,42,0.04)] cursor-pointer hover:border-gray-200 dark:hover:border-gray-700 transition-colors"
     >
       <div className="flex items-center gap-4">
         <img
@@ -1469,7 +1469,7 @@ const ProjectGridCard: React.FC<{ item: ContentItem; onReadMore: () => void }> =
   return (
     <div
       onClick={onReadMore}
-      className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden cursor-pointer hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
+      className="rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-[0_5px_18px_rgba(15,23,42,0.04)] overflow-hidden cursor-pointer hover:border-gray-200 dark:hover:border-gray-700 transition-colors"
     >
       <img
         src={item.imageUrl}

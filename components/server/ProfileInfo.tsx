@@ -133,7 +133,7 @@ export default function ProfileInfo() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="h-auto md:h-full bg-white dark:bg-gray-900 p-6 rounded shadow-sm border border-gray-200 dark:border-gray-800 relative flex flex-col"
+      className="h-auto md:h-full bg-white dark:bg-gray-900 p-6 rounded shadow-[0_10px_30px_rgba(15,23,42,0.06)] border border-gray-100 dark:border-gray-800 relative flex flex-col"
     >
       <motion.div variants={itemVariants}>
         <ThemeToggle />
@@ -194,7 +194,7 @@ export default function ProfileInfo() {
       </motion.h3>
       <motion.div
         variants={containerVariants}
-        className="space-y-4 relative border-l-2 border-gray-300 dark:border-gray-700 ml-2 pl-6"
+        className="space-y-4 relative border-l-2 border-gray-200 dark:border-gray-700 ml-2 pl-6"
       >
         <motion.div variants={timelineVariants} className="relative">
           <motion.span
@@ -252,7 +252,7 @@ export default function ProfileInfo() {
 
       <motion.div
         variants={itemVariants}
-        className="hidden md:block bg-gradient-to-br mt-auto from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-850 p-2 rounded shadow-sm border border-blue-100 dark:border-gray-700 relative z-0"
+        className="hidden md:block bg-gradient-to-br mt-auto from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-850 p-2 rounded shadow-[0_10px_26px_rgba(15,23,42,0.1)] relative z-0"
         whileHover={{ scale: 1.01 }}
         transition={{ duration: 0.2 }}
       >
