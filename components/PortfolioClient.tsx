@@ -1,7 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
+import CodeMirror from "@uiw/react-codemirror";
+import { javascript } from "@codemirror/lang-javascript";
+import { python } from "@codemirror/lang-python";
+import { html as htmlLang } from "@codemirror/lang-html";
+import { css } from "@codemirror/lang-css";
+import { markdown } from "@codemirror/lang-markdown";
+import { oneDark } from "@codemirror/theme-one-dark";
 import { ContentItem, TabType } from "../lib/types";
 import { INITIAL_CERTIFICATES } from "../lib/constants";
 import { incrementLikes, incrementViews } from "../lib/firebase";
@@ -11,12 +18,128 @@ import ProfileInfo from "./server/ProfileInfo";
 import TabSwitcher from "./client/TabSwitcher";
 import CustomContextMenu from "./client/CustomContextMenu";
 
+type DescriptionBlock =
+  | { type: "html"; content: string }
+  | { type: "code"; code: string; language?: string };
+
+type ProjectViewMode = "card" | "list" | "grid";
+
+const CODE_BLOCK_REGEX =
+  /<pre[^>]*>\s*<code([^>]*)>([\s\S]*?)<\/code>\s*<\/pre>/gi;
+
+const decodeHtmlEntities = (value: string): string => {
+  if (typeof window === "undefined") {
+    return value;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.innerHTML = value;
+  return textarea.value;
+};
+
+const extractLanguage = (codeAttributes: string): string | undefined => {
+  const languageMatch =
+    codeAttributes.match(/language-([a-z0-9#+-]+)/i) ||
+    codeAttributes.match(/lang(?:uage)?-["']?([a-z0-9#+-]+)/i);
+  return languageMatch?.[1]?.toLowerCase();
+};
+
+const splitDescriptionBlocks = (description: string): DescriptionBlock[] => {
+  const blocks: DescriptionBlock[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null = null;
+
+  while ((match = CODE_BLOCK_REGEX.exec(description)) !== null) {
+    const [fullMatch, codeAttributes, codeContent] = match;
+    const htmlBefore = description.slice(lastIndex, match.index);
+
+    if (htmlBefore.trim()) {
+      blocks.push({ type: "html", content: htmlBefore });
+    }
+
+    blocks.push({
+      type: "code",
+      code: decodeHtmlEntities(codeContent),
+      language: extractLanguage(codeAttributes),
+    });
+
+    lastIndex = match.index + fullMatch.length;
+  }
+
+  const htmlAfter = description.slice(lastIndex);
+  if (htmlAfter.trim()) {
+    blocks.push({ type: "html", content: htmlAfter });
+  }
+
+  if (blocks.length === 0) {
+    blocks.push({ type: "html", content: description });
+  }
+
+  return blocks;
+};
+
+const getCodeLanguageExtension = (language?: string) => {
+  if (!language) {
+    return javascript({ jsx: true, typescript: true });
+  }
+
+  const lang = language.toLowerCase();
+
+  if (["js", "jsx", "ts", "tsx", "javascript", "typescript"].includes(lang)) {
+    return javascript({ jsx: true, typescript: true });
+  }
+
+  if (["py", "python"].includes(lang)) {
+    return python();
+  }
+
+  if (["html", "xml"].includes(lang)) {
+    return htmlLang();
+  }
+
+  if (["css", "scss", "sass"].includes(lang)) {
+    return css();
+  }
+
+  if (["md", "markdown"].includes(lang)) {
+    return markdown();
+  }
+
+  return javascript({ jsx: true, typescript: true });
+};
+
+const CodeSnippetViewer: React.FC<{ code: string; language?: string }> = ({
+  code,
+  language,
+}) => {
+  const { isDarkMode } = useTheme();
+
+  return (
+    <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+      <CodeMirror
+        value={code}
+        editable={false}
+        basicSetup={{
+          lineNumbers: true,
+          foldGutter: true,
+          highlightActiveLine: false,
+          highlightActiveLineGutter: false,
+        }}
+        theme={isDarkMode ? oneDark : "light"}
+        extensions={[getCodeLanguageExtension(language)]}
+      />
+    </div>
+  );
+};
+
 const calculateReadTime = (text: string): number => {
   const wordsPerMinute = 200;
   const plainText = text.replace(/<[^>]*>?/gm, "");
   const wordCount = plainText.split(/\s+/).length;
   return Math.max(1, Math.ceil(wordCount / wordsPerMinute));
 };
+
+const stripHtmlTags = (value: string): string => value.replace(/<[^>]*>?/gm, "");
 
 // Animation variants
 const pageVariants: Variants = {
@@ -100,7 +223,26 @@ const PortfolioClient: React.FC = () => {
     null,
   );
   const [hasAnimatedProjectsTab, setHasAnimatedProjectsTab] = useState(false);
+  const [projectSearchQuery, setProjectSearchQuery] = useState("");
+  const [projectViewMode, setProjectViewMode] = useState<ProjectViewMode>("card");
   const isDetailView = !!viewingDetail || !!selectedCertificate;
+
+  const filteredProjects = useMemo(() => {
+    const query = projectSearchQuery.trim().toLowerCase();
+    if (!query) return projects;
+
+    return projects.filter((item) => {
+      const haystack = [
+        item.title,
+        stripHtmlTags(item.description),
+        item.tags?.join(" ") || "",
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(query);
+    });
+  }, [projects, projectSearchQuery]);
 
   useEffect(() => {
     if (activeTab === "projects" && !hasAnimatedProjectsTab) {
@@ -272,20 +414,108 @@ const PortfolioClient: React.FC = () => {
                         {activeTab}
                       </h2>
                       <span className="text-xs font-bold text-gray-500 dark:text-gray-300">
-                        {
-                          (activeTab === "projects" ? projects : activities)
-                            .length
-                        }{" "}
+                        {activeTab === "projects"
+                          ? filteredProjects.length
+                          : activities.length}{" "}
                         Items
                       </span>
                     </motion.div>
+
+                    {activeTab === "projects" && (
+                      <motion.div
+                        variants={cardVariants}
+                        className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between mb-2"
+                      >
+                        <div className="relative w-full md:max-w-sm">
+                          <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                          <input
+                            type="text"
+                            value={projectSearchQuery}
+                            onChange={(e) => setProjectSearchQuery(e.target.value)}
+                            placeholder="Search projects..."
+                            className="w-full h-10 pl-9 pr-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100 placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-[#FFDB14]/40 focus:border-[#FFDB14]"
+                          />
+                        </div>
+
+                        <div className="inline-flex rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-1 self-start md:self-auto">
+                          {([
+                            { mode: "card", icon: "fa-clone", label: "Card" },
+                            { mode: "list", icon: "fa-list", label: "List" },
+                            { mode: "grid", icon: "fa-grip", label: "Grid" },
+                          ] as {
+                            mode: ProjectViewMode;
+                            icon: string;
+                            label: string;
+                          }[]).map(({ mode, icon, label }) => (
+                            <button
+                              key={mode}
+                              type="button"
+                              onClick={() => setProjectViewMode(mode)}
+                              className={`px-3 h-8 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 ${
+                                projectViewMode === mode
+                                  ? "bg-[#FFDB14] text-gray-900"
+                                  : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                              }`}
+                            >
+                              <i className={`fas ${icon} text-[10px]`}></i>
+                              {label}
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
 
                     {isLoading
                       ? Array(3)
                           .fill(0)
                           .map((_, i) => <ShimmerCard key={i} />)
-                      : (activeTab === "projects" ? projects : activities).map(
-                          (item, index) => (
+                      : activeTab === "projects"
+                        ? projectViewMode === "grid"
+                          ? (
+                            <motion.div
+                              variants={containerVariants}
+                              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                            >
+                              {filteredProjects.map((item, index) => (
+                                <motion.div key={item.id} variants={cardVariants} custom={index}>
+                                  <ProjectGridCard
+                                    item={item}
+                                    onReadMore={() => handleOpenDetail(item)}
+                                  />
+                                </motion.div>
+                              ))}
+                            </motion.div>
+                          )
+                          : projectViewMode === "list"
+                            ? (
+                              filteredProjects.map((item, index) => (
+                                <motion.div
+                                  key={item.id}
+                                  variants={cardVariants}
+                                  custom={index}
+                                >
+                                  <ProjectListCard
+                                    item={item}
+                                    onReadMore={() => handleOpenDetail(item)}
+                                  />
+                                </motion.div>
+                              ))
+                            )
+                            : (
+                              filteredProjects.map((item, index) => (
+                                <motion.div
+                                  key={item.id}
+                                  variants={cardVariants}
+                                  custom={index}
+                                >
+                                  <ContentCard
+                                    item={item}
+                                    onReadMore={() => handleOpenDetail(item)}
+                                  />
+                                </motion.div>
+                              ))
+                            )
+                        : activities.map((item, index) => (
                             <motion.div
                               key={item.id}
                               variants={cardVariants}
@@ -296,12 +526,12 @@ const PortfolioClient: React.FC = () => {
                                 onReadMore={() => handleOpenDetail(item)}
                               />
                             </motion.div>
-                          ),
-                        )}
+                          ))}
 
                     {!isLoading &&
-                      (activeTab === "projects" ? projects : activities)
-                        .length === 0 && (
+                      (activeTab === "projects"
+                        ? filteredProjects.length === 0
+                        : activities.length === 0) && (
                         <motion.div
                           variants={cardVariants}
                           className="py-20 text-center"
@@ -316,7 +546,9 @@ const PortfolioClient: React.FC = () => {
                             }}
                           />
                           <p className="text-gray-400 dark:text-gray-600 font-medium">
-                            No {activeTab} added yet.
+                            {activeTab === "projects" && projectSearchQuery
+                              ? "No matching projects found."
+                              : `No ${activeTab} added yet.`}
                           </p>
                         </motion.div>
                       )}
@@ -431,6 +663,10 @@ const CertificateDetailView: React.FC<{
 const DetailView: React.FC<{
   item: ContentItem;
 }> = ({ item }) => {
+  const descriptionBlocks = useMemo(
+    () => splitDescriptionBlocks(item.description || ""),
+    [item.description],
+  );
   const [likes, setLikes] = useState(item.likes || 0);
   const [hasLiked, setHasLiked] = useState(false);
 
@@ -484,11 +720,7 @@ const DetailView: React.FC<{
             className="rounded-xl overflow-hidden mb-6 bg-gray-100 dark:bg-gray-800"
             whileHover={{ scale: 1.01 }}
           >
-            <img
-              src={item.imageUrl}
-              alt={item.title}
-              className="w-full h-64 md:h-80 object-cover"
-            />
+            
           </motion.div>
           <motion.span
             initial={{ opacity: 0, x: -20 }}
@@ -637,11 +869,26 @@ const DetailView: React.FC<{
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2 }}
-            className="prose prose-lg dark:prose-invert max-w-none leading-[1.8]"
-            dangerouslySetInnerHTML={{
-              __html: item.description.replace(/\n/g, "<br/>"),
-            }}
-          />
+            className="space-y-6"
+          >
+            {descriptionBlocks.map((block, index) =>
+              block.type === "code" ? (
+                <CodeSnippetViewer
+                  key={`code-${index}`}
+                  code={block.code}
+                  language={block.language}
+                />
+              ) : (
+                <div
+                  key={`html-${index}`}
+                  className="prose prose-lg dark:prose-invert max-w-none leading-[1.8]"
+                  dangerouslySetInnerHTML={{
+                    __html: block.content.replace(/\n/g, "<br/>"),
+                  }}
+                />
+              ),
+            )}
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -897,6 +1144,62 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
         />
       </motion.div>
     </motion.div>
+  );
+};
+
+const ProjectListCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
+  item,
+  onReadMore,
+}) => {
+  return (
+    <div
+      onClick={onReadMore}
+      className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 cursor-pointer hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
+    >
+      <div className="flex items-center gap-4">
+        <img
+          src={item.imageUrl}
+          alt={item.title}
+          className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+        />
+        <div className="min-w-0 flex-1">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{item.date}</p>
+          <h3 className="text-base font-bold text-gray-900 dark:text-gray-100 truncate">
+            {item.title}
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mt-1">
+            {stripHtmlTags(item.description)}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ProjectGridCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
+  item,
+  onReadMore,
+}) => {
+  return (
+    <div
+      onClick={onReadMore}
+      className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden cursor-pointer hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
+    >
+      <img
+        src={item.imageUrl}
+        alt={item.title}
+        className="w-full h-40 object-cover"
+      />
+      <div className="p-4">
+        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{item.date}</p>
+        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 line-clamp-1">
+          {item.title}
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mt-2">
+          {stripHtmlTags(item.description)}
+        </p>
+      </div>
+    </div>
   );
 };
 
