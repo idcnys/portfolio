@@ -24,6 +24,175 @@ type DescriptionBlock =
 
 type ProjectViewMode = "card" | "list" | "grid";
 
+type CounterTone = "primary" | "danger" | "success" | "info";
+
+interface GrindCounterCard {
+  id: string;
+  title: string;
+  value: string;
+  subtitle: string;
+  icon: string;
+  tone: CounterTone;
+}
+
+interface GrindStatRow {
+  id: string;
+  label: string;
+  value: string;
+}
+
+interface SkillBadge {
+  label: string;
+  url: string;
+}
+
+interface SkillsetGroup {
+  id: string;
+  title: string;
+  subtitle: string;
+  badges: SkillBadge[];
+}
+
+const GRIND_COUNTER_CARDS: GrindCounterCard[] = [
+  {
+    id: "cf-solved",
+    title: "Codeforces",
+    value: "1240",
+    subtitle: "All-time solved",
+    icon: "fa-code",
+    tone: "primary",
+  },
+  {
+    id: "lc-solved",
+    title: "LeetCode",
+    value: "865",
+    subtitle: "All-time solved",
+    icon: "fa-bolt",
+    tone: "danger",
+  },
+  {
+    id: "cses-solved",
+    title: "CSES",
+    value: "292",
+    subtitle: "All-time solved",
+    icon: "fa-sitemap",
+    tone: "success",
+  },
+  {
+    id: "total-solved",
+    title: "Total",
+    value: "2397",
+    subtitle: "Problems solved",
+    icon: "fa-trophy",
+    tone: "info",
+  },
+  {
+    id: "thm-rooms",
+    title: "TryHackMe",
+    value: "126",
+    subtitle: "Rooms completed",
+    icon: "fa-shield-halved",
+    tone: "success",
+  },
+  {
+    id: "thm-rank",
+    title: "TryHackMe",
+    value: "Top 6%",
+    subtitle: "Global rank",
+    icon: "fa-medal",
+    tone: "danger",
+  },
+  {
+    id: "thm-streak",
+    title: "TryHackMe",
+    value: "29",
+    subtitle: "Longest streak",
+    icon: "fa-fire",
+    tone: "primary",
+  },
+  {
+    id: "thm-badges",
+    title: "TryHackMe",
+    value: "18",
+    subtitle: "Badges earned",
+    icon: "fa-award",
+    tone: "info",
+  },
+];
+
+const GRIND_RATING_STATS: GrindStatRow[] = [
+  { id: "cf-max", label: "Codeforces Max Rating", value: "1874" },
+  { id: "lc-max", label: "LeetCode Contest Rating", value: "2238" },
+  { id: "cses-rank", label: "CSES Highest Rank", value: "Top 2.8%" },
+];
+
+const GRIND_GITHUB_STATS: GrindStatRow[] = [
+  { id: "gh-contrib", label: "Total Contributions", value: "1,946" },
+  { id: "gh-streak", label: "Longest Streak", value: "74 days" },
+  { id: "gh-current", label: "Current Streak", value: "18 days" },
+  { id: "gh-repos", label: "Public Repositories", value: "58" },
+];
+
+const COUNTER_TONE_CLASSES: Record<CounterTone, string> = {
+  primary: "from-blue-500 to-blue-600",
+  danger: "from-rose-500 to-red-600",
+  success: "from-emerald-500 to-green-600",
+  info: "from-cyan-500 to-sky-600",
+};
+
+const SKILLSET_GROUPS: SkillsetGroup[] = [
+  {
+    id: "interests",
+    title: "Fields of Interest",
+    subtitle: "Domains I actively explore and build in",
+    badges: [
+      { label: "AI", url: "https://img.shields.io/badge/Artificial%20Intelligence-111827?style=flat-square&logo=openai&logoColor=white" },
+      { label: "Cyber Security", url: "https://img.shields.io/badge/Cyber%20Security-991B1B?style=flat-square&logo=hackthebox&logoColor=white" },
+      { label: "Machine Learning", url: "https://img.shields.io/badge/Machine%20Learning-1D4ED8?style=flat-square&logo=tensorflow&logoColor=white" },
+      { label: "Competitive Programming", url: "https://img.shields.io/badge/Competitive%20Programming-14532D?style=flat-square&logo=codeforces&logoColor=white" },
+    ],
+  },
+  {
+    id: "working-tech",
+    title: "Working Technologies",
+    subtitle: "Frameworks and platforms I use in production work",
+    badges: [
+      { label: "Next.js", url: "https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white" },
+      { label: "React", url: "https://img.shields.io/badge/React-0F172A?style=flat-square&logo=react&logoColor=61DAFB" },
+      { label: "Firebase", url: "https://img.shields.io/badge/Firebase-78350F?style=flat-square&logo=firebase&logoColor=FFCA28" },
+      { label: "Node.js", url: "https://img.shields.io/badge/Node.js-166534?style=flat-square&logo=nodedotjs&logoColor=white" },
+      { label: "Tailwind CSS", url: "https://img.shields.io/badge/Tailwind%20CSS-0E7490?style=flat-square&logo=tailwindcss&logoColor=white" },
+      { label: "Framer Motion", url: "https://img.shields.io/badge/Framer%20Motion-701A75?style=flat-square&logo=framer&logoColor=white" },
+    ],
+  },
+  {
+    id: "languages",
+    title: "Programming Languages",
+    subtitle: "Languages I use for DSA, backend, and web apps",
+    badges: [
+      { label: "C++", url: "https://img.shields.io/badge/C%2B%2B-1D4ED8?style=flat-square&logo=cplusplus&logoColor=white" },
+      { label: "Python", url: "https://img.shields.io/badge/Python-1E3A8A?style=flat-square&logo=python&logoColor=FACC15" },
+      { label: "TypeScript", url: "https://img.shields.io/badge/TypeScript-1E40AF?style=flat-square&logo=typescript&logoColor=white" },
+      { label: "JavaScript", url: "https://img.shields.io/badge/JavaScript-713F12?style=flat-square&logo=javascript&logoColor=FDE047" },
+      { label: "SQL", url: "https://img.shields.io/badge/SQL-0F766E?style=flat-square&logo=postgresql&logoColor=white" },
+      { label: "Bash", url: "https://img.shields.io/badge/Bash-111827?style=flat-square&logo=gnubash&logoColor=white" },
+    ],
+  },
+  {
+    id: "environment-tools",
+    title: "Environment and Tools",
+    subtitle: "Daily setup for development, collaboration, and deployment",
+    badges: [
+      { label: "Linux", url: "https://img.shields.io/badge/Linux-0F172A?style=flat-square&logo=linux&logoColor=FACC15" },
+      { label: "VS Code", url: "https://img.shields.io/badge/VS%20Code-1E3A8A?style=flat-square&logo=visualstudiocode&logoColor=white" },
+      { label: "Git", url: "https://img.shields.io/badge/Git-7C2D12?style=flat-square&logo=git&logoColor=white" },
+      { label: "GitHub", url: "https://img.shields.io/badge/GitHub-111827?style=flat-square&logo=github&logoColor=white" },
+      { label: "Docker", url: "https://img.shields.io/badge/Docker-1E40AF?style=flat-square&logo=docker&logoColor=white" },
+      { label: "Vercel", url: "https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white" },
+    ],
+  },
+];
+
 const CODE_BLOCK_REGEX =
   /<pre[^>]*>\s*<code([^>]*)>([\s\S]*?)<\/code>\s*<\/pre>/gi;
 
@@ -552,6 +721,123 @@ const PortfolioClient: React.FC = () => {
                           </p>
                         </motion.div>
                       )}
+                  </motion.div>
+                )}
+
+                {activeTab === "grind" && (
+                  <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-5">
+                    <motion.div variants={cardVariants} className="flex items-center justify-between">
+                      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+                        Grind Dashboard
+                      </h2>
+                      <span className="text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Competitive Snapshot
+                      </span>
+                    </motion.div>
+
+                    <motion.div variants={containerVariants} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                      {GRIND_COUNTER_CARDS.map((card) => (
+                        <motion.div key={card.id} variants={cardVariants}>
+                          <div
+                            className={`relative overflow-hidden rounded-xl p-4 min-h-[116px] text-white shadow-md bg-gradient-to-br ${COUNTER_TONE_CLASSES[card.tone]}`}
+                          >
+                            <i className={`fas ${card.icon} absolute left-3 top-3 text-4xl opacity-25`}></i>
+                            <div className="relative z-10 pl-12">
+                              <p className="text-xs uppercase tracking-wide font-semibold text-white/80">
+                                {card.title}
+                              </p>
+                              <p className="text-3xl font-black leading-tight mt-1">{card.value}</p>
+                              <p className="text-xs text-white/80 mt-1">{card.subtitle}</p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+
+                    <motion.div variants={containerVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <motion.div
+                        variants={cardVariants}
+                        className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5"
+                      >
+                        <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-4">
+                          Max Ratings
+                        </h3>
+                        <div className="space-y-3">
+                          {GRIND_RATING_STATS.map((item) => (
+                            <div
+                              key={item.id}
+                              className="flex items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-800/70 border border-gray-100 dark:border-gray-700 px-3 py-2"
+                            >
+                              <span className="text-sm text-gray-600 dark:text-gray-300">{item.label}</span>
+                              <span className="text-sm font-bold text-gray-900 dark:text-gray-100">{item.value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
+
+                      <motion.div
+                        variants={cardVariants}
+                        className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5"
+                      >
+                        <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-4">
+                          GitHub Contributions
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {GRIND_GITHUB_STATS.map((item) => (
+                            <div
+                              key={item.id}
+                              className="rounded-lg border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/70 px-3 py-3"
+                            >
+                              <p className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">
+                                {item.label}
+                              </p>
+                              <p className="text-lg font-black text-gray-900 dark:text-gray-100">{item.value}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                  </motion.div>
+                )}
+
+                {activeTab === "skillset" && (
+                  <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-5">
+                    <motion.div variants={cardVariants} className="flex items-center justify-between">
+                      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+                        Skillset Matrix
+                      </h2>
+                      <span className="text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Shields.io Badges
+                      </span>
+                    </motion.div>
+
+                    <motion.div variants={containerVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      {SKILLSET_GROUPS.map((group) => (
+                        <motion.div
+                          key={group.id}
+                          variants={cardVariants}
+                          className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5"
+                        >
+                          <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-2">
+                            {group.title}
+                          </h3>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                            {group.subtitle}
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {group.badges.map((badge) => (
+                              <img
+                                key={badge.label}
+                                src={badge.url}
+                                alt={badge.label}
+                                className="h-7"
+                                loading="lazy"
+                              />
+                            ))}
+                          </div>
+                        </motion.div>
+                      ))}
+                    </motion.div>
                   </motion.div>
                 )}
               </motion.div>
@@ -1204,3 +1490,4 @@ const ProjectGridCard: React.FC<{ item: ContentItem; onReadMore: () => void }> =
 };
 
 export default PortfolioClient;
+

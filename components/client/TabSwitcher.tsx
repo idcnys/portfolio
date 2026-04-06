@@ -37,7 +37,7 @@ export default function TabSwitcher({
 
       {!showBackButton && (
         <div className="inline-flex rounded-lg bg-gray-100 dark:bg-gray-800 p-1 shadow-sm relative border border-gray-200 dark:border-gray-700">
-          {(["certificates", "projects", "activity"] as TabType[]).map(
+          {(["certificates", "projects", "activity", "grind", "skillset"] as TabType[]).map(
             (tab) => (
               <motion.button
                 key={tab}

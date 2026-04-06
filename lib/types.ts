@@ -43,7 +43,7 @@ export interface ActivityLog {
   ipAddress?: string;
 }
 
-export type TabType = "certificates" | "projects" | "activity";
+export type TabType = "certificates" | "projects" | "activity" | "grind" | "skillset";
 export type DashboardTab =
   | "notepad"
   | "publish-project"
