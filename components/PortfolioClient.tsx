@@ -1103,7 +1103,7 @@ const PortfolioClient: React.FC = () => {
         <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-lg px-3 py-0 shadow-sm">
           <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
             <i className="far fa-copyright text-red-500 mr-1"></i>
-            {`2024-${new Date().getFullYear()} Bitto Saha`}
+            Bitto Saha
           </p>
         </div>
       </motion.div>
@@ -1117,7 +1117,7 @@ const PortfolioClient: React.FC = () => {
       >
         <p className="text-center text-xs text-gray-600 dark:text-gray-400 font-medium">
           <i className="far fa-copyright text-red-500 mr-1"></i>
-          {`2024-${new Date().getFullYear()} Bitto Saha`}
+          Bitto Saha
         </p>
       </motion.div>
     </motion.div>
