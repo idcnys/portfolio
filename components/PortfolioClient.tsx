@@ -9,9 +9,9 @@ import { html as htmlLang } from "@codemirror/lang-html";
 import { css } from "@codemirror/lang-css";
 import { markdown } from "@codemirror/lang-markdown";
 import { oneDark } from "@codemirror/theme-one-dark";
-import { ContentItem, TabType } from "../lib/types";
+import { ContentItem, TabType, PortfolioSettings, GrindCounterCard, GrindStatRow, SkillsetGroup, SkillBadge } from "../lib/types";
 import { INITIAL_CERTIFICATES } from "../lib/constants";
-import { incrementLikes, incrementViews } from "../lib/firebase";
+import { incrementLikes, incrementViews, subscribeToPortfolioSettings } from "../lib/firebase";
 import { useTheme } from "../lib/context/ThemeContext";
 import { useContent } from "../lib/context/ContentContext";
 import ProfileInfo from "./server/ProfileInfo";
@@ -23,35 +23,6 @@ type DescriptionBlock =
   | { type: "code"; code: string; language?: string };
 
 type ProjectViewMode = "card" | "list" | "grid";
-
-type CounterTone = "primary" | "danger" | "success" | "info";
-
-interface GrindCounterCard {
-  id: string;
-  title: string;
-  value: string;
-  subtitle: string;
-  icon: string;
-  tone: CounterTone;
-}
-
-interface GrindStatRow {
-  id: string;
-  label: string;
-  value: string;
-}
-
-interface SkillBadge {
-  label: string;
-  url: string;
-}
-
-interface SkillsetGroup {
-  id: string;
-  title: string;
-  subtitle: string;
-  badges: SkillBadge[];
-}
 
 const GRIND_COUNTER_CARDS: GrindCounterCard[] = [
   {
@@ -133,7 +104,7 @@ const GRIND_GITHUB_STATS: GrindStatRow[] = [
   { id: "gh-repos", label: "Public Repositories", value: "58" },
 ];
 
-const COUNTER_TONE_CLASSES: Record<CounterTone, string> = {
+const COUNTER_TONE_CLASSES: Record<GrindCounterCard["tone"], string> = {
   primary: "from-blue-500 to-blue-600",
   danger: "from-rose-500 to-red-600",
   success: "from-emerald-500 to-green-600",
@@ -310,6 +281,31 @@ const calculateReadTime = (text: string): number => {
 
 const stripHtmlTags = (value: string): string => value.replace(/<[^>]*>?/gm, "");
 
+const formatNumber = (value: number | null | undefined): string => {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return "0";
+  }
+  return value.toLocaleString();
+};
+
+const toCompact = (value: number | null | undefined): string => {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return "0";
+  }
+  return new Intl.NumberFormat("en-US", {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(value);
+};
+
+const fetchJson = async (url: string) => {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed request: ${response.status}`);
+  }
+  return response.json();
+};
+
 // Animation variants
 const pageVariants: Variants = {
   initial: { opacity: 0, y: 10 },
@@ -394,7 +390,213 @@ const PortfolioClient: React.FC = () => {
   const [hasAnimatedProjectsTab, setHasAnimatedProjectsTab] = useState(false);
   const [projectSearchQuery, setProjectSearchQuery] = useState("");
   const [projectViewMode, setProjectViewMode] = useState<ProjectViewMode>("card");
+  const [portfolioSettings, setPortfolioSettings] =
+    useState<PortfolioSettings | null>(null);
+  const [grindCards, setGrindCards] = useState<GrindCounterCard[]>(
+    GRIND_COUNTER_CARDS,
+  );
+  const [grindRatings, setGrindRatings] = useState<GrindStatRow[]>(
+    GRIND_RATING_STATS,
+  );
+  const [grindGithubStats, setGrindGithubStats] = useState<GrindStatRow[]>(
+    GRIND_GITHUB_STATS,
+  );
   const isDetailView = !!viewingDetail || !!selectedCertificate;
+
+  useEffect(() => {
+    const unsubscribe = subscribeToPortfolioSettings((settings) => {
+      setPortfolioSettings(settings);
+      setGrindCards(settings.grindCards);
+      setGrindRatings(settings.grindRatings);
+      setGrindGithubStats(settings.grindGithubStats);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const visibleTabs = useMemo<TabType[]>(() => {
+    const order: TabType[] = ["certificates", "projects", "activity", "grind", "skillset"];
+    const visibility = portfolioSettings?.tabVisibility;
+    if (!visibility) {
+      return order;
+    }
+
+    const filtered = order.filter((tab) => visibility[tab]);
+    return filtered.length > 0 ? filtered : ["certificates"];
+  }, [portfolioSettings]);
+
+  useEffect(() => {
+    if (!visibleTabs.includes(activeTab)) {
+      setActiveTab(visibleTabs[0]);
+      setViewingDetail(null);
+      setSelectedCertificate(null);
+    }
+  }, [activeTab, visibleTabs]);
+
+  useEffect(() => {
+    const usernames = portfolioSettings?.grindUsernames;
+    if (!usernames) {
+      return;
+    }
+
+    const updateCard = (id: string, value: string, subtitle?: string) => {
+      setGrindCards((prev) =>
+        prev.map((card) =>
+          card.id === id
+            ? {
+                ...card,
+                value,
+                subtitle: subtitle || card.subtitle,
+              }
+            : card,
+        ),
+      );
+    };
+
+    const updateRating = (id: string, value: string) => {
+      setGrindRatings((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, value } : item)),
+      );
+    };
+
+    const updateGithub = (id: string, value: string) => {
+      setGrindGithubStats((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, value } : item)),
+      );
+    };
+
+    const tasks: Promise<unknown>[] = [];
+
+    if (usernames.codeforces.trim()) {
+      const handle = usernames.codeforces.trim();
+      tasks.push(
+        (async () => {
+          try {
+            const [info, status] = await Promise.all([
+              fetchJson(
+                `https://codeforces.com/api/user.info?handles=${encodeURIComponent(handle)}`,
+              ),
+              fetchJson(
+                `https://codeforces.com/api/user.status?handle=${encodeURIComponent(handle)}&from=1&count=1000`,
+              ),
+            ]);
+
+            const profile = info?.result?.[0] || {};
+            const submissions = Array.isArray(status?.result) ? status.result : [];
+            const solved = new Set(
+              submissions
+                .filter((s: { verdict?: string }) => s.verdict === "OK")
+                .map((s: { problem?: { contestId?: number; index?: string } }) =>
+                  `${s.problem?.contestId || "x"}-${s.problem?.index || "x"}`,
+                ),
+            ).size;
+
+            updateCard("cf-solved", formatNumber(solved), "All-time solved");
+            if (profile.maxRating) {
+              updateRating("cf-max", String(profile.maxRating));
+            }
+          } catch {}
+        })(),
+      );
+    }
+
+    if (usernames.leetcode.trim()) {
+      const handle = usernames.leetcode.trim();
+      tasks.push(
+        (async () => {
+          try {
+            const solved = await fetchJson(
+              `https://alfa-leetcode-api.onrender.com/${encodeURIComponent(handle)}/solved`,
+            );
+            const contest = await fetchJson(
+              `https://alfa-leetcode-api.onrender.com/${encodeURIComponent(handle)}/contest`,
+            );
+
+            if (typeof solved?.solvedProblem === "number") {
+              updateCard("lc-solved", formatNumber(solved.solvedProblem), "All-time solved");
+            }
+
+            if (contest?.contestRating) {
+              updateRating("lc-max", String(Math.round(contest.contestRating)));
+            }
+          } catch {}
+        })(),
+      );
+    }
+
+    if (usernames.tryhackme.trim()) {
+      const handle = usernames.tryhackme.trim();
+      tasks.push(
+        (async () => {
+          try {
+            const profile = await fetchJson(
+              `https://tryhackme.com/api/v2/public-profile?username=${encodeURIComponent(handle)}`,
+            );
+
+            const user = profile?.data || {};
+            if (typeof user?.completedRooms === "number") {
+              updateCard("thm-rooms", formatNumber(user.completedRooms), "Rooms completed");
+            }
+            if (typeof user?.bestStreak === "number") {
+              updateCard("thm-streak", formatNumber(user.bestStreak), "Longest streak");
+            }
+            if (typeof user?.badges === "number") {
+              updateCard("thm-badges", formatNumber(user.badges), "Badges earned");
+            }
+            if (user?.ranking) {
+              updateCard("thm-rank", `#${formatNumber(user.ranking)}`, "Global rank");
+            }
+          } catch {}
+        })(),
+      );
+    }
+
+    if (usernames.github.trim()) {
+      const handle = usernames.github.trim();
+      tasks.push(
+        (async () => {
+          try {
+            const user = await fetchJson(
+              `https://api.github.com/users/${encodeURIComponent(handle)}`,
+            );
+            updateGithub("gh-repos", formatNumber(user?.public_repos));
+
+            const events = await fetchJson(
+              `https://api.github.com/users/${encodeURIComponent(handle)}/events/public?per_page=100`,
+            );
+            if (Array.isArray(events)) {
+              updateGithub("gh-current", `${events.length} recent events`);
+            }
+
+            if (typeof user?.followers === "number") {
+              updateGithub("gh-contrib", toCompact(user.followers));
+            }
+          } catch {}
+        })(),
+      );
+    }
+
+    if (usernames.cses.trim()) {
+      const cses = usernames.cses.trim();
+      updateCard("cses-solved", cses, "Sync username/manual value");
+      updateRating("cses-rank", cses);
+    }
+
+    Promise.allSettled(tasks).then(() => {
+      setGrindCards((prev) => {
+        const cf = Number(prev.find((card) => card.id === "cf-solved")?.value.replace(/,/g, "") || 0);
+        const lc = Number(prev.find((card) => card.id === "lc-solved")?.value.replace(/,/g, "") || 0);
+        const cses = Number(prev.find((card) => card.id === "cses-solved")?.value.replace(/,/g, "") || 0);
+        const total = cf + lc + cses;
+
+        return prev.map((card) =>
+          card.id === "total-solved"
+            ? { ...card, value: formatNumber(total), subtitle: "Problems solved" }
+            : card,
+        );
+      });
+    });
+  }, [portfolioSettings?.grindUsernames]);
 
   const filteredProjects = useMemo(() => {
     const query = projectSearchQuery.trim().toLowerCase();
@@ -484,6 +686,7 @@ const PortfolioClient: React.FC = () => {
           onTabChange={handleTabChange}
           showBackButton={isDetailView}
           onBack={handleBack}
+          visibleTabs={visibleTabs}
         />
 
         <div className="flex-1 h-auto md:overflow-y-auto custom-scrollbar relative">
@@ -736,7 +939,7 @@ const PortfolioClient: React.FC = () => {
                     </motion.div>
 
                     <motion.div variants={containerVariants} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                      {GRIND_COUNTER_CARDS.map((card) => (
+                      {grindCards.map((card) => (
                         <motion.div key={card.id} variants={cardVariants}>
                           <div
                             className={`relative overflow-hidden rounded-xl p-4 min-h-[116px] text-white shadow-md bg-gradient-to-br ${COUNTER_TONE_CLASSES[card.tone]}`}
@@ -763,7 +966,7 @@ const PortfolioClient: React.FC = () => {
                           Max Ratings
                         </h3>
                         <div className="space-y-3">
-                          {GRIND_RATING_STATS.map((item) => (
+                          {grindRatings.map((item) => (
                             <div
                               key={item.id}
                               className="flex items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-800/70 border border-gray-100 dark:border-gray-700 px-3 py-2"
@@ -783,7 +986,7 @@ const PortfolioClient: React.FC = () => {
                           GitHub Contributions
                         </h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {GRIND_GITHUB_STATS.map((item) => (
+                          {grindGithubStats.map((item) => (
                             <div
                               key={item.id}
                               className="rounded-lg border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/70 px-3 py-3"
@@ -812,7 +1015,7 @@ const PortfolioClient: React.FC = () => {
                     </motion.div>
 
                     <motion.div variants={containerVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                      {SKILLSET_GROUPS.map((group) => (
+                      {(portfolioSettings?.skillsetGroups || SKILLSET_GROUPS).map((group) => (
                         <motion.div
                           key={group.id}
                           variants={cardVariants}
@@ -825,7 +1028,7 @@ const PortfolioClient: React.FC = () => {
                             {group.subtitle}
                           </p>
                           <div className="flex flex-wrap gap-2">
-                            {group.badges.map((badge) => (
+                            {group.badges.map((badge: SkillBadge) => (
                               <img
                                 key={badge.label}
                                 src={badge.url}

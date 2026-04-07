@@ -44,10 +44,64 @@ export interface ActivityLog {
 }
 
 export type TabType = "certificates" | "projects" | "activity" | "grind" | "skillset";
+
+export interface GrindUsernames {
+  codeforces: string;
+  cses: string;
+  leetcode: string;
+  tryhackme: string;
+  github: string;
+}
+
+export interface GrindCounterCard {
+  id: string;
+  title: string;
+  value: string;
+  subtitle: string;
+  icon: string;
+  tone: "primary" | "danger" | "success" | "info";
+}
+
+export interface GrindStatRow {
+  id: string;
+  label: string;
+  value: string;
+}
+
+export interface SkillBadge {
+  label: string;
+  url: string;
+}
+
+export interface SkillsetGroup {
+  id: string;
+  title: string;
+  subtitle: string;
+  badges: SkillBadge[];
+}
+
+export interface TabVisibilityConfig {
+  certificates: boolean;
+  projects: boolean;
+  activity: boolean;
+  grind: boolean;
+  skillset: boolean;
+}
+
+export interface PortfolioSettings {
+  grindUsernames: GrindUsernames;
+  grindCards: GrindCounterCard[];
+  grindRatings: GrindStatRow[];
+  grindGithubStats: GrindStatRow[];
+  skillsetGroups: SkillsetGroup[];
+  tabVisibility: TabVisibilityConfig;
+}
+
 export type DashboardTab =
   | "notepad"
   | "publish-project"
   | "publish-activity"
   | "manage-content"
+  | "portfolio-config"
   | "logs"
   | "logout";

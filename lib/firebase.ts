@@ -9,7 +9,7 @@ import {
   update,
   increment,
 } from "firebase/database";
-import { ContentItem, Note, ActivityLog } from "./types";
+import { ContentItem, Note, ActivityLog, PortfolioSettings } from "./types";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDWbrWygn6H5MKWpQ6oBFNPf2QjdOxkaiQ",
@@ -24,6 +24,272 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);
+
+const defaultPortfolioSettings: PortfolioSettings = {
+  grindUsernames: {
+    codeforces: "",
+    cses: "",
+    leetcode: "",
+    tryhackme: "",
+    github: "",
+  },
+  grindCards: [
+    {
+      id: "cf-solved",
+      title: "Codeforces",
+      value: "1240",
+      subtitle: "All-time solved",
+      icon: "fa-code",
+      tone: "primary",
+    },
+    {
+      id: "lc-solved",
+      title: "LeetCode",
+      value: "865",
+      subtitle: "All-time solved",
+      icon: "fa-bolt",
+      tone: "danger",
+    },
+    {
+      id: "cses-solved",
+      title: "CSES",
+      value: "292",
+      subtitle: "All-time solved",
+      icon: "fa-sitemap",
+      tone: "success",
+    },
+    {
+      id: "total-solved",
+      title: "Total",
+      value: "2397",
+      subtitle: "Problems solved",
+      icon: "fa-trophy",
+      tone: "info",
+    },
+    {
+      id: "thm-rooms",
+      title: "TryHackMe",
+      value: "126",
+      subtitle: "Rooms completed",
+      icon: "fa-shield-halved",
+      tone: "success",
+    },
+    {
+      id: "thm-rank",
+      title: "TryHackMe",
+      value: "Top 6%",
+      subtitle: "Global rank",
+      icon: "fa-medal",
+      tone: "danger",
+    },
+    {
+      id: "thm-streak",
+      title: "TryHackMe",
+      value: "29",
+      subtitle: "Longest streak",
+      icon: "fa-fire",
+      tone: "primary",
+    },
+    {
+      id: "thm-badges",
+      title: "TryHackMe",
+      value: "18",
+      subtitle: "Badges earned",
+      icon: "fa-award",
+      tone: "info",
+    },
+  ],
+  grindRatings: [
+    { id: "cf-max", label: "Codeforces Max Rating", value: "1874" },
+    { id: "lc-max", label: "LeetCode Contest Rating", value: "2238" },
+    { id: "cses-rank", label: "CSES Highest Rank", value: "Top 2.8%" },
+  ],
+  grindGithubStats: [
+    { id: "gh-contrib", label: "Total Contributions", value: "1,946" },
+    { id: "gh-streak", label: "Longest Streak", value: "74 days" },
+    { id: "gh-current", label: "Current Streak", value: "18 days" },
+    { id: "gh-repos", label: "Public Repositories", value: "58" },
+  ],
+  skillsetGroups: [
+    {
+      id: "interests",
+      title: "Fields of Interest",
+      subtitle: "Domains I actively explore and build in",
+      badges: [
+        {
+          label: "AI",
+          url: "https://img.shields.io/badge/Artificial%20Intelligence-111827?style=flat-square&logo=openai&logoColor=white",
+        },
+        {
+          label: "Cyber Security",
+          url: "https://img.shields.io/badge/Cyber%20Security-991B1B?style=flat-square&logo=hackthebox&logoColor=white",
+        },
+        {
+          label: "Machine Learning",
+          url: "https://img.shields.io/badge/Machine%20Learning-1D4ED8?style=flat-square&logo=tensorflow&logoColor=white",
+        },
+        {
+          label: "Competitive Programming",
+          url: "https://img.shields.io/badge/Competitive%20Programming-14532D?style=flat-square&logo=codeforces&logoColor=white",
+        },
+      ],
+    },
+    {
+      id: "working-tech",
+      title: "Working Technologies",
+      subtitle: "Frameworks and platforms I use in production work",
+      badges: [
+        {
+          label: "Next.js",
+          url: "https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white",
+        },
+        {
+          label: "React",
+          url: "https://img.shields.io/badge/React-0F172A?style=flat-square&logo=react&logoColor=61DAFB",
+        },
+        {
+          label: "Firebase",
+          url: "https://img.shields.io/badge/Firebase-78350F?style=flat-square&logo=firebase&logoColor=FFCA28",
+        },
+        {
+          label: "Node.js",
+          url: "https://img.shields.io/badge/Node.js-166534?style=flat-square&logo=nodedotjs&logoColor=white",
+        },
+        {
+          label: "Tailwind CSS",
+          url: "https://img.shields.io/badge/Tailwind%20CSS-0E7490?style=flat-square&logo=tailwindcss&logoColor=white",
+        },
+        {
+          label: "Framer Motion",
+          url: "https://img.shields.io/badge/Framer%20Motion-701A75?style=flat-square&logo=framer&logoColor=white",
+        },
+      ],
+    },
+    {
+      id: "languages",
+      title: "Programming Languages",
+      subtitle: "Languages I use for DSA, backend, and web apps",
+      badges: [
+        {
+          label: "C++",
+          url: "https://img.shields.io/badge/C%2B%2B-1D4ED8?style=flat-square&logo=cplusplus&logoColor=white",
+        },
+        {
+          label: "Python",
+          url: "https://img.shields.io/badge/Python-1E3A8A?style=flat-square&logo=python&logoColor=FACC15",
+        },
+        {
+          label: "TypeScript",
+          url: "https://img.shields.io/badge/TypeScript-1E40AF?style=flat-square&logo=typescript&logoColor=white",
+        },
+        {
+          label: "JavaScript",
+          url: "https://img.shields.io/badge/JavaScript-713F12?style=flat-square&logo=javascript&logoColor=FDE047",
+        },
+        {
+          label: "SQL",
+          url: "https://img.shields.io/badge/SQL-0F766E?style=flat-square&logo=postgresql&logoColor=white",
+        },
+        {
+          label: "Bash",
+          url: "https://img.shields.io/badge/Bash-111827?style=flat-square&logo=gnubash&logoColor=white",
+        },
+      ],
+    },
+    {
+      id: "environment-tools",
+      title: "Environment and Tools",
+      subtitle: "Daily setup for development, collaboration, and deployment",
+      badges: [
+        {
+          label: "Linux",
+          url: "https://img.shields.io/badge/Linux-0F172A?style=flat-square&logo=linux&logoColor=FACC15",
+        },
+        {
+          label: "VS Code",
+          url: "https://img.shields.io/badge/VS%20Code-1E3A8A?style=flat-square&logo=visualstudiocode&logoColor=white",
+        },
+        {
+          label: "Git",
+          url: "https://img.shields.io/badge/Git-7C2D12?style=flat-square&logo=git&logoColor=white",
+        },
+        {
+          label: "GitHub",
+          url: "https://img.shields.io/badge/GitHub-111827?style=flat-square&logo=github&logoColor=white",
+        },
+        {
+          label: "Docker",
+          url: "https://img.shields.io/badge/Docker-1E40AF?style=flat-square&logo=docker&logoColor=white",
+        },
+        {
+          label: "Vercel",
+          url: "https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white",
+        },
+      ],
+    },
+  ],
+  tabVisibility: {
+    certificates: true,
+    projects: true,
+    activity: true,
+    grind: true,
+    skillset: true,
+  },
+};
+
+const mergePortfolioSettings = (incoming: Partial<PortfolioSettings> | null | undefined): PortfolioSettings => {
+  return {
+    ...defaultPortfolioSettings,
+    ...incoming,
+    grindUsernames: {
+      ...defaultPortfolioSettings.grindUsernames,
+      ...(incoming?.grindUsernames || {}),
+    },
+    tabVisibility: {
+      ...defaultPortfolioSettings.tabVisibility,
+      ...(incoming?.tabVisibility || {}),
+    },
+    grindCards:
+      incoming?.grindCards && incoming.grindCards.length > 0
+        ? incoming.grindCards
+        : defaultPortfolioSettings.grindCards,
+    grindRatings:
+      incoming?.grindRatings && incoming.grindRatings.length > 0
+        ? incoming.grindRatings
+        : defaultPortfolioSettings.grindRatings,
+    grindGithubStats:
+      incoming?.grindGithubStats && incoming.grindGithubStats.length > 0
+        ? incoming.grindGithubStats
+        : defaultPortfolioSettings.grindGithubStats,
+    skillsetGroups:
+      incoming?.skillsetGroups && incoming.skillsetGroups.length > 0
+        ? incoming.skillsetGroups
+        : defaultPortfolioSettings.skillsetGroups,
+  };
+};
+
+export const subscribeToPortfolioSettings = (
+  callback: (settings: PortfolioSettings) => void,
+) => {
+  const settingsRef = ref(db, "portfolio_settings");
+  return onValue(settingsRef, async (snapshot) => {
+    const data = snapshot.val() as Partial<PortfolioSettings> | null;
+    if (!data) {
+      await set(settingsRef, defaultPortfolioSettings);
+      callback(defaultPortfolioSettings);
+      return;
+    }
+    callback(mergePortfolioSettings(data));
+  });
+};
+
+export const updatePortfolioSettings = async (
+  settings: Partial<PortfolioSettings>,
+) => {
+  const settingsRef = ref(db, "portfolio_settings");
+  await update(settingsRef, settings);
+  await logActivity("edit", "auth", "portfolio_settings", "Portfolio Settings");
+};
 
 // Activity Logging Functions
 export const logActivity = async (

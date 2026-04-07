@@ -9,14 +9,34 @@ import { logActivity } from "../../../lib/firebase";
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [captchaA, setCaptchaA] = useState(0);
+  const [captchaB, setCaptchaB] = useState(0);
+  const [captchaInput, setCaptchaInput] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  const regenerateCaptcha = () => {
+    setCaptchaA(Math.floor(Math.random() * 9) + 1);
+    setCaptchaB(Math.floor(Math.random() * 9) + 1);
+    setCaptchaInput("");
+  };
+
+  React.useEffect(() => {
+    regenerateCaptcha();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+
+    if (Number(captchaInput) !== captchaA + captchaB) {
+      setError("Captcha verification failed");
+      setIsLoading(false);
+      regenerateCaptcha();
+      return;
+    }
 
     try {
       if (username === "bitto" && password === "61770") {
@@ -28,6 +48,7 @@ const Login: React.FC = () => {
         router.push("/admin/dashboard");
       } else {
         setError("Invalid username or password");
+        regenerateCaptcha();
 
         // Log failed login attempt
         await logActivity(
@@ -93,6 +114,35 @@ const Login: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#FFDB14] focus:border-transparent outline-none transition-all"
               placeholder="Enter password"
+              required
+              disabled={isLoading}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              Captcha Verification
+            </label>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-black text-lg tracking-wide min-w-[120px] text-center">
+                {captchaA} + {captchaB} = ?
+              </div>
+              <button
+                type="button"
+                onClick={regenerateCaptcha}
+                className="px-3 py-3 rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                aria-label="Refresh captcha"
+                disabled={isLoading}
+              >
+                <i className="fas fa-rotate"></i>
+              </button>
+            </div>
+            <input
+              type="number"
+              value={captchaInput}
+              onChange={(e) => setCaptchaInput(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#FFDB14] focus:border-transparent outline-none transition-all"
+              placeholder="Enter captcha answer"
               required
               disabled={isLoading}
             />

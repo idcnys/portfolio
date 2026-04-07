@@ -9,6 +9,7 @@ interface TabSwitcherProps {
   onTabChange: (tab: TabType) => void;
   showBackButton: boolean;
   onBack?: () => void;
+  visibleTabs?: TabType[];
 }
 
 const TABS: TabType[] = ["certificates", "projects", "activity", "grind", "skillset"];
@@ -18,34 +19,36 @@ export default function TabSwitcher({
   onTabChange,
   showBackButton,
   onBack,
+  visibleTabs,
 }: TabSwitcherProps) {
+  const tabs = visibleTabs && visibleTabs.length > 0 ? visibleTabs : TABS;
   const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
   const previousTabRef = useRef<TabType>(activeTab);
 
   useEffect(() => {
-    const previousIndex = TABS.indexOf(previousTabRef.current);
-    const currentIndex = TABS.indexOf(activeTab);
+    const previousIndex = tabs.indexOf(previousTabRef.current);
+    const currentIndex = tabs.indexOf(activeTab);
 
     if (previousIndex !== -1 && currentIndex !== -1 && previousIndex !== currentIndex) {
-      const totalTabs = TABS.length;
+      const totalTabs = tabs.length;
       const forwardDistance = (currentIndex - previousIndex + totalTabs) % totalTabs;
       const backwardDistance = (previousIndex - currentIndex + totalTabs) % totalTabs;
       setSlideDirection(forwardDistance <= backwardDistance ? 1 : -1);
     }
 
     previousTabRef.current = activeTab;
-  }, [activeTab]);
+  }, [activeTab, tabs]);
 
-  const activeIndex = TABS.indexOf(activeTab);
+  const activeIndex = tabs.indexOf(activeTab);
 
   const prevTab = useMemo(
-    () => TABS[(activeIndex - 1 + TABS.length) % TABS.length],
-    [activeIndex],
+    () => tabs[(activeIndex - 1 + tabs.length) % tabs.length],
+    [activeIndex, tabs],
   );
 
   const nextTab = useMemo(
-    () => TABS[(activeIndex + 1) % TABS.length],
-    [activeIndex],
+    () => tabs[(activeIndex + 1) % tabs.length],
+    [activeIndex, tabs],
   );
 
   return (
@@ -114,7 +117,7 @@ export default function TabSwitcher({
           </div>
 
           <div className="hidden sm:inline-flex rounded-lg bg-gray-100 dark:bg-gray-800 p-1 shadow-[0_8px_20px_rgba(15,23,42,0.1)] relative">
-            {TABS.map((tab) => (
+            {tabs.map((tab) => (
               <motion.button
                 key={tab}
                 onClick={() => onTabChange(tab)}

@@ -8,6 +8,8 @@ import {
   Note,
   ActivityLog,
   DashboardTab,
+  PortfolioSettings,
+  TabType,
 } from "../../../lib/types";
 import {
   saveContent,
@@ -20,12 +22,22 @@ import {
   updateNote,
   subscribeToLogs,
   logActivity,
+  subscribeToPortfolioSettings,
+  updatePortfolioSettings,
 } from "../../../lib/firebase";
 import { ThemeProvider } from "../../../lib/context/ThemeContext";
 
 interface DashboardProps {
   onLogout: () => void;
 }
+
+const TAB_ORDER: TabType[] = [
+  "certificates",
+  "projects",
+  "activity",
+  "grind",
+  "skillset",
+];
 
 const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   const router = useRouter();
@@ -76,13 +88,32 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   // Logs State
   const [logs, setLogs] = useState<ActivityLog[]>([]);
 
-  // Preview State
-  const [showPreview, setShowPreview] = useState(false);
+  const [portfolioSettings, setPortfolioSettings] =
+    useState<PortfolioSettings | null>(null);
+  const [usernameForm, setUsernameForm] = useState({
+    codeforces: "",
+    cses: "",
+    leetcode: "",
+    tryhackme: "",
+    github: "",
+  });
+  const [grindCardsEditor, setGrindCardsEditor] = useState("[]");
+  const [grindRatingsEditor, setGrindRatingsEditor] = useState("[]");
+  const [grindGithubEditor, setGrindGithubEditor] = useState("[]");
+  const [skillsetEditor, setSkillsetEditor] = useState("[]");
 
   useEffect(() => {
     const unsubscribeContent = subscribeToContent(setItems);
     const unsubscribeNotes = subscribeToNotes(setNotes);
     const unsubscribeLogs = subscribeToLogs(setLogs);
+    const unsubscribeSettings = subscribeToPortfolioSettings((settings) => {
+      setPortfolioSettings(settings);
+      setUsernameForm(settings.grindUsernames);
+      setGrindCardsEditor(JSON.stringify(settings.grindCards, null, 2));
+      setGrindRatingsEditor(JSON.stringify(settings.grindRatings, null, 2));
+      setGrindGithubEditor(JSON.stringify(settings.grindGithubStats, null, 2));
+      setSkillsetEditor(JSON.stringify(settings.skillsetGroups, null, 2));
+    });
 
     // Log dashboard view
     logActivity("view", "auth", "dashboard", "Admin Dashboard");
@@ -91,6 +122,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       unsubscribeContent();
       unsubscribeNotes();
       unsubscribeLogs();
+      unsubscribeSettings();
     };
   }, []);
 
@@ -114,6 +146,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       id: "manage-content" as DashboardTab,
       label: "Manage Content",
       icon: "fas fa-edit",
+    },
+    {
+      id: "portfolio-config" as DashboardTab,
+      label: "Portfolio Config",
+      icon: "fas fa-sliders-h",
     },
     {
       id: "logs" as DashboardTab,
@@ -184,7 +221,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     });
     setTagsInput("");
     setEditingId(null);
-    setShowPreview(false);
   };
 
   const handleEdit = (item: ContentItem) => {
@@ -454,6 +490,61 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       default:
         return "text-gray-600 bg-gray-50";
     }
+  };
+
+  const saveUsernames = async () => {
+    try {
+      await updatePortfolioSettings({ grindUsernames: usernameForm });
+      setMessage({ text: "Grind usernames updated.", type: "success" });
+    } catch {
+      setMessage({ text: "Failed to save usernames.", type: "error" });
+    }
+    setTimeout(() => setMessage({ text: "", type: "" }), 3000);
+  };
+
+  const toggleTabVisibility = async (tab: TabType) => {
+    if (!portfolioSettings) {
+      return;
+    }
+
+    const nextVisibility = {
+      ...portfolioSettings.tabVisibility,
+      [tab]: !portfolioSettings.tabVisibility[tab],
+    };
+
+    if (!Object.values(nextVisibility).some(Boolean)) {
+      setMessage({ text: "At least one tab must stay visible.", type: "error" });
+      setTimeout(() => setMessage({ text: "", type: "" }), 3000);
+      return;
+    }
+
+    try {
+      await updatePortfolioSettings({ tabVisibility: nextVisibility });
+      setMessage({ text: "Tab visibility updated.", type: "success" });
+    } catch {
+      setMessage({ text: "Failed to update tab visibility.", type: "error" });
+    }
+    setTimeout(() => setMessage({ text: "", type: "" }), 3000);
+  };
+
+  const saveJsonEditors = async () => {
+    try {
+      const grindCards = JSON.parse(grindCardsEditor);
+      const grindRatings = JSON.parse(grindRatingsEditor);
+      const grindGithubStats = JSON.parse(grindGithubEditor);
+      const skillsetGroups = JSON.parse(skillsetEditor);
+
+      await updatePortfolioSettings({
+        grindCards,
+        grindRatings,
+        grindGithubStats,
+        skillsetGroups,
+      });
+      setMessage({ text: "Grind and skillset content saved.", type: "success" });
+    } catch {
+      setMessage({ text: "Invalid JSON. Please fix the format.", type: "error" });
+    }
+    setTimeout(() => setMessage({ text: "", type: "" }), 3000);
   };
 
   return (
@@ -783,9 +874,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
               {/* Content Form */}
-              <div
-                className={`${showPreview ? "xl:col-span-2" : "xl:col-span-3"} bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden`}
-              >
+              <div className="xl:col-span-2 bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
                 <div className="p-8 md:p-14 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
                   <div>
                     <h1 className="text-4xl font-black text-gray-900 tracking-tighter capitalize">
@@ -797,15 +886,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       Create and manage your {formData.type} posts
                     </p>
                   </div>
-                  <button
-                    onClick={() => setShowPreview(!showPreview)}
-                    className="bg-gray-700 text-white px-6 py-3 rounded-2xl font-bold text-xs hover:bg-gray-800 transition-all shadow-lg"
-                  >
-                    <i
-                      className={`fas ${showPreview ? "fa-eye-slash" : "fa-eye"} mr-2`}
-                    ></i>
-                    {showPreview ? "Hide Preview" : "Show Preview"}
-                  </button>
                 </div>
 
                 <form
@@ -1164,53 +1244,49 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               </div>
 
               {/* Preview Panel */}
-              {showPreview && (
-                <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
-                  <div className="p-6 border-b border-gray-100">
-                    <h2 className="text-xl font-black text-gray-900">
-                      Live Preview
-                    </h2>
-                    <p className="text-xs text-gray-500 mt-1">
-                      How your {formData.type} will look
-                    </p>
-                  </div>
-                  <div className="p-6 max-h-[600px] overflow-y-auto">
-                    {formData.imageUrl && (
-                      <img
-                        src={formData.imageUrl}
-                        alt="Preview"
-                        className="w-full h-48 object-cover rounded-2xl mb-4"
-                      />
-                    )}
-                    <h3 className="text-xl font-black text-gray-900 mb-2">
-                      {formData.title || `Sample ${formData.type} title`}
-                    </h3>
-                    <p className="text-sm text-gray-500 mb-3">
-                      {formData.date}
-                    </p>
-                    {formData.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {formData.tags.map((tag, index) => (
-                          <span
-                            key={index}
-                            className="px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-bold"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    <div
-                      className="prose prose-sm max-w-none text-gray-700"
-                      dangerouslySetInnerHTML={{
-                        __html:
-                          formData.description ||
-                          `Sample ${formData.type} description...`,
-                      }}
-                    />
-                  </div>
+              <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+                <div className="p-6 border-b border-gray-100">
+                  <h2 className="text-xl font-black text-gray-900">
+                    Live Preview
+                  </h2>
+                  <p className="text-xs text-gray-500 mt-1">
+                    How your {formData.type} will look
+                  </p>
                 </div>
-              )}
+                <div className="p-6 max-h-[600px] overflow-y-auto">
+                  {formData.imageUrl && (
+                    <img
+                      src={formData.imageUrl}
+                      alt="Preview"
+                      className="w-full h-48 object-cover rounded-2xl mb-4"
+                    />
+                  )}
+                  <h3 className="text-xl font-black text-gray-900 mb-2">
+                    {formData.title || `Sample ${formData.type} title`}
+                  </h3>
+                  <p className="text-sm text-gray-500 mb-3">{formData.date}</p>
+                  {formData.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {formData.tags.map((tag, index) => (
+                        <span
+                          key={index}
+                          className="px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-bold"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <div
+                    className="prose prose-sm max-w-none text-gray-700"
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        formData.description ||
+                        `Sample ${formData.type} description...`,
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1299,6 +1375,154 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   <p>No content published yet.</p>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "portfolio-config" && (
+        <div className="flex-1 p-6 md:p-12">
+          <div className="max-w-7xl mx-auto space-y-6">
+            <h2 className="text-2xl font-black text-gray-900 tracking-tighter">
+              Portfolio Config
+            </h2>
+
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 space-y-4">
+                <h3 className="text-lg font-black text-gray-900">
+                  Grind Usernames (Realtime Sync)
+                </h3>
+                <p className="text-sm text-gray-500">
+                  Use platform usernames so the Grind tab auto-syncs in realtime.
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {[
+                    { key: "codeforces", label: "Codeforces" },
+                    { key: "cses", label: "CSES" },
+                    { key: "leetcode", label: "LeetCode" },
+                    { key: "tryhackme", label: "TryHackMe" },
+                    { key: "github", label: "GitHub" },
+                  ].map((field) => (
+                    <div key={field.key}>
+                      <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">
+                        {field.label}
+                      </label>
+                      <input
+                        value={usernameForm[field.key as keyof typeof usernameForm]}
+                        onChange={(e) =>
+                          setUsernameForm((prev) => ({
+                            ...prev,
+                            [field.key]: e.target.value,
+                          }))
+                        }
+                        className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14]"
+                        placeholder={`Enter ${field.label} username`}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={saveUsernames}
+                  className="bg-[#FFDB14] text-gray-900 px-5 py-3 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-yellow-400 transition-all shadow-lg"
+                >
+                  Save Usernames
+                </button>
+              </div>
+
+              <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 space-y-4">
+                <h3 className="text-lg font-black text-gray-900">
+                  Tab Buttons Visibility
+                </h3>
+                <p className="text-sm text-gray-500">
+                  Hide or unhide portfolio tab buttons from the dashboard.
+                </p>
+
+                <div className="space-y-2">
+                  {TAB_ORDER.map((tab) => {
+                    const enabled = portfolioSettings?.tabVisibility?.[tab] ?? true;
+                    return (
+                      <button
+                        key={tab}
+                        type="button"
+                        onClick={() => toggleTabVisibility(tab)}
+                        className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 hover:bg-white flex items-center justify-between"
+                      >
+                        <span className="text-sm font-bold capitalize text-gray-900">
+                          {tab}
+                        </span>
+                        <span
+                          className={`text-xs font-black px-3 py-1 rounded-full ${enabled ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+                        >
+                          {enabled ? "Visible" : "Hidden"}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 space-y-4">
+              <h3 className="text-lg font-black text-gray-900">
+                Grind and Skillset Content Editor
+              </h3>
+              <p className="text-sm text-gray-500">
+                Edit JSON and save. This updates Grind cards/stats and Skillset content in realtime.
+              </p>
+
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">
+                    Grind Cards JSON
+                  </label>
+                  <textarea
+                    value={grindCardsEditor}
+                    onChange={(e) => setGrindCardsEditor(e.target.value)}
+                    className="w-full h-56 p-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] font-mono text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">
+                    Grind Ratings JSON
+                  </label>
+                  <textarea
+                    value={grindRatingsEditor}
+                    onChange={(e) => setGrindRatingsEditor(e.target.value)}
+                    className="w-full h-56 p-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] font-mono text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">
+                    GitHub Stats JSON
+                  </label>
+                  <textarea
+                    value={grindGithubEditor}
+                    onChange={(e) => setGrindGithubEditor(e.target.value)}
+                    className="w-full h-56 p-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] font-mono text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">
+                    Skillset Groups JSON
+                  </label>
+                  <textarea
+                    value={skillsetEditor}
+                    onChange={(e) => setSkillsetEditor(e.target.value)}
+                    className="w-full h-56 p-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] font-mono text-xs"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={saveJsonEditors}
+                className="bg-gray-900 text-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-black transition-all shadow-lg"
+              >
+                Save Grind + Skillset Content
+              </button>
             </div>
           </div>
         </div>
