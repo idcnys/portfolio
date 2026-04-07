@@ -393,6 +393,7 @@ const PortfolioClient: React.FC = () => {
   const [projectViewMode, setProjectViewMode] = useState<ProjectViewMode>("card");
   const [portfolioSettings, setPortfolioSettings] =
     useState<PortfolioSettings | null>(null);
+  const [isTabConfigLoading, setIsTabConfigLoading] = useState(true);
   const [grindCards, setGrindCards] = useState<GrindCounterCard[]>(
     GRIND_COUNTER_CARDS,
   );
@@ -410,6 +411,7 @@ const PortfolioClient: React.FC = () => {
       setGrindCards(settings.grindCards);
       setGrindRatings(settings.grindRatings);
       setGrindGithubStats(settings.grindGithubStats);
+      setIsTabConfigLoading(false);
     });
 
     return () => unsubscribe();
@@ -688,6 +690,7 @@ const PortfolioClient: React.FC = () => {
           showBackButton={isDetailView}
           onBack={handleBack}
           visibleTabs={visibleTabs}
+          isLoading={isTabConfigLoading}
         />
 
         <div className="flex-1 h-auto md:overflow-y-auto custom-scrollbar relative">

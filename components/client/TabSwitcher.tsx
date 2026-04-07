@@ -10,6 +10,7 @@ interface TabSwitcherProps {
   showBackButton: boolean;
   onBack?: () => void;
   visibleTabs?: TabType[];
+  isLoading?: boolean;
 }
 
 const TABS: TabType[] = ["certificates", "projects", "activity", "grind", "skillset"];
@@ -35,6 +36,7 @@ export default function TabSwitcher({
   showBackButton,
   onBack,
   visibleTabs,
+  isLoading = false,
 }: TabSwitcherProps) {
   const tabs = visibleTabs && visibleTabs.length > 0 ? visibleTabs : TABS;
   const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
@@ -87,6 +89,22 @@ export default function TabSwitcher({
 
       {!showBackButton && (
         <>
+          {isLoading ? (
+            <>
+              <div className="sm:hidden flex items-center gap-2 w-full animate-pulse">
+                <div className="h-10 flex-1 rounded-md bg-gray-100 dark:bg-gray-800" />
+                <div className="h-10 flex-[1.35] rounded-md bg-gray-200 dark:bg-gray-700" />
+                <div className="h-10 flex-1 rounded-md bg-gray-100 dark:bg-gray-800" />
+              </div>
+
+              <div className="hidden sm:inline-flex rounded-lg bg-gray-100 dark:bg-gray-800 p-1 shadow-[0_8px_20px_rgba(15,23,42,0.1)] relative animate-pulse gap-1">
+                <div className="h-9 w-24 rounded-md bg-gray-200 dark:bg-gray-700" />
+                <div className="h-9 w-24 rounded-md bg-gray-200 dark:bg-gray-700" />
+                <div className="h-9 w-24 rounded-md bg-gray-200 dark:bg-gray-700" />
+              </div>
+            </>
+          ) : (
+            <>
           <div className="sm:hidden flex items-center gap-2 w-full">
             <motion.button
               onClick={() => onTabChange(prevTab)}
@@ -156,6 +174,8 @@ export default function TabSwitcher({
               </motion.button>
             ))}
           </div>
+            </>
+          )}
         </>
       )}
     </motion.div>
