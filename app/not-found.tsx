@@ -7,6 +7,14 @@ import { ThemeProvider, useTheme } from "../lib/context/ThemeContext";
 const NotFoundComponent: React.FC = () => {
   const { isDarkMode, toggleTheme, mounted } = useTheme();
 
+  const handleThemeToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    toggleTheme({
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+    });
+  };
+
   if (!mounted) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -19,7 +27,7 @@ const NotFoundComponent: React.FC = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col items-center justify-center p-6 text-center transition-colors duration-300 relative">
       {/* Theme Toggle Button */}
       <button
-        onClick={toggleTheme}
+        onClick={handleThemeToggle}
         className="absolute top-6 right-6 w-12 h-12 rounded-full bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all shadow-lg z-10"
       >
         <img
