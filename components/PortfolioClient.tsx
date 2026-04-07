@@ -1098,11 +1098,12 @@ const PortfolioClient: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 0.6, y: 0 }}
         transition={{ delay: 1, duration: 0.5 }}
-        className="fixed bottom-4 left-4 hidden md:block z-30"
+        className="fixed bottom-1 left-4 hidden md:block z-30"
       >
         <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-lg px-3 py-0 shadow-sm">
           <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
-            Copyright <span className="text-red-500">&copy;</span> bitto.
+            <i className="far fa-copyright text-red-500 mr-1"></i>
+            {`2024-${new Date().getFullYear()} Bitto Saha`}
           </p>
         </div>
       </motion.div>
@@ -1115,7 +1116,8 @@ const PortfolioClient: React.FC = () => {
         className="block md:hidden w-full bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 py-3"
       >
         <p className="text-center text-xs text-gray-600 dark:text-gray-400 font-medium">
-          Copyright <span className="text-red-500">&copy;</span> bitto.
+          <i className="far fa-copyright text-red-500 mr-1"></i>
+          {`2024-${new Date().getFullYear()} Bitto Saha`}
         </p>
       </motion.div>
     </motion.div>
