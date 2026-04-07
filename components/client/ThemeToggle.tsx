@@ -1,14 +1,23 @@
 "use client";
 
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/lib/context/ThemeContext";
 
 export default function ThemeToggle() {
   const { isDarkMode, toggleTheme, isTransitioning } = useTheme();
 
+  const handleToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    toggleTheme({
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+    });
+  };
+
   return (
     <motion.button
-      onClick={toggleTheme}
+      onClick={handleToggle}
       disabled={isTransitioning}
       whileHover={{
         scale: 1.03,
