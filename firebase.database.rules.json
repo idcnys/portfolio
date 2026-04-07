@@ -1,0 +1,17 @@
+{
+  "rules": {
+    ".read": true,
+    "content": {
+      ".write": false
+    },
+    "notes": {
+      ".write": false
+    },
+    "activity_logs": {
+      ".write": false
+    },
+    "portfolio_settings": {
+      ".write": false
+    }
+  }
+}

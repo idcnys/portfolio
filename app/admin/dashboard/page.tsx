@@ -25,6 +25,11 @@ import {
   subscribeToPortfolioSettings,
   updatePortfolioSettings,
 } from "../../../lib/firebase";
+import {
+  sanitizeExternalUrl,
+  sanitizePlainText,
+  sanitizeRichHtml,
+} from "../../../lib/sanitize";
 import { ThemeProvider } from "../../../lib/context/ThemeContext";
 
 interface DashboardProps {
@@ -40,7 +45,6 @@ const TAB_ORDER: TabType[] = [
 ];
 
 const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState<DashboardTab>("notepad");
 
   // Content Management State
@@ -181,17 +185,33 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   // Content Management Functions
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.imageUrl) {
-      formData.imageUrl = `https://picsum.photos/seed/${Date.now()}/800/600`;
-    }
+    const payload = {
+      ...formData,
+      title: sanitizePlainText(formData.title),
+      date: sanitizePlainText(formData.date),
+      description: sanitizeRichHtml(formData.description),
+      imageUrl:
+        sanitizeExternalUrl(formData.imageUrl) ||
+        `https://picsum.photos/seed/${Date.now()}/800/600`,
+      tags: formData.tags
+        .map((tag) => sanitizePlainText(tag))
+        .filter((tag) => tag.length > 0),
+      links: {
+        github: sanitizeExternalUrl(formData.links.github),
+        website: sanitizeExternalUrl(formData.links.website),
+        twitter: sanitizeExternalUrl(formData.links.twitter),
+        youtube: sanitizeExternalUrl(formData.links.youtube),
+        linkedin: sanitizeExternalUrl(formData.links.linkedin),
+      },
+    };
 
     setIsLoading(true);
     try {
       if (editingId) {
-        await updateContent(editingId, formData);
+        await updateContent(editingId, payload);
         setMessage({ text: "Post updated!", type: "success" });
       } else {
-        await saveContent(formData);
+        await saveContent(payload);
         setMessage({ text: "Post published!", type: "success" });
       }
       resetForm();
@@ -282,12 +302,20 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   const handleSaveNote = async () => {
     if (!noteForm.title.trim()) return;
 
+    const payload = {
+      title: sanitizePlainText(noteForm.title),
+      content: sanitizeRichHtml(noteForm.content),
+      tags: (noteForm.tags || [])
+        .map((tag) => sanitizePlainText(tag))
+        .filter((tag) => tag.length > 0),
+    };
+
     try {
       if (selectedNote) {
-        await updateNote(selectedNote.id, noteForm);
+        await updateNote(selectedNote.id, payload);
         setMessage({ text: "Note updated!", type: "success" });
       } else {
-        await saveNote(noteForm);
+        await saveNote(payload);
         setMessage({ text: "Note saved!", type: "success" });
       }
       setIsEditingNote(false);
@@ -846,7 +874,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                         <div
                           className="whitespace-pre-wrap font-sans text-gray-700 leading-relaxed"
                           dangerouslySetInnerHTML={{
-                            __html: selectedNote.content,
+                            __html: sanitizeRichHtml(selectedNote.content),
                           }}
                         />
                       </div>
@@ -1280,9 +1308,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   <div
                     className="prose prose-sm max-w-none text-gray-700"
                     dangerouslySetInnerHTML={{
-                      __html:
+                      __html: sanitizeRichHtml(
                         formData.description ||
-                        `Sample ${formData.type} description...`,
+                          `Sample ${formData.type} description...`,
+                      ),
                     }}
                   />
                 </div>
@@ -1627,31 +1656,14 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
 
 // This is a simplified version with authentication logic
 const DashboardPage: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    // Check if user is authenticated (you may want to implement proper auth)
-    const auth = localStorage.getItem("isAuthenticated");
-    if (auth === "true") {
-      setIsAuthenticated(true);
-    } else {
-      router.push("/admin/login");
-    }
-  }, [router]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    router.push("/");
+  const handleLogout = async () => {
+    await fetch("/api/admin/logout", {
+      method: "POST",
+    });
+    router.push("/admin/login");
   };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-gray-400">Checking authentication...</div>
-      </div>
-    );
-  }
 
   return (
     <ThemeProvider>

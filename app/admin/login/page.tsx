@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ThemeProvider } from "../../../lib/context/ThemeContext";
@@ -9,21 +9,34 @@ import { logActivity } from "../../../lib/firebase";
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [captchaA, setCaptchaA] = useState(0);
-  const [captchaB, setCaptchaB] = useState(0);
+  const [captchaQuestion, setCaptchaQuestion] = useState("Loading...");
+  const [captchaToken, setCaptchaToken] = useState("");
   const [captchaInput, setCaptchaInput] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const regenerateCaptcha = () => {
-    setCaptchaA(Math.floor(Math.random() * 9) + 1);
-    setCaptchaB(Math.floor(Math.random() * 9) + 1);
-    setCaptchaInput("");
+  const regenerateCaptcha = async () => {
+    try {
+      const response = await fetch("/api/admin/captcha", {
+        cache: "no-store",
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error || "Failed to load captcha.");
+      }
+      setCaptchaQuestion(data.question);
+      setCaptchaToken(data.token);
+      setCaptchaInput("");
+    } catch {
+      setCaptchaQuestion("Unavailable");
+      setCaptchaToken("");
+      setError("Unable to initialize captcha. Check server env settings.");
+    }
   };
 
-  React.useEffect(() => {
-    regenerateCaptcha();
+  useEffect(() => {
+    void regenerateCaptcha();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,36 +44,44 @@ const Login: React.FC = () => {
     setIsLoading(true);
     setError("");
 
-    if (Number(captchaInput) !== captchaA + captchaB) {
-      setError("Captcha verification failed");
-      setIsLoading(false);
-      regenerateCaptcha();
-      return;
-    }
-
     try {
-      if (username === "bitto" && password === "61770") {
-        localStorage.setItem("isAuthenticated", "true");
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+          captchaAnswer: Number(captchaInput),
+          captchaToken,
+        }),
+      });
 
-        // Log successful login
-        await logActivity("login", "auth", "dashboard", "Admin Login");
+      const data = await response.json();
 
+      if (response.ok) {
+        try {
+          await logActivity("login", "auth", "dashboard", "Admin Login");
+        } catch {}
         router.push("/admin/dashboard");
       } else {
-        setError("Invalid username or password");
-        regenerateCaptcha();
+        setError(data?.error || "Login failed");
+        await regenerateCaptcha();
 
-        // Log failed login attempt
-        await logActivity(
-          "view",
-          "auth",
-          "login-failed",
-          "Failed Login Attempt",
-        );
+        try {
+          await logActivity(
+            "view",
+            "auth",
+            "login-failed",
+            "Failed Login Attempt",
+          );
+        } catch {}
       }
     } catch (err) {
       console.error("Login error:", err);
       setError("An error occurred during login");
+      await regenerateCaptcha();
     } finally {
       setIsLoading(false);
     }
@@ -125,11 +146,11 @@ const Login: React.FC = () => {
             </label>
             <div className="flex items-center gap-3 mb-2">
               <div className="px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-black text-lg tracking-wide min-w-[120px] text-center">
-                {captchaA} + {captchaB} = ?
+                {captchaQuestion}
               </div>
               <button
                 type="button"
-                onClick={regenerateCaptcha}
+                onClick={() => void regenerateCaptcha()}
                 className="px-3 py-3 rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                 aria-label="Refresh captcha"
                 disabled={isLoading}

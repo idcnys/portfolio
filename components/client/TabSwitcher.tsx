@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, Variants } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { TabType } from "@/lib/types";
 
@@ -13,6 +13,21 @@ interface TabSwitcherProps {
 }
 
 const TABS: TabType[] = ["certificates", "projects", "activity", "grind", "skillset"];
+
+const mobileActiveTabVariants: Variants = {
+  enter: (direction: 1 | -1) => ({
+    x: direction === 1 ? 26 : -26,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction: 1 | -1) => ({
+    x: direction === 1 ? -26 : 26,
+    opacity: 0,
+  }),
+};
 
 export default function TabSwitcher({
   activeTab,
@@ -87,15 +102,10 @@ export default function TabSwitcher({
                 <motion.button
                   key={activeTab}
                   custom={slideDirection}
-                  initial={(direction: 1 | -1) => ({
-                    x: direction === 1 ? 26 : -26,
-                    opacity: 0,
-                  })}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={(direction: 1 | -1) => ({
-                    x: direction === 1 ? -26 : 26,
-                    opacity: 0,
-                  })}
+                  variants={mobileActiveTabVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
                   transition={{ duration: 0.2, ease: "easeOut" }}
                   className="absolute inset-0 z-10 px-2 text-sm font-bold capitalize text-gray-900 truncate"
                   onClick={() => onTabChange(activeTab)}

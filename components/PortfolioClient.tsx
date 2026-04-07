@@ -12,6 +12,7 @@ import { oneDark } from "@codemirror/theme-one-dark";
 import { ContentItem, TabType, PortfolioSettings, GrindCounterCard, GrindStatRow, SkillsetGroup, SkillBadge } from "../lib/types";
 import { INITIAL_CERTIFICATES } from "../lib/constants";
 import { incrementLikes, incrementViews, subscribeToPortfolioSettings } from "../lib/firebase";
+import { sanitizeRichHtml } from "../lib/sanitize";
 import { useTheme } from "../lib/context/ThemeContext";
 import { useContent } from "../lib/context/ContentContext";
 import ProfileInfo from "./server/ProfileInfo";
@@ -1372,7 +1373,9 @@ const DetailView: React.FC<{
                   key={`html-${index}`}
                   className="prose prose-lg dark:prose-invert max-w-none leading-[1.8]"
                   dangerouslySetInnerHTML={{
-                    __html: block.content.replace(/\n/g, "<br/>"),
+                    __html: sanitizeRichHtml(
+                      block.content.replace(/\n/g, "<br/>"),
+                    ),
                   }}
                 />
               ),
