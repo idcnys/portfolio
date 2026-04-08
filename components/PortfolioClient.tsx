@@ -1579,10 +1579,10 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
         transition: { duration: 0.2 },
       }}
       whileTap={{ scale: 0.98 }}
-      className="flex flex-col sm:flex-row gap-4 p-5 rounded-xl border-2 border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 transition-all bg-white dark:bg-gray-900 shadow-[0_6px_22px_rgba(15,23,42,0.05)] cursor-pointer"
+      className="flex flex-col sm:flex-row gap-0 p-0 rounded-xl border-2 border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 transition-all bg-white dark:bg-gray-900 shadow-[0_6px_22px_rgba(15,23,42,0.05)] cursor-pointer overflow-hidden"
       onClick={onReadMore}
     >
-      <div className="flex-1 flex flex-col justify-between min-w-0 order-2 sm:order-1">
+      <div className="flex-1 flex flex-col justify-between min-w-0 order-2 sm:order-1 p-5">
         <div>
           <motion.span
             initial={{ opacity: 0, x: -10 }}
@@ -1755,7 +1755,7 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.3 }}
         whileHover={{ scale: 1.02 }}
-        className="w-full sm:w-48 h-32 sm:h-auto flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 order-1 sm:order-2"
+        className="w-full sm:w-48 h-32 sm:h-auto flex-shrink-0 overflow-hidden bg-gray-100 dark:bg-gray-800 order-1 sm:order-2 rounded-none"
       >
         <motion.img
           src={item.imageUrl}
