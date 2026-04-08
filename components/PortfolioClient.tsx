@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import CodeMirror from "@uiw/react-codemirror";
@@ -306,6 +306,23 @@ const fetchJson = async (url: string) => {
     throw new Error(`Failed request: ${response.status}`);
   }
   return response.json();
+};
+
+const renderLatex = async (element: HTMLElement | null) => {
+  if (!element) {
+    return;
+  }
+
+  const renderMathInElement = (await import("katex/contrib/auto-render")).default;
+  renderMathInElement(element, {
+    delimiters: [
+      { left: "$$", right: "$$", display: true },
+      { left: "\\[", right: "\\]", display: true },
+      { left: "$", right: "$", display: false },
+      { left: "\\(", right: "\\)", display: false },
+    ],
+    throwOnError: false,
+  });
 };
 
 const VIEWED_ITEMS_STORAGE_KEY = "portfolio_unique_viewed_items_v1";
@@ -1269,6 +1286,7 @@ const DetailView: React.FC<{
   item: ContentItem;
   activeTab: TabType;
 }> = ({ item, activeTab }) => {
+  const descriptionContainerRef = useRef<HTMLDivElement>(null);
   const descriptionBlocks = useMemo(
     () => splitDescriptionBlocks(item.description || ""),
     [item.description],
@@ -1304,6 +1322,10 @@ const DetailView: React.FC<{
       window.setTimeout(() => setCopyToast(null), 1800);
     }
   };
+
+  useEffect(() => {
+    renderLatex(descriptionContainerRef.current);
+  }, [descriptionBlocks]);
 
   return (
     <motion.div
@@ -1406,7 +1428,14 @@ const DetailView: React.FC<{
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.1 }}
-              className="flex gap-3 mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700"
+              className={`flex gap-3 mb-6 p-4 rounded-lg border border-gray-100 dark:border-gray-700 ${
+                item.type === "project" ? "bg-transparent" : "bg-gray-50 dark:bg-gray-800"
+              }`}
+              style={
+                item.type === "project"
+                  ? { borderColor: "transparent" }
+                  : undefined
+              }
             >
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                 <i className="fas fa-link text-gray-500 dark:text-gray-400"></i>
@@ -1489,6 +1518,7 @@ const DetailView: React.FC<{
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2 }}
+            ref={descriptionContainerRef}
             className="space-y-6"
           >
             {descriptionBlocks.map((block, index) =>
@@ -1573,6 +1603,12 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
   item,
   onReadMore,
 }) => {
+  const previewRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    renderLatex(previewRef.current);
+  }, [item.description]);
+
   return (
     <motion.div
       whileHover={{
@@ -1601,14 +1637,15 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
           >
             {item.title}
           </motion.h3>
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed line-clamp-2"
+            ref={previewRef}
           >
-            {item.description.replace(/<[^>]*>?/gm, "")}
-          </motion.p>
+            {stripHtmlTags(item.description)}
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -1775,6 +1812,12 @@ const ProjectListCard: React.FC<{ item: ContentItem; onReadMore: () => void }> =
   item,
   onReadMore,
 }) => {
+  const previewRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    renderLatex(previewRef.current);
+  }, [item.description]);
+
   return (
     <div
       onClick={onReadMore}
@@ -1791,9 +1834,12 @@ const ProjectListCard: React.FC<{ item: ContentItem; onReadMore: () => void }> =
           <h3 className="text-base font-bold text-gray-900 dark:text-gray-100 truncate">
             {item.title}
           </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mt-1">
+          <div
+            ref={previewRef}
+            className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mt-1"
+          >
             {stripHtmlTags(item.description)}
-          </p>
+          </div>
         </div>
       </div>
     </div>
@@ -1804,6 +1850,12 @@ const ProjectGridCard: React.FC<{ item: ContentItem; onReadMore: () => void }> =
   item,
   onReadMore,
 }) => {
+  const previewRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    renderLatex(previewRef.current);
+  }, [item.description]);
+
   return (
     <div
       onClick={onReadMore}
@@ -1819,9 +1871,12 @@ const ProjectGridCard: React.FC<{ item: ContentItem; onReadMore: () => void }> =
         <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 line-clamp-1">
           {item.title}
         </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mt-2">
+        <div
+          ref={previewRef}
+          className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mt-2"
+        >
           {stripHtmlTags(item.description)}
-        </p>
+        </div>
       </div>
     </div>
   );
