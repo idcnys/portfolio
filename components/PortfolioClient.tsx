@@ -1519,7 +1519,7 @@ const DetailView: React.FC<{
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2 }}
             ref={descriptionContainerRef}
-            className="space-y-6"
+            className="space-y-4"
           >
             {descriptionBlocks.map((block, index) =>
               block.type === "code" ? (
@@ -1531,7 +1531,7 @@ const DetailView: React.FC<{
               ) : (
                 <div
                   key={`html-${index}`}
-                  className="prose prose-lg dark:prose-invert max-w-none leading-[1.8]"
+                  className="prose prose-lg dark:prose-invert max-w-none leading-[1.75] rich-content"
                   dangerouslySetInnerHTML={{
                     __html: sanitizeRichHtml(
                       block.content.replace(/\n/g, "<br/>"),

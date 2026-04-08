@@ -378,7 +378,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     if (tag === "img") {
       const url = prompt("Enter Image URL:");
       if (url)
-        replacement = `<img src="${url}" class="my-10 rounded-3xl w-full shadow-lg border border-gray-100 dark:border-gray-800" />`;
+        replacement = `<img src="${url}" class="my-6 rounded-2xl w-full shadow-md border border-gray-100 dark:border-gray-800" />`;
     } else if (tag === "b") {
       replacement = `<b>${selectedText || "bold text"}</b>`;
     } else if (tag === "i") {
@@ -388,16 +388,16 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       if (url)
         replacement = `<a href="${url}" class="text-blue-500 font-bold underline" target="_blank">${selectedText || "Link Text"}</a>`;
     } else if (tag === "h2") {
-      replacement = `<h2 class="text-3xl font-black mt-12 mb-6 text-gray-900 dark:text-white">${selectedText || "Subheading"}</h2>`;
+      replacement = `<h2 class="text-2xl font-extrabold mt-8 mb-3 text-gray-900 dark:text-white">${selectedText || "Subheading"}</h2>`;
     } else if (tag === "h3") {
-      replacement = `<h3 class="text-2xl font-bold mt-8 mb-4 text-gray-900 dark:text-white">${selectedText || "Heading 3"}</h3>`;
+      replacement = `<h3 class="text-xl font-bold mt-6 mb-2 text-gray-900 dark:text-white">${selectedText || "Heading 3"}</h3>`;
     } else if (tag === "code-inline") {
-      replacement = `<code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-red-600 dark:text-red-400">${selectedText || "code"}</code>`;
+      replacement = `<code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded-md text-sm font-mono text-gray-700 dark:text-gray-200">${selectedText || "code"}</code>`;
     } else if (tag === "code-block") {
       const language = prompt(
         "Enter programming language (e.g., javascript, python, html):",
       );
-      replacement = `<pre class="bg-gray-900 text-gray-100 p-6 rounded-2xl overflow-x-auto my-8 shadow-lg"><code class="language-${language || "text"}">${selectedText || "// Your code here\nconsole.log('Hello World!');"}</code></pre>`;
+      replacement = `<pre class="bg-gray-900 text-gray-100 p-4 rounded-xl overflow-x-auto my-5 shadow-md"><code class="language-${language || "text"}">${selectedText || "// Your code here\nconsole.log('Hello World!');"}</code></pre>`;
     } else if (tag === "iframe") {
       const url = prompt("Enter iframe URL (YouTube, CodePen, etc.):");
       if (url) {
@@ -405,23 +405,23 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
         const height =
           prompt("Enter height (or press Enter for 400px):") || "400";
         if (width) {
-          replacement = `<iframe src="${url}" width="${width}" height="${height}" frameborder="0" allowfullscreen class="my-8 rounded-2xl shadow-lg"></iframe>`;
+          replacement = `<iframe src="${url}" width="${width}" height="${height}" frameborder="0" allowfullscreen class="my-6 rounded-xl shadow-md"></iframe>`;
         } else {
-          replacement = `<div class="relative w-full my-8"><iframe src="${url}" class="w-full rounded-2xl shadow-lg" style="height: ${height}px;" frameborder="0" allowfullscreen></iframe></div>`;
+          replacement = `<div class="relative w-full my-6"><iframe src="${url}" class="w-full rounded-xl shadow-md" style="height: ${height}px;" frameborder="0" allowfullscreen></iframe></div>`;
         }
       }
     } else if (tag === "quote") {
-      replacement = `<blockquote class="border-l-4 border-blue-500 pl-6 py-4 my-8 bg-blue-50 dark:bg-blue-900/20 italic text-gray-700 dark:text-gray-300">${selectedText || "Insert your quote here"}</blockquote>`;
+      replacement = `<blockquote class="border-l-2 border-gray-300 dark:border-gray-600 pl-4 py-3 my-5 bg-gray-50 dark:bg-gray-900/30 italic text-gray-700 dark:text-gray-300 rounded-r-lg">${selectedText || "Insert your quote here"}</blockquote>`;
     } else if (tag === "latex-inline") {
       replacement = `\\(${selectedText || "a^2+b^2=c^2"}\\)`;
     } else if (tag === "latex-block") {
       replacement = `\\[\n${selectedText || "\\int_0^1 x^2\\,dx = \\frac{1}{3}"}\n\\]`;
     } else if (tag === "list") {
-      replacement = `<ul class="list-disc pl-6 my-6 space-y-2">\n  <li>${selectedText || "List item 1"}</li>\n  <li>List item 2</li>\n  <li>List item 3</li>\n</ul>`;
+      replacement = `<ul class="list-disc pl-6 my-4 space-y-1">\n  <li>${selectedText || "List item 1"}</li>\n  <li>List item 2</li>\n  <li>List item 3</li>\n</ul>`;
     } else if (tag === "table") {
-      replacement = `<div class="overflow-x-auto my-8">
-  <table class="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
-    <thead class="bg-gray-50 dark:bg-gray-700">
+      replacement = `<div class="overflow-x-auto my-5 rounded-xl border border-gray-200 dark:border-gray-700">
+  <table class="min-w-full bg-white dark:bg-gray-800">
+    <thead class="bg-gray-50 dark:bg-gray-700/70">
       <tr>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Header 1</th>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Header 2</th>
@@ -436,7 +436,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   </table>
 </div>`;
     } else if (tag === "divider") {
-      replacement = `<hr class="my-12 border-t-2 border-gray-200 dark:border-gray-700" />`;
+      replacement = `<hr class="my-6 border-t border-gray-200 dark:border-gray-700" />`;
     } else if (tag === "alert") {
       const type =
         prompt("Enter alert type (success, warning, error, info):") || "info";
@@ -449,7 +449,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
           "bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-700 dark:text-red-300",
         info: "bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-700 dark:text-blue-300",
       };
-      replacement = `<div class="p-4 my-6 border rounded-lg ${colors[type as keyof typeof colors] || colors.info}">${selectedText || "Alert message here"}</div>`;
+      replacement = `<div class="p-4 my-4 border rounded-lg ${colors[type as keyof typeof colors] || colors.info}">${selectedText || "Alert message here"}</div>`;
     }
 
     if (replacement) {
@@ -481,7 +481,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     if (tag === "img") {
       const url = prompt("Enter Image URL:");
       if (url)
-        replacement = `<img src="${url}" class="my-8 rounded-2xl w-full shadow-lg border border-gray-100 dark:border-gray-800" />`;
+        replacement = `<img src="${url}" class="my-5 rounded-2xl w-full shadow-md border border-gray-100 dark:border-gray-800" />`;
     } else if (tag === "b") {
       replacement = `<b>${selectedText || "bold text"}</b>`;
     } else if (tag === "i") {
@@ -491,22 +491,22 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       if (url)
         replacement = `<a href="${url}" class="text-blue-500 font-bold underline" target="_blank">${selectedText || "Link Text"}</a>`;
     } else if (tag === "h2") {
-      replacement = `<h2 class="text-2xl font-black mt-8 mb-4 text-gray-900 dark:text-white">${selectedText || "Heading 2"}</h2>`;
+      replacement = `<h2 class="text-2xl font-extrabold mt-7 mb-3 text-gray-900 dark:text-white">${selectedText || "Heading 2"}</h2>`;
     } else if (tag === "h3") {
-      replacement = `<h3 class="text-xl font-bold mt-6 mb-3 text-gray-900 dark:text-white">${selectedText || "Heading 3"}</h3>`;
+      replacement = `<h3 class="text-lg font-bold mt-5 mb-2 text-gray-900 dark:text-white">${selectedText || "Heading 3"}</h3>`;
     } else if (tag === "code-inline") {
-      replacement = `<code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-red-600 dark:text-red-400">${selectedText || "code"}</code>`;
+      replacement = `<code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded-md text-sm font-mono text-gray-700 dark:text-gray-200">${selectedText || "code"}</code>`;
     } else if (tag === "code-block") {
       const language = prompt(
         "Enter programming language (e.g., javascript, python, html):",
       );
-      replacement = `<pre class="bg-gray-900 text-gray-100 p-4 rounded-xl overflow-x-auto my-6 shadow-lg"><code class="language-${language || "text"}">${selectedText || "// Your code here\nconsole.log('Hello World!');"}</code></pre>`;
+      replacement = `<pre class="bg-gray-900 text-gray-100 p-4 rounded-xl overflow-x-auto my-5 shadow-md"><code class="language-${language || "text"}">${selectedText || "// Your code here\nconsole.log('Hello World!');"}</code></pre>`;
     } else if (tag === "iframe") {
       const url = prompt("Enter iframe URL (YouTube, CodePen, etc.):");
       if (url) {
         const height =
           prompt("Enter height (or press Enter for 300px):") || "300";
-        replacement = `<div class="relative w-full my-6"><iframe src="${url}" class="w-full rounded-xl shadow-lg" style="height: ${height}px;" frameborder="0" allowfullscreen></iframe></div>`;
+        replacement = `<div class="relative w-full my-5"><iframe src="${url}" class="w-full rounded-xl shadow-md" style="height: ${height}px;" frameborder="0" allowfullscreen></iframe></div>`;
       }
     } else if (tag === "list") {
       replacement = `<ul class="list-disc pl-6 my-4 space-y-1">\n  <li>${selectedText || "List item 1"}</li>\n  <li>List item 2</li>\n  <li>List item 3</li>\n</ul>`;
@@ -921,7 +921,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       <h1 className="text-2xl font-black text-gray-900 mb-6">
                         {selectedNote.title}
                       </h1>
-                      <div className="prose prose-lg max-w-none">
+                      <div className="prose prose-lg max-w-none rich-content">
                         <div
                           ref={notePreviewRef}
                           className="whitespace-pre-wrap font-sans text-gray-700 leading-relaxed"
@@ -1377,7 +1377,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   )}
                   <div
                     ref={contentPreviewRef}
-                    className="prose prose-sm max-w-none text-gray-700"
+                    className="prose prose-sm max-w-none text-gray-700 rich-content"
                     dangerouslySetInnerHTML={{
                       __html: sanitizeRichHtml(
                         formData.description ||
