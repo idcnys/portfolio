@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
@@ -307,6 +308,36 @@ const fetchJson = async (url: string) => {
   return response.json();
 };
 
+const VIEWED_ITEMS_STORAGE_KEY = "portfolio_unique_viewed_items_v1";
+
+const incrementViewsIfUnique = async (itemId: string): Promise<void> => {
+  if (typeof window === "undefined") {
+    await incrementViews(itemId);
+    return;
+  }
+
+  try {
+    const rawViewed = window.localStorage.getItem(VIEWED_ITEMS_STORAGE_KEY);
+    const viewedItems = rawViewed
+      ? (JSON.parse(rawViewed) as Record<string, true>)
+      : {};
+
+    if (viewedItems[itemId]) {
+      return;
+    }
+
+    viewedItems[itemId] = true;
+    window.localStorage.setItem(
+      VIEWED_ITEMS_STORAGE_KEY,
+      JSON.stringify(viewedItems),
+    );
+    await incrementViews(itemId);
+  } catch {
+    // If localStorage is unavailable, fall back to server increment.
+    await incrementViews(itemId);
+  }
+};
+
 // Animation variants
 const pageVariants: Variants = {
   initial: { opacity: 0, y: 10 },
@@ -383,6 +414,9 @@ const certificateVariants: Variants = {
 const PortfolioClient: React.FC = () => {
   const { projects, activities, isLoading } = useContent();
   const { isTransitioning } = useTheme();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<TabType>("certificates");
   const [viewingDetail, setViewingDetail] = useState<ContentItem | null>(null);
   const [selectedCertificate, setSelectedCertificate] = useState<string | null>(
@@ -618,6 +652,71 @@ const PortfolioClient: React.FC = () => {
     });
   }, [projects, projectSearchQuery]);
 
+  const contentByTab = useMemo<Record<TabType, ContentItem[]>>(
+    () => ({
+      certificates: [],
+      projects,
+      activity: activities,
+      grind: [],
+      skillset: [],
+    }),
+    [projects, activities],
+  );
+
+  useEffect(() => {
+    const sharePathPrefix = "/projects/share=";
+    const deepLinkItemIdFromPath = pathname.startsWith(sharePathPrefix)
+      ? decodeURIComponent(pathname.slice(sharePathPrefix.length))
+      : null;
+    const deepLinkItemId = searchParams.get("share") || deepLinkItemIdFromPath;
+    const deepLinkView = searchParams.get("view")?.toLowerCase();
+
+    if (!deepLinkItemId && !deepLinkView) {
+      return;
+    }
+
+    const allowedTabs: TabType[] = [
+      "certificates",
+      "projects",
+      "activity",
+      "grind",
+      "skillset",
+    ];
+
+    const requestedTab: TabType =
+      deepLinkView && allowedTabs.includes(deepLinkView as TabType)
+        ? (deepLinkView as TabType)
+        : "projects";
+
+    if (!visibleTabs.includes(requestedTab)) {
+      return;
+    }
+
+    queueMicrotask(() => {
+      setActiveTab((prev) => (prev === requestedTab ? prev : requestedTab));
+    });
+
+    if (!deepLinkItemId) {
+      return;
+    }
+
+    const source = contentByTab[requestedTab];
+    const matchedItem = source.find((item) => item.id === deepLinkItemId);
+    if (!matchedItem) {
+      return;
+    }
+
+    queueMicrotask(() => {
+      setViewingDetail((prev) => (prev?.id === matchedItem.id ? prev : matchedItem));
+      incrementViewsIfUnique(matchedItem.id);
+    });
+  }, [
+    contentByTab,
+    pathname,
+    searchParams,
+    visibleTabs,
+  ]);
+
   useEffect(() => {
     if (activeTab === "projects" && !hasAnimatedProjectsTab) {
       setHasAnimatedProjectsTab(true);
@@ -627,6 +726,16 @@ const PortfolioClient: React.FC = () => {
   const handleBack = () => {
     if (viewingDetail) {
       setViewingDetail(null);
+
+      const hasShareInPath = pathname.startsWith("/projects/share=");
+      const hasShareInQuery = searchParams.has("share");
+      if (hasShareInPath || hasShareInQuery) {
+        const viewValue = searchParams.get("view") || activeTab;
+        router.replace(`/projects?view=${encodeURIComponent(viewValue)}`, {
+          scroll: false,
+        });
+      }
+
       return;
     }
     if (selectedCertificate) {
@@ -641,7 +750,7 @@ const PortfolioClient: React.FC = () => {
 
   const handleOpenDetail = (item: ContentItem) => {
     setViewingDetail(item);
-    incrementViews(item.id);
+    incrementViewsIfUnique(item.id);
     const scroller = document.querySelector(".md\\:overflow-y-auto");
     if (scroller) scroller.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -705,6 +814,7 @@ const PortfolioClient: React.FC = () => {
               >
                 <DetailView
                   item={viewingDetail}
+                  activeTab={activeTab}
                 />
               </motion.div>
             ) : selectedCertificate ? (
@@ -1157,13 +1267,15 @@ const CertificateDetailView: React.FC<{
 
 const DetailView: React.FC<{
   item: ContentItem;
-}> = ({ item }) => {
+  activeTab: TabType;
+}> = ({ item, activeTab }) => {
   const descriptionBlocks = useMemo(
     () => splitDescriptionBlocks(item.description || ""),
     [item.description],
   );
   const [likes, setLikes] = useState(item.likes || 0);
   const [hasLiked, setHasLiked] = useState(false);
+  const [copyToast, setCopyToast] = useState<string | null>(null);
 
   const handleLike = async () => {
     if (!hasLiked) {
@@ -1178,20 +1290,18 @@ const DetailView: React.FC<{
   };
 
   const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: item.title,
-          text:
-            item.description.replace(/<[^>]*>?/gm, "").substring(0, 100) +
-            "...",
-          url: window.location.href,
-        });
-      } catch (error) {
-        console.log("Sharing cancelled or failed");
-      }
-    } else {
-      navigator.clipboard.writeText(window.location.href);
+    const shareUrl = new URL(window.location.origin);
+    shareUrl.pathname = `/projects/share=${encodeURIComponent(item.id)}`;
+    shareUrl.searchParams.set("view", activeTab);
+
+    try {
+      await navigator.clipboard.writeText(shareUrl.toString());
+      setCopyToast("Link copied");
+      window.setTimeout(() => setCopyToast(null), 1800);
+    } catch (error) {
+      console.error("Failed to copy share link:", error);
+      setCopyToast("Copy failed");
+      window.setTimeout(() => setCopyToast(null), 1800);
     }
   };
 
@@ -1200,7 +1310,22 @@ const DetailView: React.FC<{
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      className="relative"
     >
+      <AnimatePresence>
+        {copyToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 8, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.96 }}
+            transition={{ duration: 0.16 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-full px-4 py-2 text-xs font-semibold bg-white text-gray-800 shadow-[0_10px_30px_rgba(15,23,42,0.14)] dark:bg-gray-900 dark:text-gray-100"
+          >
+            {copyToast}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.div
         initial={{ y: 30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
