@@ -36,6 +36,23 @@ interface DashboardProps {
   onLogout: () => void;
 }
 
+const renderLatex = async (element: HTMLElement | null) => {
+  if (!element) {
+    return;
+  }
+
+  const renderMathInElement = (await import("katex/contrib/auto-render")).default;
+  renderMathInElement(element, {
+    delimiters: [
+      { left: "$$", right: "$$", display: true },
+      { left: "\\[", right: "\\]", display: true },
+      { left: "$", right: "$", display: false },
+      { left: "\\(", right: "\\)", display: false },
+    ],
+    throwOnError: false,
+  });
+};
+
 const TAB_ORDER: TabType[] = [
   "certificates",
   "projects",
@@ -78,6 +95,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   const [tagsInput, setTagsInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const noteTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const notePreviewRef = useRef<HTMLDivElement>(null);
+  const contentPreviewRef = useRef<HTMLDivElement>(null);
 
   // Notes State
   const [notes, setNotes] = useState<Note[]>([]);
@@ -129,6 +148,14 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       unsubscribeSettings();
     };
   }, []);
+
+  useEffect(() => {
+    renderLatex(notePreviewRef.current);
+  }, [activeTab, isEditingNote, selectedNote?.content]);
+
+  useEffect(() => {
+    renderLatex(contentPreviewRef.current);
+  }, [activeTab, formData.description]);
 
   const tabs = [
     {
@@ -385,6 +412,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       }
     } else if (tag === "quote") {
       replacement = `<blockquote class="border-l-4 border-blue-500 pl-6 py-4 my-8 bg-blue-50 dark:bg-blue-900/20 italic text-gray-700 dark:text-gray-300">${selectedText || "Insert your quote here"}</blockquote>`;
+    } else if (tag === "latex-inline") {
+      replacement = `\\(${selectedText || "a^2+b^2=c^2"}\\)`;
+    } else if (tag === "latex-block") {
+      replacement = `\\[\n${selectedText || "\\int_0^1 x^2\\,dx = \\frac{1}{3}"}\n\\]`;
     } else if (tag === "list") {
       replacement = `<ul class="list-disc pl-6 my-6 space-y-2">\n  <li>${selectedText || "List item 1"}</li>\n  <li>List item 2</li>\n  <li>List item 3</li>\n</ul>`;
     } else if (tag === "table") {
@@ -479,6 +510,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       }
     } else if (tag === "list") {
       replacement = `<ul class="list-disc pl-6 my-4 space-y-1">\n  <li>${selectedText || "List item 1"}</li>\n  <li>List item 2</li>\n  <li>List item 3</li>\n</ul>`;
+    } else if (tag === "latex-inline") {
+      replacement = `\\(${selectedText || "a^2+b^2=c^2"}\\)`;
+    } else if (tag === "latex-block") {
+      replacement = `\\[\n${selectedText || "\\sum_{i=1}^{n} i = \\frac{n(n+1)}{2}"}\n\\]`;
     }
 
     if (replacement) {
@@ -814,6 +849,22 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             </button>
                             <button
                               type="button"
+                              onClick={() => insertNoteTag("latex-inline")}
+                              className="w-8 h-8 hover:bg-white rounded-lg text-[10px] shadow-sm text-gray-700 font-black"
+                              title="Inline LaTeX"
+                            >
+                              fx
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => insertNoteTag("latex-block")}
+                              className="w-8 h-8 hover:bg-white rounded-lg text-[10px] shadow-sm text-gray-700 font-black"
+                              title="Block LaTeX"
+                            >
+                              Σ
+                            </button>
+                            <button
+                              type="button"
                               onClick={() => insertNoteTag("iframe")}
                               className="w-8 h-8 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700"
                               title="Embed (iframe)"
@@ -872,6 +923,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       </h1>
                       <div className="prose prose-lg max-w-none">
                         <div
+                          ref={notePreviewRef}
                           className="whitespace-pre-wrap font-sans text-gray-700 leading-relaxed"
                           dangerouslySetInnerHTML={{
                             __html: sanitizeRichHtml(selectedNote.content),
@@ -1132,6 +1184,22 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           </button>
                           <button
                             type="button"
+                            onClick={() => insertTag("latex-inline")}
+                            className="w-9 h-9 hover:bg-white rounded-lg text-[10px] shadow-sm text-gray-700 font-black"
+                            title="Inline LaTeX"
+                          >
+                            fx
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => insertTag("latex-block")}
+                            className="w-9 h-9 hover:bg-white rounded-lg text-[10px] shadow-sm text-gray-700 font-black"
+                            title="Block LaTeX"
+                          >
+                            Σ
+                          </button>
+                          <button
+                            type="button"
                             onClick={() => insertTag("iframe")}
                             className="w-9 h-9 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700"
                             title="Embed (iframe)"
@@ -1223,6 +1291,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             All HTML tags are supported - feel free to add
                             custom styling
                           </li>
+                          <li>Use inline math with \( ... \) or $...$</li>
+                          <li>Use display math with \[ ... \] or $$...$$</li>
                         </ul>
                       </div>
                       <textarea
@@ -1306,6 +1376,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                     </div>
                   )}
                   <div
+                    ref={contentPreviewRef}
                     className="prose prose-sm max-w-none text-gray-700"
                     dangerouslySetInnerHTML={{
                       __html: sanitizeRichHtml(
