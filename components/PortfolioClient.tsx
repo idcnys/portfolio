@@ -1552,12 +1552,14 @@ const DetailView: React.FC<{
                   <span className={`text-sm`}>{item.views || 0} Views</span>
                 </button>
 
-                <button
-                  onClick={handleShare}
-                  className="w-9 h-9 rounded-full flex items-center justify-center text-gray-500 hover:text-sky-500 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-all"
-                >
-                  <i className="fas fa-share"></i>
-                </button>
+                {item.type === "project" && (
+                  <button
+                    onClick={handleShare}
+                    className="w-9 h-9 rounded-full flex items-center justify-center text-gray-500 hover:text-sky-500 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-all"
+                  >
+                    <i className="fas fa-share"></i>
+                  </button>
+                )}
               </div>
             </div>
           </motion.div>
