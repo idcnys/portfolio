@@ -31,6 +31,7 @@ import {
   sanitizeRichHtml,
 } from "../../../lib/sanitize";
 import { ThemeProvider } from "../../../lib/context/ThemeContext";
+import ThemeToggle from "../../../components/client/ThemeToggle";
 
 interface DashboardProps {
   onLogout: () => void;
@@ -41,7 +42,8 @@ const renderLatex = async (element: HTMLElement | null) => {
     return;
   }
 
-  const renderMathInElement = (await import("katex/contrib/auto-render")).default;
+  const renderMathInElement = (await import("katex/contrib/auto-render"))
+    .default;
   renderMathInElement(element, {
     delimiters: [
       { left: "$$", right: "$$", display: true },
@@ -539,19 +541,19 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   const getActionColor = (action: string) => {
     switch (action) {
       case "login":
-        return "text-green-600 bg-green-50";
+        return "text-green-600 bg-green-50 dark:text-green-200 dark:bg-green-900/30";
       case "logout":
-        return "text-orange-600 bg-orange-50";
+        return "text-orange-600 bg-orange-50 dark:text-orange-200 dark:bg-orange-900/30";
       case "create":
-        return "text-blue-600 bg-blue-50";
+        return "text-blue-600 bg-blue-50 dark:text-blue-200 dark:bg-blue-900/30";
       case "edit":
-        return "text-yellow-600 bg-yellow-50";
+        return "text-yellow-600 bg-yellow-50 dark:text-yellow-200 dark:bg-yellow-900/30";
       case "delete":
-        return "text-red-600 bg-red-50";
+        return "text-red-600 bg-red-50 dark:text-red-200 dark:bg-red-900/30";
       case "view":
-        return "text-purple-600 bg-purple-50";
+        return "text-purple-600 bg-purple-50 dark:text-purple-200 dark:bg-purple-900/30";
       default:
-        return "text-gray-600 bg-gray-50";
+        return "text-gray-600 bg-gray-50 dark:text-gray-200 dark:bg-gray-800";
     }
   };
 
@@ -576,7 +578,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     };
 
     if (!Object.values(nextVisibility).some(Boolean)) {
-      setMessage({ text: "At least one tab must stay visible.", type: "error" });
+      setMessage({
+        text: "At least one tab must stay visible.",
+        type: "error",
+      });
       setTimeout(() => setMessage({ text: "", type: "" }), 3000);
       return;
     }
@@ -603,61 +608,60 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
         grindGithubStats,
         skillsetGroups,
       });
-      setMessage({ text: "Grind and skillset content saved.", type: "success" });
+      setMessage({
+        text: "Grind and skillset content saved.",
+        type: "success",
+      });
     } catch {
-      setMessage({ text: "Invalid JSON. Please fix the format.", type: "error" });
+      setMessage({
+        text: "Invalid JSON. Please fix the format.",
+        type: "error",
+      });
     }
     setTimeout(() => setMessage({ text: "", type: "" }), 3000);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col transition-colors">
+    <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 flex flex-col transition-colors">
       {/* Navigation */}
-      <nav className="bg-white border-b border-gray-200 px-6 md:px-12 py-5 flex items-center justify-between sticky top-0 z-50 shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-[#FFDB14] rounded-xl flex items-center justify-center font-black text-lg text-gray-900 shadow-md ring-4 ring-yellow-400/20">
+      <nav className="bg-white border-b border-gray-200 px-4 md:px-8 py-3 flex items-center sticky top-0 z-50 shadow-sm dark:bg-gray-950 dark:border-gray-800">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-[#FFDB14] rounded-lg flex items-center justify-center font-black text-base text-gray-900 shadow-md ring-2 ring-yellow-400/20">
             B
           </div>
-          <span className="text-2xl font-black text-gray-900 hidden sm:inline tracking-tight">
-            Studio Admin
-          </span>
+          <span className="sr-only">Studio Admin</span>
         </div>
-        <div className="flex items-center gap-6">
-          <Link
-            href="/"
-            className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 hover:text-gray-900 transition-all"
-          >
-            Site Preview
-          </Link>
+
+        <div className="flex-1 mx-4 md:mx-8 overflow-hidden">
+          <div className="flex flex-wrap items-center gap-1">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => handleTabClick(tab.id)}
+                className={`flex items-center gap-2 px-3 py-2 text-xs font-bold whitespace-nowrap rounded-md border transition-all ${
+                  activeTab === tab.id
+                    ? "bg-[#FFDB14] text-gray-900 border-yellow-400 shadow-sm dark:text-gray-900 dark:bg-yellow-400 dark:border-yellow-300"
+                    : "border-transparent text-gray-400 hover:text-gray-700 hover:border-gray-200 dark:text-gray-500 dark:hover:text-gray-200 dark:hover:border-gray-700"
+                } ${tab.id === "logout" ? "ml-2 text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300" : ""}`}
+              >
+                <i className={tab.icon}></i>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <ThemeToggle className="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700" />
         </div>
       </nav>
-
-      {/* Tab Navigation */}
-      <div className="bg-white border-b border-gray-200 px-6 md:px-12">
-        <div className="flex overflow-x-auto">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => handleTabClick(tab.id)}
-              className={`flex items-center gap-2 px-6 py-4 text-sm font-bold whitespace-nowrap border-b-2 transition-all ${
-                activeTab === tab.id
-                  ? "border-[#FFDB14] text-gray-900 bg-yellow-50"
-                  : "border-transparent text-gray-400 hover:text-gray-600 hover:border-gray-300"
-              } ${tab.id === "logout" ? "ml-auto text-red-500 hover:text-red-600" : ""}`}
-            >
-              <i className={tab.icon}></i>
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      </div>
 
       {message.text && (
         <div
           className={`mx-6 md:mx-12 mt-4 px-6 py-3 rounded-2xl text-xs font-black ${
             message.type === "success"
-              ? "bg-green-50 text-green-600 border border-green-200"
-              : "bg-red-50 text-red-600 border border-red-200"
+              ? "bg-green-50 text-green-600 border border-green-200 dark:bg-green-900/30 dark:text-green-200 dark:border-green-700"
+              : "bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-200 dark:border-red-700"
           }`}
         >
           <i className="fas fa-info-circle mr-2"></i> {message.text}
@@ -670,14 +674,14 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[calc(100vh-200px)]">
               {/* Notes List */}
-              <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
-                <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                  <h2 className="text-xl font-black text-gray-900">
+              <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
+                <div className="p-6 border-b border-gray-100 flex justify-between items-center dark:border-gray-800">
+                  <h2 className="text-xl font-black text-gray-900 dark:text-gray-100">
                     All Notes
                   </h2>
                   <button
                     onClick={handleNewNote}
-                    className="bg-[#FFDB14] text-gray-900 px-4 py-2 rounded-xl font-bold text-xs hover:bg-yellow-400 transition-all"
+                    className="bg-[#FFDB14] text-gray-900 px-4 py-2 rounded-lg font-bold text-xs hover:bg-yellow-400 transition-all"
                   >
                     <i className="fas fa-plus mr-2"></i>New Note
                   </button>
@@ -689,23 +693,23 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       onClick={() => handleNoteClick(note)}
                       className={`p-4 rounded-2xl border cursor-pointer transition-all ${
                         selectedNote?.id === note.id
-                          ? "bg-yellow-50 border-[#FFDB14]"
-                          : "bg-gray-50 border-gray-200 hover:bg-white"
+                          ? "bg-yellow-50 border-[#FFDB14] dark:bg-yellow-500/15"
+                          : "bg-gray-50 border-gray-200 hover:bg-white dark:bg-gray-900/60 dark:border-gray-800 dark:hover:bg-gray-800"
                       }`}
                     >
-                      <h3 className="font-black text-gray-900 mb-2 truncate">
+                      <h3 className="font-black text-gray-900 mb-2 truncate dark:text-gray-100">
                         {note.title}
                       </h3>
-                      <p className="text-xs text-gray-500 mb-2">
+                      <p className="text-xs text-gray-500 mb-2 dark:text-gray-400">
                         {formatTimestamp(note.updatedAt)}
                       </p>
-                      <p className="text-sm text-gray-600 line-clamp-3">
+                      <p className="text-sm text-gray-600 line-clamp-3 dark:text-gray-300">
                         {note.content.substring(0, 100)}...
                       </p>
                     </div>
                   ))}
                   {notes.length === 0 && (
-                    <div className="text-center py-12 text-gray-400">
+                    <div className="text-center py-12 text-gray-400 dark:text-gray-500">
                       <i className="fas fa-sticky-note text-3xl mb-4 opacity-50"></i>
                       <p className="font-bold">No notes yet</p>
                       <p className="text-xs">Click "New Note" to start</p>
@@ -715,9 +719,9 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               </div>
 
               {/* Note Editor */}
-              <div className="lg:col-span-2 bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
-                <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                  <h2 className="text-xl font-black text-gray-900">
+              <div className="lg:col-span-2 bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
+                <div className="p-6 border-b border-gray-100 flex justify-between items-center dark:border-gray-800">
+                  <h2 className="text-xl font-black text-gray-900 dark:text-gray-100">
                     {selectedNote
                       ? isEditingNote
                         ? "Edit Note"
@@ -730,13 +734,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       <>
                         <button
                           onClick={() => setIsEditingNote(true)}
-                          className="bg-blue-500 text-white px-4 py-2 rounded-xl font-bold text-xs hover:bg-blue-600 transition-all shadow-lg"
+                          className="bg-white text-blue-600 px-4 py-2 rounded-lg border border-blue-200 font-bold text-xs hover:bg-blue-50 transition-all shadow-sm dark:bg-gray-900 dark:text-blue-300 dark:border-blue-700 dark:hover:bg-gray-800"
                         >
                           <i className="fas fa-edit mr-2"></i>Edit
                         </button>
                         <button
                           onClick={() => handleDeleteNote(selectedNote)}
-                          className="bg-red-500 text-white px-4 py-2 rounded-xl font-bold text-xs hover:bg-red-600 transition-all shadow-lg"
+                          className="bg-white text-red-600 px-4 py-2 rounded-lg border border-red-200 font-bold text-xs hover:bg-red-50 transition-all shadow-sm dark:bg-gray-900 dark:text-red-300 dark:border-red-700 dark:hover:bg-gray-800"
                         >
                           <i className="fas fa-trash mr-2"></i>Delete
                         </button>
@@ -747,7 +751,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                         <button
                           onClick={handleSaveNote}
                           disabled={!noteForm.title.trim()}
-                          className="bg-[#FFDB14] text-gray-900 px-4 py-2 rounded-xl font-bold text-xs hover:bg-yellow-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                          className="bg-[#FFDB14] text-gray-900 px-4 py-2 rounded-lg font-bold text-xs hover:bg-yellow-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                         >
                           <i className="fas fa-save mr-2"></i>Save
                         </button>
@@ -765,7 +769,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                               });
                             }
                           }}
-                          className="bg-gray-700 text-white px-4 py-2 rounded-xl font-bold text-xs hover:bg-gray-800 transition-all shadow-lg"
+                          className="bg-white text-gray-700 px-4 py-2 rounded-lg border border-gray-200 font-bold text-xs hover:bg-gray-50 transition-all shadow-sm dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800"
                         >
                           <i className="fas fa-times mr-2"></i>Cancel
                         </button>
@@ -786,21 +790,21 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             title: e.target.value,
                           }))
                         }
-                        className="w-full text-2xl font-black border-none outline-none mb-6 text-gray-900 placeholder:text-gray-300"
+                        className="w-full text-2xl font-black border-none outline-none mb-6 text-gray-900 placeholder:text-gray-300 dark:text-gray-100 dark:placeholder:text-gray-600 bg-transparent"
                       />
 
                       {/* Enhanced Content Editor for Notes */}
                       <div className="mb-4">
                         <div className="flex items-center justify-between mb-4">
-                          <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
+                          <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] dark:text-gray-500">
                             Note Content
                           </label>
-                          <div className="flex flex-wrap gap-1 p-1 bg-gray-50 rounded-xl border border-gray-100">
+                          <div className="flex flex-wrap gap-1 p-1 bg-gray-50 rounded-lg border border-gray-100 dark:bg-gray-900/60 dark:border-gray-700">
                             {/* Text Formatting */}
                             <button
                               type="button"
                               onClick={() => insertNoteTag("h2")}
-                              className="w-8 h-8 hover:bg-white rounded-lg text-xs font-black shadow-sm text-gray-700"
+                              className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] font-black shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                               title="Heading 2"
                             >
                               H2
@@ -808,7 +812,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             <button
                               type="button"
                               onClick={() => insertNoteTag("h3")}
-                              className="w-8 h-8 hover:bg-white rounded-lg text-xs font-black shadow-sm text-gray-700"
+                              className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] font-black shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                               title="Heading 3"
                             >
                               H3
@@ -816,7 +820,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             <button
                               type="button"
                               onClick={() => insertNoteTag("b")}
-                              className="w-8 h-8 hover:bg-white rounded-lg text-xs font-black shadow-sm text-gray-700"
+                              className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] font-black shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                               title="Bold"
                             >
                               B
@@ -824,7 +828,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             <button
                               type="button"
                               onClick={() => insertNoteTag("i")}
-                              className="w-8 h-8 hover:bg-white rounded-lg text-xs italic font-serif shadow-sm text-gray-700"
+                              className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] italic font-serif shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                               title="Italic"
                             >
                               I
@@ -834,7 +838,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             <button
                               type="button"
                               onClick={() => insertNoteTag("code-inline")}
-                              className="w-8 h-8 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700 font-mono"
+                              className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 font-mono dark:text-gray-200 dark:hover:bg-gray-800"
                               title="Inline Code"
                             >
                               &lt;/&gt;
@@ -842,7 +846,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             <button
                               type="button"
                               onClick={() => insertNoteTag("code-block")}
-                              className="w-8 h-8 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700"
+                              className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                               title="Code Block"
                             >
                               <i className="fas fa-code"></i>
@@ -850,7 +854,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             <button
                               type="button"
                               onClick={() => insertNoteTag("latex-inline")}
-                              className="w-8 h-8 hover:bg-white rounded-lg text-[10px] shadow-sm text-gray-700 font-black"
+                              className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[10px] shadow-sm text-gray-700 font-black dark:text-gray-200 dark:hover:bg-gray-800"
                               title="Inline LaTeX"
                             >
                               fx
@@ -858,7 +862,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             <button
                               type="button"
                               onClick={() => insertNoteTag("latex-block")}
-                              className="w-8 h-8 hover:bg-white rounded-lg text-[10px] shadow-sm text-gray-700 font-black"
+                              className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[10px] shadow-sm text-gray-700 font-black dark:text-gray-200 dark:hover:bg-gray-800"
                               title="Block LaTeX"
                             >
                               Σ
@@ -866,7 +870,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             <button
                               type="button"
                               onClick={() => insertNoteTag("iframe")}
-                              className="w-8 h-8 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700"
+                              className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                               title="Embed (iframe)"
                             >
                               <i className="fas fa-window-maximize"></i>
@@ -876,7 +880,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             <button
                               type="button"
                               onClick={() => insertNoteTag("link")}
-                              className="w-8 h-8 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700"
+                              className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                               title="Link"
                             >
                               <i className="fas fa-link"></i>
@@ -884,7 +888,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             <button
                               type="button"
                               onClick={() => insertNoteTag("img")}
-                              className="w-8 h-8 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700"
+                              className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                               title="Image"
                             >
                               <i className="fas fa-image"></i>
@@ -894,7 +898,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             <button
                               type="button"
                               onClick={() => insertNoteTag("list")}
-                              className="w-8 h-8 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700"
+                              className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                               title="List"
                             >
                               <i className="fas fa-list"></i>
@@ -913,18 +917,18 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             content: e.target.value,
                           }))
                         }
-                        className="w-full h-[calc(100%-180px)] border border-gray-200 rounded-2xl p-4 outline-none resize-none text-gray-700 text-lg leading-relaxed focus:border-[#FFDB14] transition-all"
+                        className="w-full h-[calc(100%-180px)] border border-gray-200 rounded-2xl p-4 outline-none resize-none text-gray-700 text-lg leading-relaxed focus:border-[#FFDB14] transition-all bg-white dark:bg-gray-900 dark:border-gray-800 dark:text-gray-200"
                       />
                     </>
                   ) : selectedNote ? (
                     <>
-                      <h1 className="text-2xl font-black text-gray-900 mb-6">
+                      <h1 className="text-2xl font-black text-gray-900 mb-6 dark:text-gray-100">
                         {selectedNote.title}
                       </h1>
                       <div className="prose prose-lg max-w-none rich-content">
                         <div
                           ref={notePreviewRef}
-                          className="whitespace-pre-wrap font-sans text-gray-700 leading-relaxed"
+                          className="whitespace-pre-wrap font-sans text-gray-700 leading-relaxed dark:text-gray-300"
                           dangerouslySetInnerHTML={{
                             __html: sanitizeRichHtml(selectedNote.content),
                           }}
@@ -932,7 +936,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       </div>
                     </>
                   ) : (
-                    <div className="flex items-center justify-center h-full text-gray-400">
+                    <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500">
                       <div className="text-center">
                         <i className="fas fa-sticky-note text-4xl mb-4 opacity-50"></i>
                         <p className="font-bold">
@@ -954,15 +958,15 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
               {/* Content Form */}
-              <div className="xl:col-span-2 bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
-                <div className="p-8 md:p-14 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="xl:col-span-2 bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
+                <div className="p-8 md:p-14 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-6 dark:border-gray-800">
                   <div>
-                    <h1 className="text-4xl font-black text-gray-900 tracking-tighter capitalize">
+                    <h1 className="text-4xl font-black text-gray-900 tracking-tighter capitalize dark:text-gray-100">
                       {editingId
                         ? `Updating ${formData.type}`
                         : `New ${formData.type}`}
                     </h1>
-                    <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-2">
+                    <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-2 dark:text-gray-500">
                       Create and manage your {formData.type} posts
                     </p>
                   </div>
@@ -976,7 +980,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                     <input
                       type="text"
                       placeholder={`Enter a compelling ${formData.type} title...`}
-                      className="w-full text-4xl md:text-6xl font-black border-none outline-none focus:ring-0 bg-transparent text-gray-900 placeholder:text-gray-100 tracking-tight"
+                      className="w-full text-4xl md:text-6xl font-black border-none outline-none focus:ring-0 bg-transparent text-gray-900 placeholder:text-gray-100 tracking-tight dark:text-gray-100 dark:placeholder:text-gray-700"
                       value={formData.title}
                       onChange={(e) =>
                         setFormData((p) => ({ ...p, title: e.target.value }))
@@ -986,12 +990,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-3">
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-3 dark:text-gray-500">
                           Published Date (Display)
                         </label>
                         <input
                           type="text"
-                          className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:bg-white focus:border-[#FFDB14] transition-all font-black text-gray-900"
+                          className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:bg-white focus:border-[#FFDB14] transition-all font-black text-gray-900 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100 dark:focus:bg-gray-900"
                           value={formData.date}
                           onChange={(e) =>
                             setFormData((p) => ({ ...p, date: e.target.value }))
@@ -1000,13 +1004,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                         />
                       </div>
                       <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-3">
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-3 dark:text-gray-500">
                           Cover Image URL
                         </label>
                         <input
                           type="text"
                           placeholder="https://images.unsplash.com/..."
-                          className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:bg-white focus:border-[#FFDB14] transition-all font-black text-gray-900"
+                          className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:bg-white focus:border-[#FFDB14] transition-all font-black text-gray-900 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100 dark:focus:bg-gray-900"
                           value={formData.imageUrl}
                           onChange={(e) =>
                             setFormData((p) => ({
@@ -1019,13 +1023,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-3">
+                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-3 dark:text-gray-500">
                         Technology Tags (comma-separated)
                       </label>
                       <input
                         type="text"
                         placeholder="React, TypeScript, Node.js, MongoDB, etc."
-                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:bg-white focus:border-[#FFDB14] transition-all font-black text-gray-900"
+                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:bg-white focus:border-[#FFDB14] transition-all font-black text-gray-900 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100 dark:focus:bg-gray-900"
                         value={tagsInput}
                         onChange={(e) => {
                           const value = e.target.value;
@@ -1040,16 +1044,16 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-3">
+                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-3 dark:text-gray-500">
                         Project Links
                       </label>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-2 focus-within:border-[#FFDB14]">
-                          <i className="fab fa-github text-gray-400"></i>
+                        <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-2 focus-within:border-[#FFDB14] dark:bg-gray-900 dark:border-gray-800">
+                          <i className="fab fa-github text-gray-400 dark:text-gray-500"></i>
                           <input
                             type="text"
                             placeholder="GitHub URL"
-                            className="flex-1 bg-transparent outline-none text-sm text-gray-900"
+                            className="flex-1 bg-transparent outline-none text-sm text-gray-900 dark:text-gray-100"
                             value={formData.links.github}
                             onChange={(e) =>
                               setFormData((p) => ({
@@ -1059,12 +1063,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             }
                           />
                         </div>
-                        <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-2 focus-within:border-[#FFDB14]">
-                          <i className="fas fa-globe text-gray-400"></i>
+                        <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-2 focus-within:border-[#FFDB14] dark:bg-gray-900 dark:border-gray-800">
+                          <i className="fas fa-globe text-gray-400 dark:text-gray-500"></i>
                           <input
                             type="text"
                             placeholder="Website URL"
-                            className="flex-1 bg-transparent outline-none text-sm text-gray-900"
+                            className="flex-1 bg-transparent outline-none text-sm text-gray-900 dark:text-gray-100"
                             value={formData.links.website}
                             onChange={(e) =>
                               setFormData((p) => ({
@@ -1074,12 +1078,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             }
                           />
                         </div>
-                        <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-2 focus-within:border-[#FFDB14]">
-                          <i className="fab fa-twitter text-gray-400"></i>
+                        <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-2 focus-within:border-[#FFDB14] dark:bg-gray-900 dark:border-gray-800">
+                          <i className="fab fa-twitter text-gray-400 dark:text-gray-500"></i>
                           <input
                             type="text"
                             placeholder="Twitter URL"
-                            className="flex-1 bg-transparent outline-none text-sm text-gray-900"
+                            className="flex-1 bg-transparent outline-none text-sm text-gray-900 dark:text-gray-100"
                             value={formData.links.twitter}
                             onChange={(e) =>
                               setFormData((p) => ({
@@ -1089,12 +1093,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             }
                           />
                         </div>
-                        <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-2 focus-within:border-[#FFDB14]">
-                          <i className="fab fa-youtube text-gray-400"></i>
+                        <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-2 focus-within:border-[#FFDB14] dark:bg-gray-900 dark:border-gray-800">
+                          <i className="fab fa-youtube text-gray-400 dark:text-gray-500"></i>
                           <input
                             type="text"
                             placeholder="YouTube URL"
-                            className="flex-1 bg-transparent outline-none text-sm text-gray-900"
+                            className="flex-1 bg-transparent outline-none text-sm text-gray-900 dark:text-gray-100"
                             value={formData.links.youtube}
                             onChange={(e) =>
                               setFormData((p) => ({
@@ -1104,12 +1108,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             }
                           />
                         </div>
-                        <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-2 focus-within:border-[#FFDB14]">
-                          <i className="fab fa-linkedin text-gray-400"></i>
+                        <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-2 focus-within:border-[#FFDB14] dark:bg-gray-900 dark:border-gray-800">
+                          <i className="fab fa-linkedin text-gray-400 dark:text-gray-500"></i>
                           <input
                             type="text"
                             placeholder="LinkedIn URL"
-                            className="flex-1 bg-transparent outline-none text-sm text-gray-900"
+                            className="flex-1 bg-transparent outline-none text-sm text-gray-900 dark:text-gray-100"
                             value={formData.links.linkedin}
                             onChange={(e) =>
                               setFormData((p) => ({
@@ -1124,15 +1128,15 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
 
                     <div>
                       <div className="flex items-center justify-between mb-4 px-2">
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] dark:text-gray-500">
                           Content Description
                         </label>
-                        <div className="flex flex-wrap gap-2 p-1 bg-gray-50 rounded-xl border border-gray-100 max-w-2xl">
+                        <div className="flex flex-wrap gap-1 p-1 bg-gray-50 rounded-lg border border-gray-100 max-w-2xl dark:bg-gray-900/60 dark:border-gray-700">
                           {/* Text Formatting */}
                           <button
                             type="button"
                             onClick={() => insertTag("h2")}
-                            className="w-9 h-9 hover:bg-white rounded-lg text-xs font-black shadow-sm text-gray-700"
+                            className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] font-black shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Heading 2"
                           >
                             H2
@@ -1140,7 +1144,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           <button
                             type="button"
                             onClick={() => insertTag("h3")}
-                            className="w-9 h-9 hover:bg-white rounded-lg text-xs font-black shadow-sm text-gray-700"
+                            className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] font-black shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Heading 3"
                           >
                             H3
@@ -1148,7 +1152,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           <button
                             type="button"
                             onClick={() => insertTag("b")}
-                            className="w-9 h-9 hover:bg-white rounded-lg text-xs font-black shadow-sm text-gray-700"
+                            className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] font-black shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Bold"
                           >
                             B
@@ -1156,20 +1160,20 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           <button
                             type="button"
                             onClick={() => insertTag("i")}
-                            className="w-9 h-9 hover:bg-white rounded-lg text-xs italic font-serif shadow-sm text-gray-700"
+                            className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] italic font-serif shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Italic"
                           >
                             I
                           </button>
 
                           {/* Divider */}
-                          <div className="w-px h-6 bg-gray-300 self-center mx-1"></div>
+                          <div className="w-px h-5 bg-gray-300 self-center mx-1 dark:bg-gray-700"></div>
 
                           {/* Code and Embeds */}
                           <button
                             type="button"
                             onClick={() => insertTag("code-inline")}
-                            className="w-9 h-9 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700 font-mono"
+                            className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 font-mono dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Inline Code"
                           >
                             &lt;/&gt;
@@ -1177,7 +1181,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           <button
                             type="button"
                             onClick={() => insertTag("code-block")}
-                            className="w-9 h-9 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700"
+                            className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Code Block"
                           >
                             <i className="fas fa-code"></i>
@@ -1185,7 +1189,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           <button
                             type="button"
                             onClick={() => insertTag("latex-inline")}
-                            className="w-9 h-9 hover:bg-white rounded-lg text-[10px] shadow-sm text-gray-700 font-black"
+                            className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[10px] shadow-sm text-gray-700 font-black dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Inline LaTeX"
                           >
                             fx
@@ -1193,7 +1197,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           <button
                             type="button"
                             onClick={() => insertTag("latex-block")}
-                            className="w-9 h-9 hover:bg-white rounded-lg text-[10px] shadow-sm text-gray-700 font-black"
+                            className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[10px] shadow-sm text-gray-700 font-black dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Block LaTeX"
                           >
                             Σ
@@ -1201,20 +1205,20 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           <button
                             type="button"
                             onClick={() => insertTag("iframe")}
-                            className="w-9 h-9 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700"
+                            className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Embed (iframe)"
                           >
                             <i className="fas fa-window-maximize"></i>
                           </button>
 
                           {/* Divider */}
-                          <div className="w-px h-6 bg-gray-300 self-center mx-1"></div>
+                          <div className="w-px h-5 bg-gray-300 self-center mx-1 dark:bg-gray-700"></div>
 
                           {/* Media and Links */}
                           <button
                             type="button"
                             onClick={() => insertTag("link")}
-                            className="w-9 h-9 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700"
+                            className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Link"
                           >
                             <i className="fas fa-link"></i>
@@ -1222,20 +1226,20 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           <button
                             type="button"
                             onClick={() => insertTag("img")}
-                            className="w-9 h-9 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700"
+                            className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Image"
                           >
                             <i className="fas fa-image"></i>
                           </button>
 
                           {/* Divider */}
-                          <div className="w-px h-6 bg-gray-300 self-center mx-1"></div>
+                          <div className="w-px h-5 bg-gray-300 self-center mx-1 dark:bg-gray-700"></div>
 
                           {/* Layout Elements */}
                           <button
                             type="button"
                             onClick={() => insertTag("quote")}
-                            className="w-9 h-9 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700"
+                            className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Quote"
                           >
                             <i className="fas fa-quote-left"></i>
@@ -1243,7 +1247,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           <button
                             type="button"
                             onClick={() => insertTag("list")}
-                            className="w-9 h-9 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700"
+                            className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="List"
                           >
                             <i className="fas fa-list"></i>
@@ -1251,7 +1255,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           <button
                             type="button"
                             onClick={() => insertTag("table")}
-                            className="w-9 h-9 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700"
+                            className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Table"
                           >
                             <i className="fas fa-table"></i>
@@ -1259,7 +1263,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           <button
                             type="button"
                             onClick={() => insertTag("alert")}
-                            className="w-9 h-9 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700"
+                            className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Alert Box"
                           >
                             <i className="fas fa-exclamation-triangle"></i>
@@ -1267,14 +1271,14 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           <button
                             type="button"
                             onClick={() => insertTag("divider")}
-                            className="w-9 h-9 hover:bg-white rounded-lg text-xs shadow-sm text-gray-700"
+                            className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Divider"
                           >
                             <i className="fas fa-minus"></i>
                           </button>
                         </div>
                       </div>
-                      <div className="text-xs text-gray-500 mb-4 px-2">
+                      <div className="text-xs text-gray-500 mb-4 px-2 dark:text-gray-400">
                         <p>
                           <strong>💡 Pro Tips:</strong>
                         </p>
@@ -1298,7 +1302,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       <textarea
                         ref={textareaRef}
                         placeholder={`Tell your ${formData.type} story...`}
-                        className="w-full h-[400px] px-8 py-8 bg-gray-50 border border-gray-100 rounded-[2rem] outline-none focus:bg-white focus:border-[#FFDB14] transition-all resize-none text-xl leading-relaxed text-gray-700 font-medium font-serif"
+                        className="w-full h-[400px] px-8 py-8 bg-gray-50 border border-gray-100 rounded-[2rem] outline-none focus:bg-white focus:border-[#FFDB14] transition-all resize-none text-xl leading-relaxed text-gray-700 font-medium font-serif dark:bg-gray-900 dark:border-gray-800 dark:text-gray-200 dark:focus:bg-gray-900"
                         value={formData.description}
                         onChange={(e) =>
                           setFormData((p) => ({
@@ -1311,11 +1315,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                     </div>
                   </div>
 
-                  <div className="pt-10 border-t border-gray-50 flex gap-4">
+                  <div className="pt-10 border-t border-gray-50 flex gap-4 dark:border-gray-800">
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="bg-gray-900 text-white px-14 py-6 rounded-full font-black text-sm uppercase tracking-widest hover:bg-black hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3 disabled:opacity-50 shadow-2xl"
+                      className="bg-gray-900 text-white px-10 py-4 rounded-lg font-black text-sm uppercase tracking-widest hover:bg-black hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3 disabled:opacity-50 shadow-sm dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
                     >
                       {isLoading
                         ? "WORKING..."
@@ -1332,7 +1336,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       <button
                         type="button"
                         onClick={resetForm}
-                        className="px-10 py-6 rounded-full font-black text-xs uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-all underline underline-offset-8"
+                        className="px-8 py-4 rounded-lg border border-gray-200 font-black text-xs uppercase tracking-widest text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
                       >
                         Discard Changes
                       </button>
@@ -1342,12 +1346,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               </div>
 
               {/* Preview Panel */}
-              <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
-                <div className="p-6 border-b border-gray-100">
-                  <h2 className="text-xl font-black text-gray-900">
+              <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
+                <div className="p-6 border-b border-gray-100 dark:border-gray-800">
+                  <h2 className="text-xl font-black text-gray-900 dark:text-gray-100">
                     Live Preview
                   </h2>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 mt-1 dark:text-gray-400">
                     How your {formData.type} will look
                   </p>
                 </div>
@@ -1359,16 +1363,18 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       className="w-full h-48 object-cover rounded-2xl mb-4"
                     />
                   )}
-                  <h3 className="text-xl font-black text-gray-900 mb-2">
+                  <h3 className="text-xl font-black text-gray-900 mb-2 dark:text-gray-100">
                     {formData.title || `Sample ${formData.type} title`}
                   </h3>
-                  <p className="text-sm text-gray-500 mb-3">{formData.date}</p>
+                  <p className="text-sm text-gray-500 mb-3 dark:text-gray-400">
+                    {formData.date}
+                  </p>
                   {formData.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-4">
                       {formData.tags.map((tag, index) => (
                         <span
                           key={index}
-                          className="px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-bold"
+                          className="px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-bold dark:bg-gray-800 dark:text-gray-200"
                         >
                           {tag}
                         </span>
@@ -1377,7 +1383,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   )}
                   <div
                     ref={contentPreviewRef}
-                    className="prose prose-sm max-w-none text-gray-700 rich-content"
+                    className="prose prose-sm max-w-none text-gray-700 rich-content dark:text-gray-300"
                     dangerouslySetInnerHTML={{
                       __html: sanitizeRichHtml(
                         formData.description ||
@@ -1397,11 +1403,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
         <div className="flex-1 p-6 md:p-12">
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-black text-gray-900 tracking-tighter">
+              <h2 className="text-2xl font-black text-gray-900 tracking-tighter dark:text-gray-100">
                 Manage Published Content
               </h2>
               <div className="flex gap-2">
-                <button className="px-4 py-2 bg-gray-700 text-white rounded-xl font-bold text-xs shadow-lg">
+                <button className="px-4 py-2 bg-white text-gray-700 border border-gray-200 rounded-lg font-bold text-xs shadow-sm hover:bg-gray-50 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
                   <i className="fas fa-filter mr-2"></i>All ({items.length})
                 </button>
               </div>
@@ -1411,7 +1417,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-white p-6 rounded-3xl border border-gray-100 flex items-center justify-between group hover:shadow-xl transition-all border-l-4 border-l-transparent hover:border-l-[#FFDB14]"
+                  className="bg-white p-6 rounded-3xl border border-gray-100 flex items-center justify-between group hover:shadow-xl transition-all border-l-4 border-l-transparent hover:border-l-[#FFDB14] dark:bg-gray-900 dark:border-gray-800"
                 >
                   <div className="flex items-center gap-6 min-w-0 flex-1">
                     <img
@@ -1420,10 +1426,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       alt=""
                     />
                     <div className="min-w-0 flex-1">
-                      <h4 className="font-black text-lg text-gray-900 truncate">
+                      <h4 className="font-black text-lg text-gray-900 truncate dark:text-gray-100">
                         {item.title}
                       </h4>
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1 dark:text-gray-500">
                         {item.date} •{" "}
                         <span
                           className={`${item.type === "project" ? "text-blue-500" : "text-green-500"}`}
@@ -1437,13 +1443,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           {item.tags.slice(0, 3).map((tag, index) => (
                             <span
                               key={index}
-                              className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] rounded-lg font-bold"
+                              className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] rounded-lg font-bold dark:bg-gray-800 dark:text-gray-300"
                             >
                               {tag}
                             </span>
                           ))}
                           {item.tags.length > 3 && (
-                            <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] rounded-lg font-bold">
+                            <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] rounded-lg font-bold dark:bg-gray-800 dark:text-gray-300">
                               +{item.tags.length - 3}
                             </span>
                           )}
@@ -1451,17 +1457,17 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-3 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => handleEdit(item)}
-                      className="w-12 h-12 rounded-2xl bg-blue-500 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg"
+                      className="w-10 h-10 rounded-lg bg-white border border-blue-200 text-blue-600 flex items-center justify-center hover:bg-blue-50 transition-colors shadow-sm dark:bg-gray-900 dark:text-blue-300 dark:border-blue-700 dark:hover:bg-gray-800"
                       title="Edit"
                     >
                       <i className="fas fa-edit"></i>
                     </button>
                     <button
                       onClick={() => handleDelete(item.id)}
-                      className="w-12 h-12 rounded-2xl bg-red-500 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg"
+                      className="w-10 h-10 rounded-lg bg-white border border-red-200 text-red-600 flex items-center justify-center hover:bg-red-50 transition-colors shadow-sm dark:bg-gray-900 dark:text-red-300 dark:border-red-700 dark:hover:bg-gray-800"
                       title="Delete"
                     >
                       <i className="fas fa-trash-alt"></i>
@@ -1470,7 +1476,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                 </div>
               ))}
               {items.length === 0 && (
-                <div className="p-20 text-center text-gray-400 font-bold uppercase tracking-widest bg-white rounded-[2.5rem] border border-dashed border-gray-200">
+                <div className="p-20 text-center text-gray-400 font-bold uppercase tracking-widest bg-white rounded-[2.5rem] border border-dashed border-gray-200 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-500">
                   <i className="fas fa-ghost text-4xl mb-4 opacity-20"></i>
                   <p>No content published yet.</p>
                 </div>
@@ -1483,17 +1489,18 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       {activeTab === "portfolio-config" && (
         <div className="flex-1 p-6 md:p-12">
           <div className="max-w-7xl mx-auto space-y-6">
-            <h2 className="text-2xl font-black text-gray-900 tracking-tighter">
+            <h2 className="text-2xl font-black text-gray-900 tracking-tighter dark:text-gray-100">
               Portfolio Config
             </h2>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 space-y-4">
-                <h3 className="text-lg font-black text-gray-900">
+              <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 space-y-4 dark:bg-gray-900 dark:border-gray-800">
+                <h3 className="text-lg font-black text-gray-900 dark:text-gray-100">
                   Grind Usernames (Realtime Sync)
                 </h3>
-                <p className="text-sm text-gray-500">
-                  Use platform usernames so the Grind tab auto-syncs in realtime.
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Use platform usernames so the Grind tab auto-syncs in
+                  realtime.
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -1505,18 +1512,20 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                     { key: "github", label: "GitHub" },
                   ].map((field) => (
                     <div key={field.key}>
-                      <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">
+                      <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
                         {field.label}
                       </label>
                       <input
-                        value={usernameForm[field.key as keyof typeof usernameForm]}
+                        value={
+                          usernameForm[field.key as keyof typeof usernameForm]
+                        }
                         onChange={(e) =>
                           setUsernameForm((prev) => ({
                             ...prev,
                             [field.key]: e.target.value,
                           }))
                         }
-                        className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14]"
+                        className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100 dark:focus:bg-gray-900"
                         placeholder={`Enter ${field.label} username`}
                       />
                     </div>
@@ -1526,35 +1535,36 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                 <button
                   type="button"
                   onClick={saveUsernames}
-                  className="bg-[#FFDB14] text-gray-900 px-5 py-3 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-yellow-400 transition-all shadow-lg"
+                  className="bg-[#FFDB14] text-gray-900 px-5 py-3 rounded-lg text-xs font-black uppercase tracking-wider hover:bg-yellow-400 transition-all shadow-sm"
                 >
                   Save Usernames
                 </button>
               </div>
 
-              <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 space-y-4">
-                <h3 className="text-lg font-black text-gray-900">
+              <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 space-y-4 dark:bg-gray-900 dark:border-gray-800">
+                <h3 className="text-lg font-black text-gray-900 dark:text-gray-100">
                   Tab Buttons Visibility
                 </h3>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   Hide or unhide portfolio tab buttons from the dashboard.
                 </p>
 
                 <div className="space-y-2">
                   {TAB_ORDER.map((tab) => {
-                    const enabled = portfolioSettings?.tabVisibility?.[tab] ?? true;
+                    const enabled =
+                      portfolioSettings?.tabVisibility?.[tab] ?? true;
                     return (
                       <button
                         key={tab}
                         type="button"
                         onClick={() => toggleTabVisibility(tab)}
-                        className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 hover:bg-white flex items-center justify-between"
+                        className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-100 hover:bg-white flex items-center justify-between dark:bg-gray-900 dark:border-gray-700 dark:hover:bg-gray-800"
                       >
-                        <span className="text-sm font-bold capitalize text-gray-900">
+                        <span className="text-sm font-bold capitalize text-gray-900 dark:text-gray-100">
                           {tab}
                         </span>
                         <span
-                          className={`text-xs font-black px-3 py-1 rounded-full ${enabled ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+                          className={`text-xs font-black px-3 py-1 rounded-full ${enabled ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-200" : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-200"}`}
                         >
                           {enabled ? "Visible" : "Hidden"}
                         </span>
@@ -1565,53 +1575,54 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 space-y-4">
-              <h3 className="text-lg font-black text-gray-900">
+            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 space-y-4 dark:bg-gray-900 dark:border-gray-800">
+              <h3 className="text-lg font-black text-gray-900 dark:text-gray-100">
                 Grind and Skillset Content Editor
               </h3>
-              <p className="text-sm text-gray-500">
-                Edit JSON and save. This updates Grind cards/stats and Skillset content in realtime.
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Edit JSON and save. This updates Grind cards/stats and Skillset
+                content in realtime.
               </p>
 
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">
+                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
                     Grind Cards JSON
                   </label>
                   <textarea
                     value={grindCardsEditor}
                     onChange={(e) => setGrindCardsEditor(e.target.value)}
-                    className="w-full h-56 p-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] font-mono text-xs"
+                    className="w-full h-56 p-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] font-mono text-xs dark:bg-gray-900 dark:border-gray-800 dark:text-gray-200 dark:focus:bg-gray-900"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">
+                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
                     Grind Ratings JSON
                   </label>
                   <textarea
                     value={grindRatingsEditor}
                     onChange={(e) => setGrindRatingsEditor(e.target.value)}
-                    className="w-full h-56 p-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] font-mono text-xs"
+                    className="w-full h-56 p-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] font-mono text-xs dark:bg-gray-900 dark:border-gray-800 dark:text-gray-200 dark:focus:bg-gray-900"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">
+                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
                     GitHub Stats JSON
                   </label>
                   <textarea
                     value={grindGithubEditor}
                     onChange={(e) => setGrindGithubEditor(e.target.value)}
-                    className="w-full h-56 p-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] font-mono text-xs"
+                    className="w-full h-56 p-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] font-mono text-xs dark:bg-gray-900 dark:border-gray-800 dark:text-gray-200 dark:focus:bg-gray-900"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">
+                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
                     Skillset Groups JSON
                   </label>
                   <textarea
                     value={skillsetEditor}
                     onChange={(e) => setSkillsetEditor(e.target.value)}
-                    className="w-full h-56 p-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] font-mono text-xs"
+                    className="w-full h-56 p-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] font-mono text-xs dark:bg-gray-900 dark:border-gray-800 dark:text-gray-200 dark:focus:bg-gray-900"
                   />
                 </div>
               </div>
@@ -1619,7 +1630,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               <button
                 type="button"
                 onClick={saveJsonEditors}
-                className="bg-gray-900 text-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-black transition-all shadow-lg"
+                className="bg-gray-900 text-white px-6 py-3 rounded-lg text-xs font-black uppercase tracking-wider hover:bg-black transition-all shadow-sm dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
               >
                 Save Grind + Skillset Content
               </button>
@@ -1633,38 +1644,38 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
         <div className="flex-1 p-6 md:p-12">
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-black text-gray-900 tracking-tighter">
+              <h2 className="text-2xl font-black text-gray-900 tracking-tighter dark:text-gray-100">
                 Portfolio Activity Logs
               </h2>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-gray-500 dark:text-gray-400">
                 Total activities: {logs.length}
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-100">
+                  <thead className="bg-gray-50 border-b border-gray-100 dark:bg-gray-900/60 dark:border-gray-800">
                     <tr>
-                      <th className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider dark:text-gray-400">
                         Action
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider dark:text-gray-400">
                         Entity
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider dark:text-gray-400">
                         Title
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider dark:text-gray-400">
                         Timestamp
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                     {logs.map((log) => (
                       <tr
                         key={log.id}
-                        className="hover:bg-gray-50 transition-colors"
+                        className="hover:bg-gray-50 transition-colors dark:hover:bg-gray-900/70"
                       >
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
@@ -1689,17 +1700,17 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm font-bold text-gray-900 capitalize">
+                          <span className="text-sm font-bold text-gray-900 capitalize dark:text-gray-100">
                             {log.entity}
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-sm text-gray-700 truncate max-w-xs block">
+                          <span className="text-sm text-gray-700 truncate max-w-xs block dark:text-gray-300">
                             {log.entityTitle || "N/A"}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm text-gray-500">
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
                             {formatTimestamp(log.timestamp)}
                           </span>
                         </td>
@@ -1708,7 +1719,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   </tbody>
                 </table>
                 {logs.length === 0 && (
-                  <div className="p-20 text-center text-gray-400">
+                  <div className="p-20 text-center text-gray-400 dark:text-gray-500">
                     <i className="fas fa-history text-4xl mb-4 opacity-20"></i>
                     <p className="font-bold">No activity logs yet</p>
                     <p className="text-xs">

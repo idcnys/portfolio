@@ -4,7 +4,11 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/lib/context/ThemeContext";
 
-export default function ThemeToggle() {
+interface ThemeToggleProps {
+  className?: string;
+}
+
+export default function ThemeToggle({ className }: ThemeToggleProps) {
   const { isDarkMode, toggleTheme, isTransitioning } = useTheme();
 
   const handleToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -31,7 +35,10 @@ export default function ThemeToggle() {
         scale: 1,
         transition: { delay: 0.5, duration: 0.4, ease: "backOut" },
       }}
-      className={`absolute top-4 right-4 w-9 h-9 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors z-10 shadow-sm ${
+      className={`${
+        className ??
+        "absolute top-4 right-4 w-9 h-9 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+      } flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors z-10 shadow-sm ${
         isTransitioning ? "opacity-50 cursor-not-allowed" : ""
       }`}
     >
