@@ -95,6 +95,7 @@ export interface PortfolioSettings {
   grindGithubStats: GrindStatRow[];
   skillsetGroups: SkillsetGroup[];
   tabVisibility: TabVisibilityConfig;
+  githubToken?: string;
 }
 
 export type DashboardTab =
@@ -102,6 +103,7 @@ export type DashboardTab =
   | "publish-project"
   | "publish-activity"
   | "manage-content"
+  | "codespace"
   | "portfolio-config"
   | "logs"
   | "logout";

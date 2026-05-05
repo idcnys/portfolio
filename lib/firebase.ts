@@ -26,6 +26,7 @@ const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);
 
 const defaultPortfolioSettings: PortfolioSettings = {
+  githubToken: "",
   grindUsernames: {
     codeforces: "",
     cses: "",
@@ -241,6 +242,7 @@ const mergePortfolioSettings = (incoming: Partial<PortfolioSettings> | null | un
   return {
     ...defaultPortfolioSettings,
     ...incoming,
+    githubToken: incoming?.githubToken ?? defaultPortfolioSettings.githubToken,
     grindUsernames: {
       ...defaultPortfolioSettings.grindUsernames,
       ...(incoming?.grindUsernames || {}),

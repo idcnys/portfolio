@@ -3,6 +3,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import CodeMirror from "@uiw/react-codemirror";
+import { javascript } from "@codemirror/lang-javascript";
+import { oneDark } from "@codemirror/theme-one-dark";
 import {
   ContentItem,
   Note,
@@ -30,7 +33,7 @@ import {
   sanitizePlainText,
   sanitizeRichHtml,
 } from "../../../lib/sanitize";
-import { ThemeProvider } from "../../../lib/context/ThemeContext";
+import { ThemeProvider, useTheme } from "../../../lib/context/ThemeContext";
 import ThemeToggle from "../../../components/client/ThemeToggle";
 
 interface DashboardProps {
@@ -126,6 +129,34 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   const [grindRatingsEditor, setGrindRatingsEditor] = useState("[]");
   const [grindGithubEditor, setGrindGithubEditor] = useState("[]");
   const [skillsetEditor, setSkillsetEditor] = useState("[]");
+  const { isDarkMode } = useTheme();
+
+  const [githubTokenInput, setGithubTokenInput] = useState("");
+  const [codespaceCode, setCodespaceCode] = useState(
+    "// Start coding...\n",
+  );
+  const [githubUser, setGithubUser] = useState<{ login: string } | null>(null);
+  const [repoList, setRepoList] = useState<
+    Array<{ id: number; name: string; full_name: string; private: boolean }>
+  >([]);
+  const [selectedRepo, setSelectedRepo] = useState("");
+  const [repoEntries, setRepoEntries] = useState<
+    Array<{
+      name: string;
+      path: string;
+      type: "file" | "dir";
+    }>
+  >([]);
+  const [repoPath, setRepoPath] = useState("");
+  const [repoNameInput, setRepoNameInput] = useState("");
+  const [repoVisibility, setRepoVisibility] = useState<
+    "public" | "private"
+  >("public");
+  const [filePathInput, setFilePathInput] = useState("README.md");
+  const [commitMessage, setCommitMessage] = useState(
+    "Update via Codespace",
+  );
+  const [codespaceBusy, setCodespaceBusy] = useState(false);
 
   useEffect(() => {
     const unsubscribeContent = subscribeToContent(setItems);
@@ -159,6 +190,30 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     renderLatex(contentPreviewRef.current);
   }, [activeTab, formData.description]);
 
+  useEffect(() => {
+    const savedToken = portfolioSettings?.githubToken?.trim();
+    if (!savedToken) {
+      setGithubUser(null);
+      return;
+    }
+
+    fetchGithubUser(savedToken).catch(() => {
+      setGithubUser(null);
+    });
+  }, [portfolioSettings?.githubToken]);
+
+  useEffect(() => {
+    if (!selectedRepo) {
+      setRepoEntries([]);
+      setRepoPath("");
+      return;
+    }
+
+    loadRepoEntries("").catch(() => {
+      setRepoEntries([]);
+    });
+  }, [selectedRepo]);
+
   const tabs = [
     {
       id: "notepad" as DashboardTab,
@@ -179,6 +234,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       id: "manage-content" as DashboardTab,
       label: "Manage Content",
       icon: "fas fa-edit",
+    },
+    {
+      id: "codespace" as DashboardTab,
+      label: "Codespace",
+      icon: "fas fa-terminal",
     },
     {
       id: "portfolio-config" as DashboardTab,
@@ -619,6 +679,293 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       });
     }
     setTimeout(() => setMessage({ text: "", type: "" }), 3000);
+  };
+
+  const getGithubToken = () =>
+    portfolioSettings?.githubToken?.trim() || githubTokenInput.trim();
+
+  const encodeBase64 = (value: string) =>
+    typeof window === "undefined"
+      ? ""
+      : btoa(unescape(encodeURIComponent(value)));
+
+  const decodeBase64 = (value: string) =>
+    typeof window === "undefined"
+      ? ""
+      : decodeURIComponent(escape(atob(value)));
+
+  const safeRepoPath = (path: string) =>
+    path
+      .split("/")
+      .map((segment) => encodeURIComponent(segment))
+      .join("/");
+
+  const fetchGithubUser = async (token: string) => {
+    const response = await fetch("https://api.github.com/user", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/vnd.github+json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch GitHub user");
+    }
+
+    const data = (await response.json()) as { login: string };
+    setGithubUser({ login: data.login });
+    return data.login;
+  };
+
+  const handleSaveGithubToken = async () => {
+    const token = githubTokenInput.trim();
+    if (!token) {
+      setMessage({ text: "Enter a GitHub token first.", type: "error" });
+      return;
+    }
+
+    await updatePortfolioSettings({ githubToken: token });
+    setGithubTokenInput("");
+    setMessage({ text: "GitHub token saved.", type: "success" });
+  };
+
+  const loadRepoEntries = async (path: string) => {
+    const token = getGithubToken();
+    if (!token || !selectedRepo) {
+      return;
+    }
+
+    const normalizedPath = path.trim();
+    setCodespaceBusy(true);
+    try {
+      const response = await fetch(
+        `https://api.github.com/repos/${selectedRepo}/contents/${safeRepoPath(normalizedPath)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/vnd.github+json",
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load repo contents");
+      }
+
+      const data = (await response.json()) as Array<{
+        name: string;
+        path: string;
+        type: "file" | "dir";
+      }>;
+
+      setRepoEntries(data);
+      setRepoPath(normalizedPath);
+    } catch (error) {
+      setMessage({ text: "Failed to load repo files.", type: "error" });
+    } finally {
+      setCodespaceBusy(false);
+    }
+  };
+
+  const loadFileByPath = async (path: string, notify = true) => {
+    const token = getGithubToken();
+    if (!token || !selectedRepo) {
+      setMessage({ text: "Select a repo and token first.", type: "error" });
+      return;
+    }
+
+    const normalizedPath = path.trim();
+    if (!normalizedPath) {
+      setMessage({ text: "Enter a file path.", type: "error" });
+      return;
+    }
+
+    setCodespaceBusy(true);
+    try {
+      const response = await fetch(
+        `https://api.github.com/repos/${selectedRepo}/contents/${safeRepoPath(normalizedPath)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/vnd.github+json",
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load file");
+      }
+
+      const data = (await response.json()) as { content?: string };
+      if (data.content) {
+        setCodespaceCode(decodeBase64(data.content));
+        setFilePathInput(normalizedPath);
+        if (notify) {
+          setMessage({ text: "File loaded.", type: "success" });
+        }
+      }
+    } catch (error) {
+      setMessage({ text: "Failed to load file.", type: "error" });
+    } finally {
+      setCodespaceBusy(false);
+    }
+  };
+
+  const handleClearGithubToken = async () => {
+    await updatePortfolioSettings({ githubToken: "" });
+    setGithubUser(null);
+    setRepoList([]);
+    setSelectedRepo("");
+    setMessage({ text: "GitHub token cleared.", type: "success" });
+  };
+
+  const handleLoadRepos = async () => {
+    const token = getGithubToken();
+    if (!token) {
+      setMessage({ text: "Add a GitHub token to load repos.", type: "error" });
+      return;
+    }
+
+    setCodespaceBusy(true);
+    try {
+      const response = await fetch(
+        "https://api.github.com/user/repos?per_page=100&sort=updated",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/vnd.github+json",
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load repos");
+      }
+
+      const data = (await response.json()) as Array<{
+        id: number;
+        name: string;
+        full_name: string;
+        private: boolean;
+      }>;
+      setRepoList(data);
+      if (!selectedRepo && data.length > 0) {
+        setSelectedRepo(data[0].full_name);
+      }
+      setMessage({ text: "Repos loaded.", type: "success" });
+    } catch (error) {
+      setMessage({ text: "Failed to load repos.", type: "error" });
+    } finally {
+      setCodespaceBusy(false);
+    }
+  };
+
+  const handleCreateRepo = async () => {
+    const token = getGithubToken();
+    if (!token) {
+      setMessage({ text: "Add a GitHub token first.", type: "error" });
+      return;
+    }
+
+    const name = repoNameInput.trim();
+    if (!name) {
+      setMessage({ text: "Enter a repository name.", type: "error" });
+      return;
+    }
+
+    setCodespaceBusy(true);
+    try {
+      const response = await fetch("https://api.github.com/user/repos", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/vnd.github+json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          private: repoVisibility === "private",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create repo");
+      }
+
+      const data = (await response.json()) as { full_name: string };
+      setRepoNameInput("");
+      setSelectedRepo(data.full_name);
+      await handleLoadRepos();
+      setMessage({ text: "Repository created.", type: "success" });
+    } catch (error) {
+      setMessage({ text: "Failed to create repo.", type: "error" });
+    } finally {
+      setCodespaceBusy(false);
+    }
+  };
+
+  const handleLoadFile = async () => {
+    await loadFileByPath(filePathInput.trim());
+  };
+
+  const handleSaveFile = async () => {
+    const token = getGithubToken();
+    if (!token || !selectedRepo) {
+      setMessage({ text: "Select a repo and token first.", type: "error" });
+      return;
+    }
+
+    const path = filePathInput.trim();
+    if (!path) {
+      setMessage({ text: "Enter a file path.", type: "error" });
+      return;
+    }
+
+    setCodespaceBusy(true);
+    try {
+      let sha: string | undefined;
+      const existingResponse = await fetch(
+        `https://api.github.com/repos/${selectedRepo}/contents/${safeRepoPath(path)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/vnd.github+json",
+          },
+        },
+      );
+
+      if (existingResponse.ok) {
+        const existingData = (await existingResponse.json()) as { sha?: string };
+        sha = existingData.sha;
+      }
+
+      const response = await fetch(
+        `https://api.github.com/repos/${selectedRepo}/contents/${safeRepoPath(path)}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/vnd.github+json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: commitMessage.trim() || "Update via Codespace",
+            content: encodeBase64(codespaceCode),
+            ...(sha ? { sha } : {}),
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to save file");
+      }
+
+      setMessage({ text: "File saved to GitHub.", type: "success" });
+    } catch (error) {
+      setMessage({ text: "Failed to save file.", type: "error" });
+    } finally {
+      setCodespaceBusy(false);
+    }
   };
 
   return (
@@ -1481,6 +1828,279 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   <p>No content published yet.</p>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "codespace" && (
+        <div className="flex-1 p-6 md:p-12">
+          <div className="max-w-7xl mx-auto space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h2 className="text-2xl font-black text-gray-900 tracking-tighter dark:text-gray-100">
+                  Codespace
+                </h2>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  GitHub-backed editor for managing repos and files.
+                </p>
+              </div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                {githubUser
+                  ? `Connected as ${githubUser.login}`
+                  : "GitHub not connected"}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+              <div className="xl:col-span-1 bg-white rounded-3xl shadow-lg border border-gray-100 p-6 space-y-6 dark:bg-gray-900 dark:border-gray-800">
+                <div>
+                  <h3 className="text-lg font-black text-gray-900 dark:text-gray-100">
+                    GitHub Access
+                  </h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Store a GitHub token to create repos and push code.
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] dark:text-gray-500">
+                    Personal Access Token
+                  </label>
+                  <input
+                    type="password"
+                    value={githubTokenInput}
+                    onChange={(event) => setGithubTokenInput(event.target.value)}
+                    placeholder={
+                      portfolioSettings?.githubToken
+                        ? "Token saved"
+                        : "ghp_..."
+                    }
+                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] text-sm text-gray-900 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100 dark:focus:bg-gray-900"
+                  />
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={handleSaveGithubToken}
+                      disabled={codespaceBusy}
+                      className="bg-[#FFDB14] text-gray-900 px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider hover:bg-yellow-400 transition-all shadow-sm disabled:opacity-50"
+                    >
+                      Save Token
+                    </button>
+                    {portfolioSettings?.githubToken && (
+                      <button
+                        type="button"
+                        onClick={handleClearGithubToken}
+                        disabled={codespaceBusy}
+                        className="px-4 py-2 rounded-lg border border-gray-200 text-xs font-black uppercase tracking-wider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all shadow-sm disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                      >
+                        Clear Token
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-gray-100 space-y-4 dark:border-gray-800">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-black text-gray-900 dark:text-gray-100">
+                      Repositories
+                    </h4>
+                    <button
+                      type="button"
+                      onClick={handleLoadRepos}
+                      disabled={codespaceBusy || !getGithubToken()}
+                      className="px-3 py-1 rounded-md border border-gray-200 text-[10px] font-black uppercase tracking-wider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all shadow-sm disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                    >
+                      Load Repos
+                    </button>
+                  </div>
+
+                  <select
+                    value={selectedRepo}
+                    onChange={(event) => setSelectedRepo(event.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 text-sm text-gray-900 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100"
+                  >
+                    <option value="">Select a repo</option>
+                    {repoList.map((repo) => (
+                      <option key={repo.id} value={repo.full_name}>
+                        {repo.full_name} {repo.private ? "(private)" : ""}
+                      </option>
+                    ))}
+                  </select>
+
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] dark:text-gray-500">
+                      Create Repository
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={repoNameInput}
+                        onChange={(event) => setRepoNameInput(event.target.value)}
+                        placeholder="new-repo"
+                        className="flex-1 px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 text-sm text-gray-900 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100"
+                      />
+                      <select
+                        value={repoVisibility}
+                        onChange={(event) =>
+                          setRepoVisibility(
+                            event.target.value as "public" | "private",
+                          )
+                        }
+                        className="px-2 py-2 rounded-lg bg-gray-50 border border-gray-100 text-xs font-bold text-gray-600 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-200"
+                      >
+                        <option value="public">Public</option>
+                        <option value="private">Private</option>
+                      </select>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleCreateRepo}
+                      disabled={codespaceBusy || !getGithubToken()}
+                      className="w-full bg-gray-900 text-white px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider hover:bg-black transition-all shadow-sm disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+                    >
+                      Create Repo
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="xl:col-span-2 bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
+                <div className="p-4 border-b border-gray-100 dark:border-gray-800">
+                  <div className="grid grid-cols-1 md:grid-cols-[1.1fr_1.2fr_auto] gap-3 items-end">
+                    <div>
+                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-2 dark:text-gray-500">
+                        File Path
+                      </label>
+                      <input
+                        type="text"
+                        value={filePathInput}
+                        onChange={(event) => setFilePathInput(event.target.value)}
+                        placeholder="README.md"
+                        className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 text-sm text-gray-900 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-2 dark:text-gray-500">
+                        Commit Message
+                      </label>
+                      <input
+                        type="text"
+                        value={commitMessage}
+                        onChange={(event) => setCommitMessage(event.target.value)}
+                        className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 text-sm text-gray-900 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={handleLoadFile}
+                        disabled={codespaceBusy || !getGithubToken() || !selectedRepo}
+                        className="px-4 py-2 rounded-lg border border-gray-200 text-xs font-black uppercase tracking-wider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all shadow-sm disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                      >
+                        Load File
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleSaveFile}
+                        disabled={codespaceBusy || !getGithubToken() || !selectedRepo}
+                        className="bg-[#FFDB14] text-gray-900 px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider hover:bg-yellow-400 transition-all shadow-sm disabled:opacity-50"
+                      >
+                        Save File
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-4 p-4">
+                  <div className="bg-gray-50 border border-gray-100 rounded-2xl p-3 space-y-3 dark:bg-gray-900 dark:border-gray-800">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-[0.3em] text-gray-400 dark:text-gray-500">
+                          Files
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {repoPath || "/"}
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => loadRepoEntries("")}
+                          disabled={codespaceBusy || !selectedRepo}
+                          className="px-2 py-1 rounded-md border border-gray-200 text-[10px] font-black uppercase tracking-wider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                        >
+                          Root
+                        </button>
+                        {repoPath && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              loadRepoEntries(
+                                repoPath.split("/").slice(0, -1).join("/"),
+                              )
+                            }
+                            disabled={codespaceBusy}
+                            className="px-2 py-1 rounded-md border border-gray-200 text-[10px] font-black uppercase tracking-wider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                          >
+                            Up
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="max-h-[420px] overflow-y-auto space-y-1">
+                      {repoEntries
+                        .slice()
+                        .sort((a, b) =>
+                          a.type === b.type
+                            ? a.name.localeCompare(b.name)
+                            : a.type === "dir"
+                              ? -1
+                              : 1,
+                        )
+                        .map((entry) => (
+                          <button
+                            key={entry.path}
+                            type="button"
+                            onClick={() => {
+                              if (entry.type === "dir") {
+                                loadRepoEntries(entry.path);
+                              } else {
+                                loadFileByPath(entry.path, true);
+                              }
+                            }}
+                            className="w-full flex items-center gap-2 text-left px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-white transition-all dark:text-gray-200 dark:hover:bg-gray-800"
+                          >
+                            <i
+                              className={`fas ${
+                                entry.type === "dir" ? "fa-folder" : "fa-file"
+                              } text-[10px] text-gray-400 dark:text-gray-500`}
+                            ></i>
+                            <span className="truncate">{entry.name}</span>
+                          </button>
+                        ))}
+                      {repoEntries.length === 0 && (
+                        <div className="text-xs text-gray-400 dark:text-gray-500">
+                          {selectedRepo
+                            ? "No files yet. Create a file to start."
+                            : "Select a repo to browse files."}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <CodeMirror
+                      value={codespaceCode}
+                      height="520px"
+                      extensions={[javascript({ typescript: true })]}
+                      theme={isDarkMode ? oneDark : "light"}
+                      onChange={(value) => setCodespaceCode(value)}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
