@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminSessionToken } from "@/lib/security/session";
 
-export const runtime = "edge";
+export const runtime = "experimental-edge";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
