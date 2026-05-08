@@ -2,7 +2,7 @@
 
 A modern, interactive personal portfolio built with **Next.js 15**, **Firebase**, and **Cloudflare Workers**. Features a CMS-enabled admin dashboard, real-time content updates, secure authentication, and advanced animations.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
 - [Tech Stack](#tech-stack)
@@ -17,7 +17,7 @@ A modern, interactive personal portfolio built with **Next.js 15**, **Firebase**
 
 ---
 
-## 🎯 Overview
+## Overview
 
 This is a full-stack portfolio application with:
 - **Public-facing portfolio** showcasing projects and activities
@@ -29,7 +29,7 @@ This is a full-stack portfolio application with:
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 - **Framework:** Next.js 15 (React 19)
@@ -61,7 +61,7 @@ This is a full-stack portfolio application with:
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ### System Overview
 
@@ -212,38 +212,38 @@ This is a full-stack portfolio application with:
 
 ---
 
-## ✨ Features
+## Features
 
 ### Public Portfolio
-- 📱 **Responsive Design:** Mobile-first, works on all devices
-- 🎨 **Dark/Light Mode:** Theme preference persisted with smooth transitions
-- ⚡ **Real-time Updates:** Content changes instantly across all viewers
-- 🎬 **Animations:** Smooth Framer Motion transitions & appearing text effects
-- 📊 **Project Showcase:** Display projects with descriptions, links, engagement metrics
-- 📈 **Activity Timeline:** Show recent activities, skills, achievements
-- 📞 **Contact Integration:** Cal.com embedded scheduling
-- 🔒 **Security Headers:** CSP, HSTS, X-Frame-Options, etc.
+- **Responsive Design:** Mobile-first, works on all devices
+- **Dark/Light Mode:** Theme preference persisted with smooth transitions
+- **Real-time Updates:** Content changes instantly across all viewers
+- **Animations:** Smooth Framer Motion transitions & appearing text effects
+- **Project Showcase:** Display projects with descriptions, links, engagement metrics
+- **Activity Timeline:** Show recent activities, skills, achievements
+- **Contact Integration:** Cal.com embedded scheduling
+- **Security Headers:** CSP, HSTS, X-Frame-Options, etc.
 
 ### Admin Dashboard
-- 🔐 **Secure Login:** Math CAPTCHA + JWT authentication
-- 📝 **Content Management:** Create/edit/delete projects and activities
-- ⚙️ **Settings Management:** Update theme, hero text, social links
-- 📋 **Activity Logs:** View audit trail of all admin actions
-- 🔄 **Real-time Sync:** Changes propagate instantly
-- 📊 **Analytics:** Vercel Analytics integration
+- **Secure Login:** Math CAPTCHA + JWT authentication
+- **Content Management:** Create/edit/delete projects and activities
+- **Settings Management:** Update theme, hero text, social links
+- **Activity Logs:** View audit trail of all admin actions
+- **Real-time Sync:** Changes propagate instantly
+- **Analytics:** Vercel Analytics integration
 
 ### Technical Features
-- 🚀 **Edge Deployment:** Cloudflare Workers for sub-100ms global latency
-- 🔒 **Secure Authentication:** JWT tokens, HttpOnly cookies, CAPTCHA
-- 🌍 **Global Database:** Firebase Realtime DB with low-latency updates
-- 💻 **TypeScript:** Full type safety across the stack
-- 🎯 **SEO Optimized:** Server-side rendering, meta tags, structured data
-- 📈 **Analytics:** Vercel Analytics for user insights
-- ⚡ **Performance:** Code splitting, image optimization, caching
+- **Edge Deployment:** Cloudflare Workers for sub-100ms global latency
+- **Secure Authentication:** JWT tokens, HttpOnly cookies, CAPTCHA
+- **Global Database:** Firebase Realtime DB with low-latency updates
+- **TypeScript:** Full type safety across the stack
+- **SEO Optimized:** Server-side rendering, meta tags, structured data
+- **Analytics:** Vercel Analytics for user insights
+- **Performance:** Code splitting, image optimization, caching
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 .
@@ -311,7 +311,7 @@ This is a full-stack portfolio application with:
 
 ---
 
-## 🔄 Data Flow
+## Data Flow
 
 ### 1. **Initial Page Load (Public)**
 
@@ -402,7 +402,7 @@ On next visit:
 
 ---
 
-## 🔐 Security
+## Security
 
 ### Authentication
 - **Math CAPTCHA:** Prevents automated attacks (5-minute JWT)
@@ -430,7 +430,7 @@ On next visit:
 
 ---
 
-## 📦 Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
 - Node.js v22+ (or v20.19.4 with engine-strict warning)
@@ -521,7 +521,7 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## 💻 Development
+## Development
 
 ### Available Scripts
 
@@ -623,7 +623,7 @@ async function updateProject(projectId: string, data: any) {
 
 ---
 
-## 🚀 Deployment
+## Deployment
 
 ### Deploy to Cloudflare Workers
 
