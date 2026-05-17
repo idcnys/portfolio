@@ -450,16 +450,16 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       if (url)
         replacement = `<a href="${url}" class="text-blue-500 font-bold underline" target="_blank">${selectedText || "Link Text"}</a>`;
     } else if (tag === "h2") {
-      replacement = `<h2 class="text-2xl font-extrabold mt-8 mb-3 text-gray-900 dark:text-white">${selectedText || "Subheading"}</h2>`;
+      replacement = `<h2 class="text-2xl font-extrabold text-gray-900 dark:text-white">${selectedText || "Subheading"}</h2>`;
     } else if (tag === "h3") {
-      replacement = `<h3 class="text-xl font-bold mt-6 mb-2 text-gray-900 dark:text-white">${selectedText || "Heading 3"}</h3>`;
+      replacement = `<h3 class="text-xl font-bold text-gray-900 dark:text-white">${selectedText || "Heading 3"}</h3>`;
     } else if (tag === "code-inline") {
-      replacement = `<code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded-md text-sm font-mono text-gray-700 dark:text-gray-200">${selectedText || "code"}</code>`;
+      replacement = `<code class="bg-gray-100 dark:bg-gray-800 rounded-md text-sm font-mono text-gray-700 dark:text-gray-200">${selectedText || "code"}</code>`;
     } else if (tag === "code-block") {
       const language = prompt(
         "Enter programming language (e.g., javascript, python, html):",
       );
-      replacement = `<pre class="bg-gray-900 text-gray-100 p-4 rounded-xl overflow-x-auto my-5 shadow-md"><code class="language-${language || "text"}">${selectedText || "// Your code here\nconsole.log('Hello World!');"}</code></pre>`;
+      replacement = `<pre class="bg-gray-900 text-gray-100 rounded-xl overflow-x-auto shadow-md"><code class="language-${language || "text"}">${selectedText || "// Your code here\nconsole.log('Hello World!');"}</code></pre>`;
     } else if (tag === "iframe") {
       const url = prompt("Enter iframe URL (YouTube, CodePen, etc.):");
       if (url) {
@@ -467,19 +467,19 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
         const height =
           prompt("Enter height (or press Enter for 400px):") || "400";
         if (width) {
-          replacement = `<iframe src="${url}" width="${width}" height="${height}" frameborder="0" allowfullscreen class="my-6 rounded-xl shadow-md"></iframe>`;
+          replacement = `<iframe src="${url}" width="${width}" height="${height}" frameborder="0" allowfullscreen class="rounded-xl shadow-md"></iframe>`;
         } else {
-          replacement = `<div class="relative w-full my-6"><iframe src="${url}" class="w-full rounded-xl shadow-md" style="height: ${height}px;" frameborder="0" allowfullscreen></iframe></div>`;
+          replacement = `<div class="relative w-full"><iframe src="${url}" class="w-full rounded-xl shadow-md" style="height: ${height}px;" frameborder="0" allowfullscreen></iframe></div>`;
         }
       }
     } else if (tag === "quote") {
-      replacement = `<blockquote class="border-l-2 border-gray-300 dark:border-gray-600 pl-4 py-3 my-5 bg-gray-50 dark:bg-gray-900/30 italic text-gray-700 dark:text-gray-300 rounded-r-lg">${selectedText || "Insert your quote here"}</blockquote>`;
+      replacement = `<blockquote class="border-l-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/30 italic text-gray-700 dark:text-gray-300 rounded-r-lg">${selectedText || "Insert your quote here"}</blockquote>`;
     } else if (tag === "latex-inline") {
       replacement = `\\(${selectedText || "a^2+b^2=c^2"}\\)`;
     } else if (tag === "latex-block") {
       replacement = `\\[\n${selectedText || "\\int_0^1 x^2\\,dx = \\frac{1}{3}"}\n\\]`;
     } else if (tag === "list") {
-      replacement = `<ul class="list-disc pl-6 my-4 space-y-1">\n  <li>${selectedText || "List item 1"}</li>\n  <li>List item 2</li>\n  <li>List item 3</li>\n</ul>`;
+      replacement = `<ul class="list-disc space-y-1">\n  <li>${selectedText || "List item 1"}</li>\n  <li>List item 2</li>\n  <li>List item 3</li>\n</ul>`;
     } else if (tag === "table") {
       replacement = `<div class="overflow-x-auto my-5 rounded-xl border border-gray-200 dark:border-gray-700">
   <table class="min-w-full bg-white dark:bg-gray-800">

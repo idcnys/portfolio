@@ -1534,7 +1534,7 @@ const DetailView: React.FC<{
                   className="prose prose-lg dark:prose-invert max-w-none leading-[1.75] rich-content"
                   dangerouslySetInnerHTML={{
                     __html: sanitizeRichHtml(
-                      block.content.replace(/\n/g, "<br/>"),
+                      block.content.replace(/\n/g, ""),
                     ),
                   }}
                 />
