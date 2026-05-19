@@ -104,7 +104,16 @@ export type DashboardTab =
   | "publish-project"
   | "publish-activity"
   | "manage-content"
+  | "media"
   | "codespace"
   | "portfolio-config"
   | "logs"
   | "logout";
+
+export interface CloudinaryImage {
+  id: string;
+  url: string;
+  publicId: string;
+  createdAt: string;
+  name: string;
+}

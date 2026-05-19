@@ -9,7 +9,7 @@ import {
   update,
   increment,
 } from "firebase/database";
-import { ContentItem, Note, ActivityLog, PortfolioSettings } from "./types";
+import { ContentItem, Note, ActivityLog, PortfolioSettings, CloudinaryImage } from "./types";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDWbrWygn6H5MKWpQ6oBFNPf2QjdOxkaiQ",
@@ -282,6 +282,39 @@ export const subscribeToPortfolioSettings = (
       return;
     }
     callback(mergePortfolioSettings(data));
+  });
+};
+
+// Media Functions (Cloudinary Image Tracking)
+export const saveMediaRef = async (image: Omit<CloudinaryImage, "id">) => {
+  const mediaRef = ref(db, "media");
+  const newRef = push(mediaRef);
+  await set(newRef, {
+    ...image,
+    id: newRef.key,
+  });
+};
+
+export const deleteMediaRef = async (id: string) => {
+  const imageRef = ref(db, `media/${id}`);
+  await remove(imageRef);
+};
+
+export const subscribeToMedia = (
+  callback: (images: CloudinaryImage[]) => void,
+) => {
+  const mediaRef = ref(db, "media");
+  return onValue(mediaRef, (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      const images = Object.keys(data).map((key) => ({
+        ...data[key],
+        id: key,
+      }));
+      callback(images.reverse());
+    } else {
+      callback([]);
+    }
   });
 };
 

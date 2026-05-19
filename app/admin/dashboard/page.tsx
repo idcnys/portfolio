@@ -14,6 +14,7 @@ import {
   DashboardTab,
   PortfolioSettings,
   TabType,
+  CloudinaryImage,
 } from "../../../lib/types";
 import {
   saveContent,
@@ -28,6 +29,9 @@ import {
   logActivity,
   subscribeToPortfolioSettings,
   updatePortfolioSettings,
+  subscribeToMedia,
+  saveMediaRef,
+  deleteMediaRef,
 } from "../../../lib/firebase";
 import {
   sanitizeExternalUrl,
@@ -118,6 +122,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   // Logs State
   const [logs, setLogs] = useState<ActivityLog[]>([]);
 
+  // Media State
+  const [media, setMedia] = useState<CloudinaryImage[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const cloudinaryUploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "portfolio_preset";
+  const cloudinaryCloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dqhwfya3u";
+
   const [portfolioSettings, setPortfolioSettings] =
     useState<PortfolioSettings | null>(null);
   const [usernameForm, setUsernameForm] = useState({
@@ -164,6 +174,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     const unsubscribeContent = subscribeToContent(setItems);
     const unsubscribeNotes = subscribeToNotes(setNotes);
     const unsubscribeLogs = subscribeToLogs(setLogs);
+    const unsubscribeMedia = subscribeToMedia(setMedia);
     const unsubscribeSettings = subscribeToPortfolioSettings((settings) => {
       setPortfolioSettings(settings);
       setUsernameForm(settings.grindUsernames);
@@ -180,6 +191,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       unsubscribeContent();
       unsubscribeNotes();
       unsubscribeLogs();
+      unsubscribeMedia();
       unsubscribeSettings();
     };
   }, []);
@@ -236,6 +248,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       id: "manage-content" as DashboardTab,
       label: "Manage Content",
       icon: "fas fa-edit",
+    },
+    {
+      id: "media" as DashboardTab,
+      label: "Upload Images",
+      icon: "fas fa-image",
     },
     {
       id: "codespace" as DashboardTab,
@@ -369,6 +386,77 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
         setMessage({ text: "Error deleting post.", type: "error" });
       }
     }
+  };
+
+  // Media Functions
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!cloudinaryCloudName || !cloudinaryUploadPreset) {
+      setMessage({
+        text: "Cloudinary config missing. Check dashboard code.",
+        type: "error",
+      });
+      return;
+    }
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", cloudinaryUploadPreset);
+
+    try {
+      console.log("Starting upload to:", `https://api.cloudinary.com/v1_1/${cloudinaryCloudName}/image/upload`);
+      console.log("Using preset:", cloudinaryUploadPreset);
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudinaryCloudName}/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+      const data = await res.json();
+      console.log("Cloudinary response:", data);
+
+      if (data.secure_url) {
+        await saveMediaRef({
+          url: data.secure_url,
+          publicId: data.public_id,
+          name: file.name,
+          createdAt: new Date().toISOString(),
+        });
+        setMessage({ text: "Image uploaded successfully!", type: "success" });
+      } else {
+        throw new Error(data.error?.message || "Upload failed");
+      }
+    } catch (err: any) {
+      setMessage({
+        text: `Upload failed: ${err.message}`,
+        type: "error",
+      });
+    } finally {
+      setIsUploading(false);
+      setTimeout(() => setMessage({ text: "", type: "" }), 4000);
+    }
+  };
+
+  const handleDeleteMedia = async (image: CloudinaryImage) => {
+    if (window.confirm(`Delete "${image.name}" from your records?`)) {
+      try {
+        await deleteMediaRef(image.id);
+        setMessage({ text: "Image reference removed.", type: "success" });
+      } catch (err) {
+        setMessage({ text: "Error removing reference.", type: "error" });
+      }
+      setTimeout(() => setMessage({ text: "", type: "" }), 3000);
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setMessage({ text: "Link copied to clipboard!", type: "success" });
+    setTimeout(() => setMessage({ text: "", type: "" }), 2000);
   };
 
   // Notes Functions
@@ -2255,6 +2343,108 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               >
                 Save Grind + Skillset Content
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Media Upload Tab */}
+      {activeTab === "media" && (
+        <div className="flex-1 p-6 md:p-12 overflow-y-auto">
+          <div className="max-w-7xl mx-auto space-y-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div>
+                <h1 className="text-4xl font-black text-gray-900 tracking-tighter dark:text-gray-100">
+                  Media Library
+                </h1>
+                <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-2 dark:text-gray-500">
+                  Upload and manage images via Cloudinary
+                </p>
+              </div>
+
+              <div className="relative group">
+                <input
+                  type="file"
+                  id="imageUpload"
+                  className="hidden"
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  disabled={isUploading}
+                />
+                <label
+                  htmlFor="imageUpload"
+                  className={`flex items-center gap-3 px-8 py-4 bg-[#FFDB14] text-gray-900 rounded-2xl font-black text-sm hover:bg-yellow-400 transition-all cursor-pointer shadow-lg shadow-yellow-500/20 active:scale-95 ${
+                    isUploading ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  <i
+                    className={`fas ${
+                      isUploading ? "fa-circle-notch fa-spin" : "fa-cloud-upload-alt"
+                    } text-lg`}
+                  ></i>
+                  {isUploading ? "Uploading..." : "Upload New Image"}
+                </label>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {media.map((image) => (
+                <div
+                  key={image.id}
+                  className="group bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all dark:bg-gray-900 dark:border-gray-800"
+                >
+                  <div className="relative aspect-video overflow-hidden bg-gray-100 dark:bg-gray-800">
+                    <img
+                      src={image.url}
+                      alt={image.name}
+                      className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                      <button
+                        onClick={() => copyToClipboard(image.url)}
+                        className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-900 hover:bg-[#FFDB14] transition-colors"
+                        title="Copy Link"
+                      >
+                        <i className="fas fa-link"></i>
+                      </button>
+                      <button
+                        onClick={() => window.open(image.url, "_blank")}
+                        className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-900 hover:bg-[#FFDB14] transition-colors"
+                        title="View Fullsize"
+                      >
+                        <i className="fas fa-external-link-alt"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="p-4 space-y-3">
+                    <p className="font-bold text-sm text-gray-900 truncate dark:text-gray-100">
+                      {image.name}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-black text-gray-400 uppercase dark:text-gray-500">
+                        {new Date(image.createdAt).toLocaleDateString()}
+                      </span>
+                      <button
+                        onClick={() => handleDeleteMedia(image)}
+                        className="text-red-500 hover:text-red-600 transition-colors p-2"
+                        title="Delete Reference"
+                      >
+                        <i className="fas fa-trash-alt text-xs"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {media.length === 0 && !isUploading && (
+                <div className="col-span-full py-20 text-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200 dark:bg-gray-900/40 dark:border-gray-800">
+                  <i className="fas fa-images text-4xl text-gray-200 mb-4 block"></i>
+                  <p className="text-gray-400 font-bold">No images uploaded yet</p>
+                  <p className="text-xs text-gray-400">
+                    Your media library is empty. Start by uploading an image.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
