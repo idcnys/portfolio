@@ -104,8 +104,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [message, setMessage] = useState({ text: "", type: "" });
   const [tagsInput, setTagsInput] = useState("");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const noteTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const editorRef = useRef<any>(null);
+  const noteEditorRef = useRef<any>(null);
   const notePreviewRef = useRef<HTMLDivElement>(null);
   const contentPreviewRef = useRef<HTMLDivElement>(null);
 
@@ -520,13 +520,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   };
 
   const insertTag = (tag: string) => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
+    const view = editorRef.current?.view;
+    if (!view) return;
 
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = textarea.value;
-    const selectedText = text.substring(start, end);
+    const selection = view.state.selection.main;
+    const start = selection.from;
+    const end = selection.to;
+    const selectedText = view.state.sliceDoc(start, end);
 
     let replacement = "";
     if (tag === "img") {
@@ -555,14 +555,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     } else if (tag === "iframe") {
       const url = prompt("Enter iframe URL (YouTube, CodePen, etc.):");
       if (url) {
-        const width = prompt("Enter width (or press Enter for responsive):");
-        const height =
-          prompt("Enter height (or press Enter for 400px):") || "400";
-        if (width) {
-          replacement = `<iframe src="${url}" width="${width}" height="${height}" frameborder="0" allowfullscreen class="rounded-xl shadow-md"></iframe>`;
-        } else {
-          replacement = `<div class="relative w-full"><iframe src="${url}" class="w-full rounded-xl shadow-md" style="height: ${height}px;" frameborder="0" allowfullscreen></iframe></div>`;
-        }
+        replacement = `<iframe src="${url}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:auto;aspect-ratio:16 / 9"></iframe>`;
       }
     } else if (tag === "quote") {
       replacement = `<blockquote class="border-l-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/30 italic text-gray-700 dark:text-gray-300 rounded-r-lg">${selectedText || "Insert your quote here"}</blockquote>`;
@@ -607,29 +600,22 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     }
 
     if (replacement) {
-      const newValue =
-        text.substring(0, start) + replacement + text.substring(end);
-      setFormData({ ...formData, description: newValue });
-
-      // Update cursor position after insertion
-      setTimeout(() => {
-        if (textarea) {
-          const newCursorPos = start + replacement.length;
-          textarea.setSelectionRange(newCursorPos, newCursorPos);
-          textarea.focus();
-        }
-      }, 0);
+      view.dispatch({
+        changes: { from: start, to: end, insert: replacement },
+        selection: { anchor: start + replacement.length },
+      });
+      view.focus();
     }
   };
 
   const insertNoteTag = (tag: string) => {
-    const textarea = noteTextareaRef.current;
-    if (!textarea) return;
+    const view = noteEditorRef.current?.view;
+    if (!view) return;
 
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = textarea.value;
-    const selectedText = text.substring(start, end);
+    const selection = view.state.selection.main;
+    const start = selection.from;
+    const end = selection.to;
+    const selectedText = view.state.sliceDoc(start, end);
 
     let replacement = "";
     if (tag === "img") {
@@ -658,9 +644,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     } else if (tag === "iframe") {
       const url = prompt("Enter iframe URL (YouTube, CodePen, etc.):");
       if (url) {
-        const height =
-          prompt("Enter height (or press Enter for 300px):") || "300";
-        replacement = `<div class="relative w-full my-5"><iframe src="${url}" class="w-full rounded-xl shadow-md" style="height: ${height}px;" frameborder="0" allowfullscreen></iframe></div>`;
+        replacement = `<iframe src="${url}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:auto;aspect-ratio:16 / 9"></iframe>`;
       }
     } else if (tag === "list") {
       replacement = `<ul class="list-disc pl-6 my-4 space-y-1">\n  <li>${selectedText || "List item 1"}</li>\n  <li>List item 2</li>\n  <li>List item 3</li>\n</ul>`;
@@ -671,18 +655,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     }
 
     if (replacement) {
-      const newValue =
-        text.substring(0, start) + replacement + text.substring(end);
-      setNoteForm((prev) => ({ ...prev, content: newValue }));
-
-      // Update cursor position after insertion
-      setTimeout(() => {
-        if (textarea) {
-          const newCursorPos = start + replacement.length;
-          textarea.setSelectionRange(newCursorPos, newCursorPos);
-          textarea.focus();
-        }
-      }, 0);
+      view.dispatch({
+        changes: { from: start, to: end, insert: replacement },
+        selection: { anchor: start + replacement.length },
+      });
+      view.focus();
     }
   };
 
@@ -1347,6 +1324,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       </div>
 
                       <CodeMirror
+                        ref={noteEditorRef}
                         value={noteForm.content}
                         height="calc(100vh - 450px)"
                         theme={isDarkMode ? oneDark : "light"}
@@ -1750,6 +1728,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       </div>
                      
                       <CodeMirror
+                        ref={editorRef}
                         value={formData.description}
                         height="400px"
                         theme={isDarkMode ? oneDark : "light"}
