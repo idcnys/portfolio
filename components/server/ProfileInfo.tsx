@@ -117,7 +117,7 @@ const timelineVariants: Variants = {
   },
 };
 
-export default function ProfileInfo() {
+export default function ProfileInfo({ forceStatic }: { forceStatic?: boolean }) {
   const [hasBottomTypingStarted, setHasBottomTypingStarted] = useState(false);
   const [hasBottomTypingCompleted, setHasBottomTypingCompleted] = useState(false);
   const handleBottomTypingStart = useCallback(() => {
@@ -131,7 +131,7 @@ export default function ProfileInfo() {
   return (
     <motion.div
       variants={containerVariants}
-      initial="hidden"
+      initial={forceStatic ? "visible" : "hidden"}
       animate="visible"
       className="h-auto md:h-full bg-white dark:bg-gray-900 p-6 rounded shadow-[0_10px_30px_rgba(15,23,42,0.06)] border border-gray-100 dark:border-gray-800 relative flex flex-col"
     >
@@ -163,7 +163,7 @@ export default function ProfileInfo() {
             Bitto Saha
           </motion.h1>
           <motion.div variants={itemVariants}>
-            <AppearingTextAnimation />
+            <AppearingTextAnimation forceStatic={forceStatic} />
           </motion.div>
         </div>
       </motion.div>
@@ -247,7 +247,7 @@ export default function ProfileInfo() {
       </motion.div>
 
       <motion.div variants={itemVariants} className="relative z-10 mb-3 shrink-0">
-        <ActionButtons />
+        <ActionButtons forceStatic={forceStatic} />
       </motion.div>
 
       <motion.div

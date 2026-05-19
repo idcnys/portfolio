@@ -27,7 +27,7 @@ const iconVariants: Variants = {
   },
 };
 
-export default function ActionButtons() {
+export default function ActionButtons({ forceStatic = false }: { forceStatic?: boolean }) {
   const [calLoaded, setCalLoaded] = useState(false);
 
   useEffect(() => {
@@ -61,9 +61,9 @@ export default function ActionButtons() {
   return (
     <motion.div
       className="flex gap-2 mt-8"
-      initial={{ opacity: 0, y: 20 }}
+      initial={forceStatic ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.8, duration: 0.5 }}
+      transition={forceStatic ? { duration: 0 } : { delay: 0.8, duration: 0.5 }}
     >
       <motion.button
         onClick={handleScheduleTalk}

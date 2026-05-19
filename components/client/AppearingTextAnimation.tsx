@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function AppearingTextAnimation() {
+export default function AppearingTextAnimation({ forceStatic = false }: { forceStatic?: boolean }) {
   const titles = [
     "Undergrad Student",
     "Problem Solver",
@@ -25,10 +25,10 @@ export default function AppearingTextAnimation() {
       <AnimatePresence mode="wait">
         <motion.p
           key={titles[index]}
-          initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+          initial={forceStatic ? { opacity: 1, y: 0, filter: "blur(0px)" } : { opacity: 0, y: 20, filter: "blur(4px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           exit={{ opacity: 0, y: -20, filter: "blur(4px)" }}
-          transition={{
+          transition={forceStatic && index === 0 ? { duration: 0 } : {
             duration: 0.5,
             ease: [0.25, 0.46, 0.45, 0.94],
           }}

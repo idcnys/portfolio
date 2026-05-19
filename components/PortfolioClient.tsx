@@ -357,20 +357,17 @@ const incrementViewsIfUnique = async (itemId: string): Promise<void> => {
 
 // Animation variants
 const pageVariants: Variants = {
-  initial: { opacity: 0, y: 10 },
+  initial: { opacity: 1 },
   animate: {
     opacity: 1,
-    y: 0,
     transition: {
-      duration: 0.2,
-      ease: [0.25, 0.46, 0.45, 0.94],
+      duration: 0,
     },
   },
   exit: {
-    opacity: 0,
-    y: -10,
+    opacity: 1,
     transition: {
-      duration: 0.15,
+      duration: 0,
     },
   },
 };
@@ -445,6 +442,13 @@ const PortfolioClient: React.FC = () => {
   const [portfolioSettings, setPortfolioSettings] =
     useState<PortfolioSettings | null>(null);
   const [isTabConfigLoading, setIsTabConfigLoading] = useState(true);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [hasEntranceAnimated, setHasEntranceAnimated] = useState(() => {
+    if (typeof window !== "undefined") {
+      return !!sessionStorage.getItem("portfolio_entrance_animated");
+    }
+    return false;
+  });
   const [grindCards, setGrindCards] = useState<GrindCounterCard[]>(
     GRIND_COUNTER_CARDS,
   );
@@ -467,6 +471,13 @@ const PortfolioClient: React.FC = () => {
 
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (!hasEntranceAnimated) {
+      setHasEntranceAnimated(true);
+      sessionStorage.setItem("portfolio_entrance_animated", "true");
+    }
+  }, [hasEntranceAnimated]);
 
   const visibleTabs = useMemo<TabType[]>(() => {
     const order: TabType[] = ["certificates", "projects", "activity", "grind", "skillset"];
@@ -761,9 +772,8 @@ const PortfolioClient: React.FC = () => {
       
       if (hasSlugInPath || hasShareInQuery) {
         const viewValue = searchParams.get("view") || activeTab;
-        router.push(`/projects?view=${encodeURIComponent(viewValue)}`, {
-          scroll: false,
-        });
+        // Navigation is handled internally by state, router.push is just for URL sync
+        window.history.replaceState(null, "", `/projects?view=${encodeURIComponent(viewValue)}`);
       }
 
       return;
@@ -780,10 +790,18 @@ const PortfolioClient: React.FC = () => {
 
   const handleOpenDetail = (item: ContentItem) => {
     const slug = item.slug || item.id;
-    const scrollValue = window.scrollY;
-    router.push(`/projects/${slug}`, { scroll: false });
-    // Restore scroll position to avoid jump since we are using { scroll: false }
-    setTimeout(() => window.scrollTo(0, scrollValue), 0);
+    setViewingDetail(item);
+    // Silent URL update to prevent route change flash/reload
+    window.history.pushState(null, "", `/projects/${slug}`);
+    incrementViewsIfUnique(item.id);
+
+    // Ensure the scroll container resets to top when opening a detail view
+    const mainContentArea = document.querySelector(".md\\:overflow-y-auto");
+    if (mainContentArea) {
+      mainContentArea.scrollTo({ top: 0, behavior: "instant" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
   };
 
   const ShimmerCard = () => (
@@ -810,16 +828,16 @@ const PortfolioClient: React.FC = () => {
     >
       <CustomContextMenu />
       <motion.div
-        initial={{ opacity: 0, x: -50 }}
+        initial={!hasEntranceAnimated ? { opacity: 0, x: -50 } : false}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className={`w-full md:w-[380px] h-auto md:h-full flex flex-col gap-4 md:overflow-y-hidden custom-scrollbar pr-0 md:pr-0 ${isDetailView ? "hidden md:flex" : "flex"}`}
+        className={`w-full md:w-[380px] h-auto md:h-full flex flex-col gap-4 md:overflow-y-hidden custom-scrollbar pr-0 md:pr-0 ${isDetailView ? "hidden md:flex" : "flex"} flex-shrink-0`}
       >
-        <ProfileInfo />
+        <ProfileInfo forceStatic={hasEntranceAnimated} />
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0, x: 50 }}
+        initial={!hasEntranceAnimated ? { opacity: 0, x: 50 } : false}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
         className="flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white dark:bg-gray-900 rounded shadow-[0_12px_34px_rgba(15,23,42,0.07)] border border-gray-100 dark:border-gray-800 overflow-hidden"
@@ -834,7 +852,7 @@ const PortfolioClient: React.FC = () => {
         />
 
         <div className="flex-1 h-auto md:overflow-y-auto custom-scrollbar relative">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="popLayout" initial={false}>
             {viewingDetail ? (
               <motion.div
                 key="detail"
@@ -842,6 +860,7 @@ const PortfolioClient: React.FC = () => {
                 initial="initial"
                 animate="animate"
                 exit="exit"
+                className="w-full"
               >
                 <DetailView
                   item={viewingDetail}
@@ -855,6 +874,7 @@ const PortfolioClient: React.FC = () => {
                 initial="initial"
                 animate="animate"
                 exit="exit"
+                className="w-full"
               >
                 <CertificateDetailView
                   imageUrl={selectedCertificate}
@@ -864,10 +884,10 @@ const PortfolioClient: React.FC = () => {
               <motion.div
                 key={activeTab}
                 variants={pageVariants}
-                initial="initial"
+                initial={hasEntranceAnimated ? "animate" : "initial"}
                 animate="animate"
                 exit="exit"
-                className="p-4 md:p-6"
+                className="p-4 md:p-6 w-full"
               >
                 {activeTab === "certificates" && (
                   <motion.div
