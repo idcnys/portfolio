@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
+import { html } from "@codemirror/lang-html";
 import { oneDark } from "@codemirror/theme-one-dark";
 import {
   ContentItem,
@@ -79,6 +80,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
 
   const [formData, setFormData] = useState({
     title: "",
+    slug: "",
     date: getDefaultDate(),
     description: "",
     imageUrl: "",
@@ -315,6 +317,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   const resetForm = () => {
     setFormData({
       title: "",
+      slug: "",
       date: getDefaultDate(),
       description: "",
       imageUrl: "",
@@ -335,6 +338,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   const handleEdit = (item: ContentItem) => {
     setFormData({
       title: item.title,
+      slug: item.slug || "",
       date: item.date,
       description: item.description,
       imageUrl: item.imageUrl,
@@ -1017,11 +1021,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
 
       {/* Personal Notepad Tab */}
       {activeTab === "notepad" && (
-        <div className="flex-1 p-6 md:p-12">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[calc(100vh-200px)]">
+        <div className="flex-1 p-3">
+          <div className="w-[100%] mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 h-[90vh]">
               {/* Notes List */}
-              <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
+              <div className="bg-white shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
                 <div className="p-6 border-b border-gray-100 flex justify-between items-center dark:border-gray-800">
                   <h2 className="text-xl font-black text-gray-900 dark:text-gray-100">
                     All Notes
@@ -1066,7 +1070,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               </div>
 
               {/* Note Editor */}
-              <div className="lg:col-span-2 bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
+              <div className="lg:col-span-2 bg-white shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
                 <div className="p-6 border-b border-gray-100 flex justify-between items-center dark:border-gray-800">
                   <h2 className="text-xl font-black text-gray-900 dark:text-gray-100">
                     {selectedNote
@@ -1254,17 +1258,18 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                         </div>
                       </div>
 
-                      <textarea
-                        ref={noteTextareaRef}
-                        placeholder="Start writing your note..."
+                      <CodeMirror
                         value={noteForm.content}
-                        onChange={(e) =>
+                        height="calc(100vh - 450px)"
+                        theme={isDarkMode ? oneDark : "light"}
+                        extensions={[html()]}
+                        onChange={(value) =>
                           setNoteForm((prev) => ({
                             ...prev,
-                            content: e.target.value,
+                            content: value,
                           }))
                         }
-                        className="w-full h-[calc(100%-180px)] border border-gray-200 rounded-2xl p-4 outline-none resize-none text-gray-700 text-lg leading-relaxed focus:border-[#FFDB14] transition-all bg-white dark:bg-gray-900 dark:border-gray-800 dark:text-gray-200"
+                        className="border border-gray-200 rounded-2xl overflow-hidden focus-within:border-[#FFDB14] transition-all bg-white dark:bg-gray-900 dark:border-gray-800"
                       />
                     </>
                   ) : selectedNote ? (
@@ -1301,11 +1306,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       {/* Publish Project/Activity Tabs */}
       {(activeTab === "publish-project" ||
         activeTab === "publish-activity") && (
-        <div className="flex-1 p-6 md:p-12">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div className="flex-1 p-0">
+          <div className="w-[100%] mx-auto">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-0">
               {/* Content Form */}
-              <div className="xl:col-span-2 bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
+              <div className="xl:col-span-2 bg-white shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
                 <div className="p-8 md:p-14 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-6 dark:border-gray-800">
                   <div>
                     <h1 className="text-4xl font-black text-gray-900 tracking-tighter capitalize dark:text-gray-100">
@@ -1329,13 +1334,43 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       placeholder={`Enter a compelling ${formData.type} title...`}
                       className="w-full text-4xl md:text-6xl font-black border-none outline-none focus:ring-0 bg-transparent text-gray-900 placeholder:text-gray-100 tracking-tight dark:text-gray-100 dark:placeholder:text-gray-700"
                       value={formData.title}
-                      onChange={(e) =>
-                        setFormData((p) => ({ ...p, title: e.target.value }))
-                      }
+                      onChange={(e) => {
+                        const title = e.target.value;
+                        setFormData((p) => ({
+                          ...p,
+                          title,
+                          slug: editingId
+                            ? p.slug
+                            : title
+                                .toLowerCase()
+                                .replace(/[^a-z0-9]+/g, "-")
+                                .replace(/(^-|-$)/g, ""),
+                        }));
+                      }}
                       required
                     />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-3 dark:text-gray-500">
+                          URL Slug (Lowercase, no spaces)
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="my-awesome-project"
+                          className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:bg-white focus:border-[#FFDB14] transition-all font-black text-gray-900 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100 dark:focus:bg-gray-900"
+                          value={formData.slug}
+                          onChange={(e) =>
+                            setFormData((p) => ({
+                              ...p,
+                              slug: e.target.value
+                                .toLowerCase()
+                                .replace(/[^a-z0-9-]+/g, ""),
+                            }))
+                          }
+                          required
+                        />
+                      </div>
                       <div>
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-3 dark:text-gray-500">
                           Published Date (Display)
@@ -1625,39 +1660,19 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           </button>
                         </div>
                       </div>
-                      <div className="text-xs text-gray-500 mb-4 px-2 dark:text-gray-400">
-                        <p>
-                          <strong>💡 Pro Tips:</strong>
-                        </p>
-                        <ul className="list-disc list-inside mt-1 space-y-1">
-                          <li>Select text before applying formatting</li>
-                          <li>
-                            Use code blocks for syntax-highlighted code snippets
-                          </li>
-                          <li>
-                            Embed YouTube videos, CodePen demos, or any iframe
-                            content
-                          </li>
-                          <li>
-                            All HTML tags are supported - feel free to add
-                            custom styling
-                          </li>
-                          <li>Use inline math with \( ... \) or $...$</li>
-                          <li>Use display math with \[ ... \] or $$...$$</li>
-                        </ul>
-                      </div>
-                      <textarea
-                        ref={textareaRef}
-                        placeholder={`Tell your ${formData.type} story...`}
-                        className="w-full h-[400px] px-8 py-8 bg-gray-50 border border-gray-100 rounded-[2rem] outline-none focus:bg-white focus:border-[#FFDB14] transition-all resize-none text-xl leading-relaxed text-gray-700 font-medium font-serif dark:bg-gray-900 dark:border-gray-800 dark:text-gray-200 dark:focus:bg-gray-900"
+                     
+                      <CodeMirror
                         value={formData.description}
-                        onChange={(e) =>
+                        height="400px"
+                        theme={isDarkMode ? oneDark : "light"}
+                        extensions={[html()]}
+                        onChange={(value) =>
                           setFormData((p) => ({
                             ...p,
-                            description: e.target.value,
+                            description: value,
                           }))
                         }
-                        required
+                        className="border border-gray-100 rounded-[2px] overflow-hidden focus-within:border-[#FFDB14] transition-all dark:bg-gray-900 dark:border-gray-800"
                       />
                     </div>
                   </div>
@@ -1693,7 +1708,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               </div>
 
               {/* Preview Panel */}
-              <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
+              <div className="bg-white shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
                 <div className="p-6 border-b border-gray-100 dark:border-gray-800">
                   <h2 className="text-xl font-black text-gray-900 dark:text-gray-100">
                     Live Preview
@@ -1834,26 +1849,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       )}
 
       {activeTab === "codespace" && (
-        <div className="flex-1 p-6 md:p-12">
-          <div className="max-w-7xl mx-auto space-y-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <h2 className="text-2xl font-black text-gray-900 tracking-tighter dark:text-gray-100">
-                  Codespace
-                </h2>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  GitHub-backed editor for managing repos and files.
-                </p>
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">
-                {githubUser
-                  ? `Connected as ${githubUser.login}`
-                  : "GitHub not connected"}
-              </div>
-            </div>
+        <div className="flex-1 p-3">
+          <div className="w-[100%] mx-auto space-y-6">
+           
 
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-              <div className="xl:col-span-1 bg-white rounded-3xl shadow-lg border border-gray-100 p-6 space-y-6 dark:bg-gray-900 dark:border-gray-800">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-0">
+              <div className="xl:col-span-1 bg-white shadow-lg border border-gray-100 p-6 space-y-6 dark:bg-gray-900 dark:border-gray-800">
                 <div>
                   <h3 className="text-lg font-black text-gray-900 dark:text-gray-100">
                     GitHub Access
@@ -1965,7 +1966,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                 </div>
               </div>
 
-              <div className="xl:col-span-2 bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
+              <div className="xl:col-span-2 bg-white shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
                 <div className="p-4 border-b border-gray-100 dark:border-gray-800">
                   <div className="grid grid-cols-1 md:grid-cols-[1.1fr_1.2fr_auto] gap-3 items-end">
                     <div>
@@ -2012,7 +2013,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-4 p-4">
+                <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] p-4">
                   <div className="bg-gray-50 border border-gray-100 rounded-2xl p-3 space-y-3 dark:bg-gray-900 dark:border-gray-800">
                     <div className="flex items-center justify-between">
                       <div>

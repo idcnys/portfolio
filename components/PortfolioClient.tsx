@@ -681,14 +681,23 @@ const PortfolioClient: React.FC = () => {
   );
 
   useEffect(() => {
-    const sharePathPrefix = "/projects/share=";
-    const deepLinkItemIdFromPath = pathname.startsWith(sharePathPrefix)
-      ? decodeURIComponent(pathname.slice(sharePathPrefix.length))
-      : null;
-    const deepLinkItemId = searchParams.get("share") || deepLinkItemIdFromPath;
+    const sharePathPrefix = "/projects/";
+    let deepLinkSlug = null;
+    
+    if (pathname.startsWith(sharePathPrefix)) {
+      const parts = pathname.slice(sharePathPrefix.length).split("/");
+      if (parts[0] && parts[0] !== "share=") {
+         deepLinkSlug = decodeURIComponent(parts[0]);
+      } else if (parts[0] === "share=") {
+         deepLinkSlug = decodeURIComponent(pathname.slice(sharePathPrefix.length + 6));
+      }
+    }
+
+    const deepLinkItemId = searchParams.get("share") || deepLinkSlug;
     const deepLinkView = searchParams.get("view")?.toLowerCase();
 
     if (!deepLinkItemId && !deepLinkView) {
+      if (viewingDetail) setViewingDetail(null);
       return;
     }
 
@@ -717,8 +726,10 @@ const PortfolioClient: React.FC = () => {
       return;
     }
 
-    const source = contentByTab[requestedTab];
-    const matchedItem = source.find((item) => item.id === deepLinkItemId);
+    // Try finding by slug first, then ID
+    const source = [...projects, ...activities];
+    const matchedItem = source.find((item) => item.slug === deepLinkItemId || item.id === deepLinkItemId);
+    
     if (!matchedItem) {
       return;
     }
@@ -728,7 +739,8 @@ const PortfolioClient: React.FC = () => {
       incrementViewsIfUnique(matchedItem.id);
     });
   }, [
-    contentByTab,
+    projects,
+    activities,
     pathname,
     searchParams,
     visibleTabs,
@@ -744,11 +756,12 @@ const PortfolioClient: React.FC = () => {
     if (viewingDetail) {
       setViewingDetail(null);
 
-      const hasShareInPath = pathname.startsWith("/projects/share=");
+      const hasSlugInPath = pathname.startsWith("/projects/") && pathname !== "/projects";
       const hasShareInQuery = searchParams.has("share");
-      if (hasShareInPath || hasShareInQuery) {
+      
+      if (hasSlugInPath || hasShareInQuery) {
         const viewValue = searchParams.get("view") || activeTab;
-        router.replace(`/projects?view=${encodeURIComponent(viewValue)}`, {
+        router.push(`/projects?view=${encodeURIComponent(viewValue)}`, {
           scroll: false,
         });
       }
@@ -766,10 +779,11 @@ const PortfolioClient: React.FC = () => {
   };
 
   const handleOpenDetail = (item: ContentItem) => {
-    setViewingDetail(item);
-    incrementViewsIfUnique(item.id);
-    const scroller = document.querySelector(".md\\:overflow-y-auto");
-    if (scroller) scroller.scrollTo({ top: 0, behavior: "smooth" });
+    const slug = item.slug || item.id;
+    const scrollValue = window.scrollY;
+    router.push(`/projects/${slug}`, { scroll: false });
+    // Restore scroll position to avoid jump since we are using { scroll: false }
+    setTimeout(() => window.scrollTo(0, scrollValue), 0);
   };
 
   const ShimmerCard = () => (
@@ -799,7 +813,7 @@ const PortfolioClient: React.FC = () => {
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className="w-full md:w-[380px] h-auto md:h-full flex flex-col gap-4 md:overflow-y-hidden custom-scrollbar pr-0 md:pr-0"
+        className={`w-full md:w-[380px] h-auto md:h-full flex flex-col gap-4 md:overflow-y-hidden custom-scrollbar pr-0 md:pr-0 ${isDetailView ? "hidden md:flex" : "flex"}`}
       >
         <ProfileInfo />
       </motion.div>
