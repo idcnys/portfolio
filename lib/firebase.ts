@@ -405,11 +405,11 @@ export const cleanupOldLogs = async () => {
           await remove(logRef);
         }
 
-        console.log(`Cleaned up ${logsToDelete.length} old activity logs`);
+        // console.log(`Cleaned up ${logsToDelete.length} old activity logs`);
       }
     }
   } catch (error) {
-    console.error("Error cleaning up old logs:", error);
+    // console.error("Error cleaning up old logs:", error);
   }
 };
 

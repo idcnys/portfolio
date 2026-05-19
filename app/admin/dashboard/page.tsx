@@ -125,7 +125,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   // Media State
   const [media, setMedia] = useState<CloudinaryImage[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const cloudinaryUploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "portfolio_preset";
+  const cloudinaryUploadPreset = "portfolio_preset";
   const cloudinaryCloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dqhwfya3u";
 
   const [portfolioSettings, setPortfolioSettings] =
@@ -407,8 +407,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     formData.append("upload_preset", cloudinaryUploadPreset);
 
     try {
-      console.log("Starting upload to:", `https://api.cloudinary.com/v1_1/${cloudinaryCloudName}/image/upload`);
-      console.log("Using preset:", cloudinaryUploadPreset);
+      // console.log("Starting upload to:", `https://api.cloudinary.com/v1_1/${cloudinaryCloudName}/image/upload`);
+      // console.log("Using preset:", cloudinaryUploadPreset);
       const res = await fetch(
         `https://api.cloudinary.com/v1_1/${cloudinaryCloudName}/image/upload`,
         {
@@ -417,7 +417,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
         },
       );
       const data = await res.json();
-      console.log("Cloudinary response:", data);
+      // console.log("Cloudinary response:", data);
 
       if (data.secure_url) {
         await saveMediaRef({

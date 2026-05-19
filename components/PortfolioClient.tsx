@@ -1316,7 +1316,7 @@ const DetailView: React.FC<{
         setLikes((prev) => prev + 1);
         setHasLiked(true);
       } catch (error) {
-        console.error("Error liking item:", error);
+        // console.error("Error liking item:", error);
       }
     }
   };
@@ -1331,7 +1331,7 @@ const DetailView: React.FC<{
       setCopyToast("Link copied");
       window.setTimeout(() => setCopyToast(null), 1800);
     } catch (error) {
-      console.error("Failed to copy share link:", error);
+      // console.error("Failed to copy share link:", error);
       setCopyToast("Copy failed");
       window.setTimeout(() => setCopyToast(null), 1800);
     }

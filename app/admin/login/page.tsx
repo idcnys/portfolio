@@ -79,7 +79,7 @@ const Login: React.FC = () => {
         } catch {}
       }
     } catch (err) {
-      console.error("Login error:", err);
+      // console.error("Login error:", err);
       setError("An error occurred during login");
       await regenerateCaptcha();
     } finally {
