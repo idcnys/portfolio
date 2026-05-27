@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ThemeProvider, useTheme } from "../lib/context/ThemeContext";
 
 const NotFoundComponent: React.FC = () => {
@@ -30,13 +31,15 @@ const NotFoundComponent: React.FC = () => {
         onClick={handleThemeToggle}
         className="absolute top-6 right-6 w-12 h-12 rounded-full bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all shadow-lg z-10"
       >
-        <img
+        <Image
           src={
             isDarkMode
               ? "/icons/icons8-sun-50.svg"
               : "/icons/icons8-moon-symbol-50.svg"
           }
           alt="Toggle theme"
+          width={24}
+          height={24}
           className="w-6 h-6"
         />
       </button>

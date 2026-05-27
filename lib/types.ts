@@ -48,9 +48,6 @@ export type TabType = "certificates" | "projects" | "activity" | "grind" | "skil
 
 export interface GrindUsernames {
   codeforces: string;
-  cses: string;
-  leetcode: string;
-  tryhackme: string;
   github: string;
 }
 

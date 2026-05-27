@@ -1,15 +1,9 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence, Variants } from "framer-motion";
-import CodeMirror from "@uiw/react-codemirror";
-import { javascript } from "@codemirror/lang-javascript";
-import { python } from "@codemirror/lang-python";
-import { html as htmlLang } from "@codemirror/lang-html";
-import { css } from "@codemirror/lang-css";
-import { markdown } from "@codemirror/lang-markdown";
-import { oneDark } from "@codemirror/theme-one-dark";
 import { ContentItem, TabType, PortfolioSettings, GrindCounterCard, GrindStatRow, SkillsetGroup, SkillBadge } from "../lib/types";
 import { INITIAL_CERTIFICATES } from "../lib/constants";
 import { incrementLikes, incrementViews, subscribeToPortfolioSettings } from "../lib/firebase";
@@ -26,84 +20,14 @@ type DescriptionBlock =
 
 type ProjectViewMode = "card" | "list" | "grid";
 
-const GRIND_COUNTER_CARDS: GrindCounterCard[] = [
-  {
-    id: "cf-solved",
-    title: "Codeforces",
-    value: "1240",
-    subtitle: "All-time solved",
-    icon: "fa-code",
-    tone: "primary",
-  },
-  {
-    id: "lc-solved",
-    title: "LeetCode",
-    value: "865",
-    subtitle: "All-time solved",
-    icon: "fa-bolt",
-    tone: "danger",
-  },
-  {
-    id: "cses-solved",
-    title: "CSES",
-    value: "292",
-    subtitle: "All-time solved",
-    icon: "fa-sitemap",
-    tone: "success",
-  },
-  {
-    id: "total-solved",
-    title: "Total",
-    value: "2397",
-    subtitle: "Problems solved",
-    icon: "fa-trophy",
-    tone: "info",
-  },
-  {
-    id: "thm-rooms",
-    title: "TryHackMe",
-    value: "126",
-    subtitle: "Rooms completed",
-    icon: "fa-shield-halved",
-    tone: "success",
-  },
-  {
-    id: "thm-rank",
-    title: "TryHackMe",
-    value: "Top 6%",
-    subtitle: "Global rank",
-    icon: "fa-medal",
-    tone: "danger",
-  },
-  {
-    id: "thm-streak",
-    title: "TryHackMe",
-    value: "29",
-    subtitle: "Longest streak",
-    icon: "fa-fire",
-    tone: "primary",
-  },
-  {
-    id: "thm-badges",
-    title: "TryHackMe",
-    value: "18",
-    subtitle: "Badges earned",
-    icon: "fa-award",
-    tone: "info",
-  },
-];
+const GRIND_COUNTER_CARDS: GrindCounterCard[] = []; // Initialized as empty, fetched from Firebase 
 
-const GRIND_RATING_STATS: GrindStatRow[] = [
-  { id: "cf-max", label: "Codeforces Max Rating", value: "1874" },
-  { id: "lc-max", label: "LeetCode Contest Rating", value: "2238" },
-  { id: "cses-rank", label: "CSES Highest Rank", value: "Top 2.8%" },
-];
+const GRIND_RATING_STATS: GrindStatRow[] = [];
 
 const GRIND_GITHUB_STATS: GrindStatRow[] = [
-  { id: "gh-contrib", label: "Total Contributions", value: "1,946" },
-  { id: "gh-streak", label: "Longest Streak", value: "74 days" },
-  { id: "gh-current", label: "Current Streak", value: "18 days" },
-  { id: "gh-repos", label: "Public Repositories", value: "58" },
+  { id: "gh-contrib", label: "Followers", value: "N/A" },
+  { id: "gh-current", label: "Recent Activity", value: "N/A" },
+  { id: "gh-repos", label: "Public Repositories", value: "N/A" },
 ];
 
 const COUNTER_TONE_CLASSES: Record<GrindCounterCard["tone"], string> = {
@@ -220,56 +144,15 @@ const splitDescriptionBlocks = (description: string): DescriptionBlock[] => {
   return blocks;
 };
 
-const getCodeLanguageExtension = (language?: string) => {
-  if (!language) {
-    return javascript({ jsx: true, typescript: true });
-  }
-
-  const lang = language.toLowerCase();
-
-  if (["js", "jsx", "ts", "tsx", "javascript", "typescript"].includes(lang)) {
-    return javascript({ jsx: true, typescript: true });
-  }
-
-  if (["py", "python"].includes(lang)) {
-    return python();
-  }
-
-  if (["html", "xml"].includes(lang)) {
-    return htmlLang();
-  }
-
-  if (["css", "scss", "sass"].includes(lang)) {
-    return css();
-  }
-
-  if (["md", "markdown"].includes(lang)) {
-    return markdown();
-  }
-
-  return javascript({ jsx: true, typescript: true });
-};
-
 const CodeSnippetViewer: React.FC<{ code: string; language?: string }> = ({
   code,
   language,
 }) => {
-  const { isDarkMode } = useTheme();
-
   return (
-    <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
-      <CodeMirror
-        value={code}
-        editable={false}
-        basicSetup={{
-          lineNumbers: true,
-          foldGutter: true,
-          highlightActiveLine: false,
-          highlightActiveLineGutter: false,
-        }}
-        theme={isDarkMode ? oneDark : "light"}
-        extensions={[getCodeLanguageExtension(language)]}
-      />
+    <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-950 p-4">
+      <pre className="text-sm font-mono text-gray-100 overflow-x-auto">
+        <code className={language ? `language-${language}` : ""}>{code}</code>
+      </pre>
     </div>
   );
 };
@@ -306,23 +189,6 @@ const fetchJson = async (url: string) => {
     throw new Error(`Failed request: ${response.status}`);
   }
   return response.json();
-};
-
-const renderLatex = async (element: HTMLElement | null) => {
-  if (!element) {
-    return;
-  }
-
-  const renderMathInElement = (await import("katex/contrib/auto-render")).default;
-  renderMathInElement(element, {
-    delimiters: [
-      { left: "$$", right: "$$", display: true },
-      { left: "\\[", right: "\\]", display: true },
-      { left: "$", right: "$", display: false },
-      { left: "\\(", right: "\\)", display: false },
-    ],
-    throwOnError: false,
-  });
 };
 
 const VIEWED_ITEMS_STORAGE_KEY = "portfolio_unique_viewed_items_v1";
@@ -443,12 +309,25 @@ const PortfolioClient: React.FC = () => {
     useState<PortfolioSettings | null>(null);
   const [isTabConfigLoading, setIsTabConfigLoading] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
-  const [hasEntranceAnimated, setHasEntranceAnimated] = useState(() => {
-    if (typeof window !== "undefined") {
-      return !!sessionStorage.getItem("portfolio_entrance_animated");
+  const [hasEntranceAnimated, setHasEntranceAnimated] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+    const animatedStatus = sessionStorage.getItem("portfolio_entrance_animated");
+    if (animatedStatus === "true") {
+      setHasEntranceAnimated(true);
+    } else {
+      // Record entrance after a short delay so user sees animation at least once
+      const timer = setTimeout(() => {
+        sessionStorage.setItem("portfolio_entrance_animated", "true");
+      }, 2000);
+      return () => clearTimeout(timer);
     }
-    return false;
-  });
+  }, []);
+
+  const effectivelyAnimated = isHydrated && hasEntranceAnimated;
+
   const [grindCards, setGrindCards] = useState<GrindCounterCard[]>(
     GRIND_COUNTER_CARDS,
   );
@@ -471,13 +350,6 @@ const PortfolioClient: React.FC = () => {
 
     return () => unsubscribe();
   }, []);
-
-  useEffect(() => {
-    if (!hasEntranceAnimated) {
-      setHasEntranceAnimated(true);
-      sessionStorage.setItem("portfolio_entrance_animated", "true");
-    }
-  }, [hasEntranceAnimated]);
 
   const visibleTabs = useMemo<TabType[]>(() => {
     const order: TabType[] = ["certificates", "projects", "activity", "grind", "skillset"];
@@ -565,57 +437,6 @@ const PortfolioClient: React.FC = () => {
       );
     }
 
-    if (usernames.leetcode.trim()) {
-      const handle = usernames.leetcode.trim();
-      tasks.push(
-        (async () => {
-          try {
-            const solved = await fetchJson(
-              `https://alfa-leetcode-api.onrender.com/${encodeURIComponent(handle)}/solved`,
-            );
-            const contest = await fetchJson(
-              `https://alfa-leetcode-api.onrender.com/${encodeURIComponent(handle)}/contest`,
-            );
-
-            if (typeof solved?.solvedProblem === "number") {
-              updateCard("lc-solved", formatNumber(solved.solvedProblem), "All-time solved");
-            }
-
-            if (contest?.contestRating) {
-              updateRating("lc-max", String(Math.round(contest.contestRating)));
-            }
-          } catch {}
-        })(),
-      );
-    }
-
-    if (usernames.tryhackme.trim()) {
-      const handle = usernames.tryhackme.trim();
-      tasks.push(
-        (async () => {
-          try {
-            const profile = await fetchJson(
-              `https://tryhackme.com/api/v2/public-profile?username=${encodeURIComponent(handle)}`,
-            );
-
-            const user = profile?.data || {};
-            if (typeof user?.completedRooms === "number") {
-              updateCard("thm-rooms", formatNumber(user.completedRooms), "Rooms completed");
-            }
-            if (typeof user?.bestStreak === "number") {
-              updateCard("thm-streak", formatNumber(user.bestStreak), "Longest streak");
-            }
-            if (typeof user?.badges === "number") {
-              updateCard("thm-badges", formatNumber(user.badges), "Badges earned");
-            }
-            if (user?.ranking) {
-              updateCard("thm-rank", `#${formatNumber(user.ranking)}`, "Global rank");
-            }
-          } catch {}
-        })(),
-      );
-    }
-
     if (usernames.github.trim()) {
       const handle = usernames.github.trim();
       tasks.push(
@@ -634,29 +455,25 @@ const PortfolioClient: React.FC = () => {
             }
 
             if (typeof user?.followers === "number") {
-              updateGithub("gh-contrib", toCompact(user.followers));
+              updateGithub("gh-contrib", formatNumber(user.followers));
             }
           } catch {}
         })(),
       );
     }
 
-    if (usernames.cses.trim()) {
-      const cses = usernames.cses.trim();
-      updateCard("cses-solved", cses, "Sync username/manual value");
-      updateRating("cses-rank", cses);
-    }
-
     Promise.allSettled(tasks).then(() => {
       setGrindCards((prev) => {
-        const cf = Number(prev.find((card) => card.id === "cf-solved")?.value.replace(/,/g, "") || 0);
-        const lc = Number(prev.find((card) => card.id === "lc-solved")?.value.replace(/,/g, "") || 0);
-        const cses = Number(prev.find((card) => card.id === "cses-solved")?.value.replace(/,/g, "") || 0);
-        const total = cf + lc + cses;
+        const cfStr = prev.find((card) => card.id === "cf-solved")?.value || "";
+        
+        const cf = cfStr === "N/A" ? 0 : Number(cfStr.replace(/,/g, ""));
+        
+        const total = cf;
+        const totalValue = total > 0 ? formatNumber(total) : "N/A";
 
         return prev.map((card) =>
           card.id === "total-solved"
-            ? { ...card, value: formatNumber(total), subtitle: "Problems solved" }
+            ? { ...card, value: totalValue, subtitle: "Problems solved" }
             : card,
         );
       });
@@ -824,23 +641,23 @@ const PortfolioClient: React.FC = () => {
       variants={pageVariants}
       initial="initial"
       animate="animate"
-      className="min-h-screen md:h-screen bg-gray-100 dark:bg-gray-950 flex flex-col md:flex-row p-0 md:p-0 gap-0 max-w-screen transition-colors duration-300 md:overflow-hidden"
+      className="min-h-screen md:h-screen bg-gray-100 dark:bg-gray-950 flex flex-col md:flex-row p-2 md:p-3 lg:p-4 max-w-screen transition-colors duration-300 md:overflow-hidden"
     >
       <CustomContextMenu />
       <motion.div
-        initial={!hasEntranceAnimated ? { opacity: 0, x: -50 } : false}
+        initial={!effectivelyAnimated ? { opacity: 0, x: -50 } : false}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className={`w-full md:w-[380px] h-auto md:h-full flex flex-col gap-4 md:overflow-y-hidden custom-scrollbar pr-0 md:pr-0 ${isDetailView ? "hidden md:flex" : "flex"} flex-shrink-0`}
+        className={`w-full md:w-[380px] h-auto md:h-full flex flex-col md:overflow-y-hidden custom-scrollbar pr-0 md:pr-0 ${isDetailView ? "hidden md:flex" : "flex"} flex-shrink-0 z-10`}
       >
-        <ProfileInfo forceStatic={hasEntranceAnimated} />
+        <ProfileInfo forceStatic={effectivelyAnimated} />
       </motion.div>
 
       <motion.div
-        initial={!hasEntranceAnimated ? { opacity: 0, x: 50 } : false}
+        initial={!effectivelyAnimated ? { opacity: 0, x: 50 } : false}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
-        className="flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white dark:bg-gray-900 rounded shadow-[0_12px_34px_rgba(15,23,42,0.07)] border border-gray-100 dark:border-gray-800 overflow-hidden"
+        className="flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white dark:bg-gray-900 rounded-r-xl md:rounded-l-none shadow-[0_12px_34px_rgba(15,23,42,0.07)] border-y border-r border-gray-100 dark:border-gray-800 overflow-hidden"
       >
         <TabSwitcher
           activeTab={activeTab}
@@ -884,7 +701,7 @@ const PortfolioClient: React.FC = () => {
               <motion.div
                 key={activeTab}
                 variants={pageVariants}
-                initial={hasEntranceAnimated ? "animate" : "initial"}
+                initial={effectivelyAnimated ? "animate" : "initial"}
                 animate="animate"
                 exit="exit"
                 className="p-4 md:p-6 w-full"
@@ -1192,15 +1009,16 @@ const PortfolioClient: React.FC = () => {
                           <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
                             {group.subtitle}
                           </p>
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-x-2 gap-y-3">
                             {group.badges.map((badge: SkillBadge) => (
-                              <img
-                                key={badge.label}
-                                src={badge.url}
-                                alt={badge.label}
-                                className="h-7"
-                                loading="lazy"
-                              />
+                              <div key={badge.label} className="h-6 flex items-center">
+                                <img
+                                  src={badge.url}
+                                  alt={badge.label}
+                                  className="h-full w-auto"
+                                  loading="lazy"
+                                />
+                              </div>
                             ))}
                           </div>
                         </motion.div>
@@ -1303,13 +1121,21 @@ const CertificateDetailView: React.FC<{
         className="flex-1 p-4 md:p-6 flex items-center justify-center"
       >
         <div className="w-full max-w-4xl">
-          <motion.img
-            src={imageUrl}
-            alt="Certificate"
-            className="w-full h-auto rounded-lg shadow-lg"
+          <motion.div
+            className="w-full h-auto min-h-[400px] relative rounded-lg shadow-lg overflow-hidden"
             whileHover={{ scale: 1.01 }}
             transition={{ duration: 0.3 }}
-          />
+          >
+            <Image
+              src={imageUrl}
+              alt="Certificate"
+              layout="responsive"
+              width={1600}
+              height={1200}
+              className="w-full h-auto rounded-lg"
+              loading="lazy"
+            />
+          </motion.div>
         </div>
       </motion.div>
     </motion.div>
@@ -1336,7 +1162,7 @@ const DetailView: React.FC<{
         setLikes((prev) => prev + 1);
         setHasLiked(true);
       } catch (error) {
-        // console.error("Error liking item:", error);
+        // Silent error
       }
     }
   };
@@ -1351,15 +1177,10 @@ const DetailView: React.FC<{
       setCopyToast("Link copied");
       window.setTimeout(() => setCopyToast(null), 1800);
     } catch (error) {
-      // console.error("Failed to copy share link:", error);
       setCopyToast("Copy failed");
       window.setTimeout(() => setCopyToast(null), 1800);
     }
   };
-
-  useEffect(() => {
-    renderLatex(descriptionContainerRef.current);
-  }, [descriptionBlocks]);
 
   return (
     <motion.div
@@ -1485,9 +1306,11 @@ const DetailView: React.FC<{
                     rel="noopener noreferrer"
                     className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
                   >
-                    <img
+                    <Image
                       src="/icons/icons8-github-50.svg"
                       alt="GitHub"
+                      width={24}
+                      height={24}
                       className="w-6 h-6"
                     />
                   </a>
@@ -1509,9 +1332,11 @@ const DetailView: React.FC<{
                     rel="noopener noreferrer"
                     className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
                   >
-                    <img
+                    <Image
                       src="/icons/icons8-twitter-bird.svg"
                       alt="Twitter"
+                      width={24}
+                      height={24}
                       className="w-6 h-6"
                     />
                   </a>
@@ -1523,9 +1348,11 @@ const DetailView: React.FC<{
                     rel="noopener noreferrer"
                     className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
                   >
-                    <img
+                    <Image
                       src="/icons/icons8-youtube-50.svg"
                       alt="YouTube"
+                      width={24}
+                      height={24}
                       className="w-6 h-6"
                     />
                   </a>
@@ -1537,9 +1364,11 @@ const DetailView: React.FC<{
                     rel="noopener noreferrer"
                     className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
                   >
-                    <img
+                    <Image
                       src="/icons/icons8-linkedin-50.svg"
                       alt="LinkedIn"
+                      width={24}
+                      height={24}
                       className="w-6 h-6"
                     />
                   </a>
@@ -1637,12 +1466,6 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
   item,
   onReadMore,
 }) => {
-  const previewRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    renderLatex(previewRef.current);
-  }, [item.description]);
-
   return (
     <motion.div
       whileHover={{
@@ -1651,7 +1474,7 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
         transition: { duration: 0.2 },
       }}
       whileTap={{ scale: 0.98 }}
-      className="flex flex-col sm:flex-row gap-0 p-0 rounded-xl border-2 border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 transition-all bg-white dark:bg-gray-900 shadow-[0_6px_22px_rgba(15,23,42,0.05)] cursor-pointer overflow-hidden"
+      className="flex flex-col sm:flex-row gap-0 p-0 rounded-lg border-2 border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 transition-all bg-white dark:bg-gray-900 shadow-[0_6px_22px_rgba(15,23,42,0.05)] cursor-pointer overflow-hidden"
       onClick={onReadMore}
     >
       <div className="flex-1 flex flex-col justify-between min-w-0 order-2 sm:order-1 p-5">
@@ -1676,7 +1499,6 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed line-clamp-2"
-            ref={previewRef}
           >
             {stripHtmlTags(item.description)}
           </motion.div>
@@ -1748,9 +1570,11 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <img
+                <Image
                   src="/icons/icons8-github-50.svg"
                   alt="GitHub"
+                  width={24}
+                  height={24}
                   className="w-6 h-6"
                 />
               </motion.a>
@@ -1778,9 +1602,11 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <img
+                <Image
                   src="/icons/icons8-twitter-bird.svg"
                   alt="Twitter"
+                  width={24}
+                  height={24}
                   className="w-6 h-6"
                 />
               </motion.a>
@@ -1795,9 +1621,11 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <img
+                <Image
                   src="/icons/icons8-youtube-50.svg"
                   alt="YouTube"
+                  width={24}
+                  height={24}
                   className="w-6 h-6"
                 />
               </motion.a>
@@ -1812,9 +1640,11 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <img
+                <Image
                   src="/icons/icons8-linkedin-50.svg"
                   alt="LinkedIn"
+                  width={24}
+                  height={24}
                   className="w-6 h-6"
                 />
               </motion.a>
@@ -1828,14 +1658,13 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.3 }}
         whileHover={{ scale: 1.02 }}
-        className="w-full sm:w-48 h-32 sm:h-auto flex-shrink-0 overflow-hidden bg-gray-100 dark:bg-gray-800 order-1 sm:order-2 rounded-none"
+        className="w-full sm:w-48 h-32 sm:h-auto flex-shrink-0 relative overflow-hidden bg-gray-100 dark:bg-gray-800 order-1 sm:order-2 rounded-none"
       >
-        <motion.img
+        <Image
           src={item.imageUrl}
           alt={item.title}
-          className="w-full h-full object-cover"
-          whileHover={{ scale: 1.03 }}
-          transition={{ duration: 0.3 }}
+          fill
+          className="object-cover"
         />
       </motion.div>
     </motion.div>
@@ -1846,30 +1675,26 @@ const ProjectListCard: React.FC<{ item: ContentItem; onReadMore: () => void }> =
   item,
   onReadMore,
 }) => {
-  const previewRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    renderLatex(previewRef.current);
-  }, [item.description]);
-
   return (
     <div
       onClick={onReadMore}
-      className="p-4 rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-[0_5px_18px_rgba(15,23,42,0.04)] cursor-pointer hover:border-gray-200 dark:hover:border-gray-700 transition-colors"
+      className="p-4 rounded-lg border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-[0_5px_18px_rgba(15,23,42,0.04)] cursor-pointer hover:border-gray-200 dark:hover:border-gray-700 transition-colors"
     >
       <div className="flex items-center gap-4">
-        <img
-          src={item.imageUrl}
-          alt={item.title}
-          className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
-        />
+        <div className="w-20 h-20 relative rounded-lg overflow-hidden flex-shrink-0">
+          <Image
+            src={item.imageUrl}
+            alt={item.title}
+            fill
+            className="object-cover"
+          />
+        </div>
         <div className="min-w-0 flex-1">
           <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{item.date}</p>
           <h3 className="text-base font-bold text-gray-900 dark:text-gray-100 truncate">
             {item.title}
           </h3>
           <div
-            ref={previewRef}
             className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mt-1"
           >
             {stripHtmlTags(item.description)}
@@ -1884,29 +1709,25 @@ const ProjectGridCard: React.FC<{ item: ContentItem; onReadMore: () => void }> =
   item,
   onReadMore,
 }) => {
-  const previewRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    renderLatex(previewRef.current);
-  }, [item.description]);
-
   return (
     <div
       onClick={onReadMore}
-      className="rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-[0_5px_18px_rgba(15,23,42,0.04)] overflow-hidden cursor-pointer hover:border-gray-200 dark:hover:border-gray-700 transition-colors"
+      className="rounded-lg border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-[0_5px_18px_rgba(15,23,42,0.04)] overflow-hidden cursor-pointer hover:border-gray-200 dark:hover:border-gray-700 transition-colors"
     >
-      <img
-        src={item.imageUrl}
-        alt={item.title}
-        className="w-full h-40 object-cover"
-      />
+      <div className="w-full h-40 relative">
+        <Image
+          src={item.imageUrl}
+          alt={item.title}
+          fill
+          className="object-cover"
+        />
+      </div>
       <div className="p-4">
         <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{item.date}</p>
         <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 line-clamp-1">
           {item.title}
         </h3>
         <div
-          ref={previewRef}
           className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mt-2"
         >
           {stripHtmlTags(item.description)}

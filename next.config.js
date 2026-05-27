@@ -1,5 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    dangerouslyAllowSVG: true,
+    contentDispositionType: "attachment",
+    remotePatterns: [
+      { protocol: "https", hostname: "firebasestorage.googleapis.com" },
+      { protocol: "https", hostname: "img.shields.io" },
+      { protocol: "https", hostname: "res.cloudinary.com" },
+      { protocol: "https", hostname: "picsum.photos" },
+      { protocol: "https", hostname: "fastly.picsum.photos" },
+      { protocol: "https", hostname: "img.freepik.com" },
+      { protocol: "https", hostname: "encrypted-tbn0.gstatic.com" },
+    ],
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -11,7 +24,7 @@ const nextConfig = {
       "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com",
       "img-src 'self' data: blob: https:",
       "font-src 'self' data: https://cdnjs.cloudflare.com",
-      "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebaseapp.com https://*.gstatic.com https://app.cal.com https://codeforces.com https://alfa-leetcode-api.onrender.com https://tryhackme.com https://api.github.com https://img.shields.io https://api.cloudinary.com",
+      "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebaseapp.com https://*.gstatic.com https://app.cal.com https://codeforces.com https://api.github.com https://img.shields.io https://api.cloudinary.com",
       "frame-src 'self' https:",
       "object-src 'none'",
       "base-uri 'self'",

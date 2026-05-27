@@ -49,54 +49,35 @@ export default function RootLayout({
                 --loading-bg: #ffffff;
                 --loading-gear-bg: #fff;
                 --loading-gear-color: #263238;
-                background-color: var(--loading-bg) !important;
+                background-color: var(--loading-bg);
                 color: var(--loading-gear-color);
-                transition: background-color 0.8s ease, color 0.8s ease;
-                user-select: none;
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
               }
 
               .dark,
               .dark body {
-                --loading-bg: #0f0f0f !important;
-                --loading-gear-bg: #1f1f1f !important;
-                --loading-gear-color: #ffffff !important;
-                background-color: var(--loading-bg) !important;
-                color: var(--loading-gear-color) !important;
-                transition: background-color 0.8s ease, color 0.8s ease;
-              }
-              
-              *, *::before, *::after {
-                transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease !important;
-              }
-              
-              .transitioning * {
-                transition: all 0.8s ease !important;
+                --loading-bg: #0f0f0f;
+                --loading-gear-bg: #1f1f1f;
+                --loading-gear-color: #ffffff;
+                background-color: var(--loading-bg);
+                color: var(--loading-gear-color);
               }
               
               .fade-in {
                 opacity: 0;
-                animation: fadeIn 1s ease forwards;
-                animation-delay: 0.5s;
+                animation: fadeIn 0.6s ease forwards;
               }
               
               @keyframes fadeIn {
-                from {
-                  opacity: 0;
-                }
-                to {
-                  opacity: 1;
-                }
+                from { opacity: 0; }
+                to { opacity: 1; }
               }
               
               .custom-context-menu {
-                animation: fadeIn 0.15s ease-out;
+                animation: fadeIn 0.1s ease-out;
                 backdrop-filter: blur(8px);
                 -webkit-backdrop-filter: blur(8px);
                 background: rgba(255, 255, 255, 0.85);
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05);
                 border: 1px solid rgba(255, 255, 255, 0.2);
               }
               

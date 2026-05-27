@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion, Variants } from "framer-motion";
 
 const socialVariants: Variants = {
@@ -83,11 +84,12 @@ export default function SocialLinks() {
           onClick={() => openSocial(social.platform)}
           className="cursor-pointer"
         >
-          <motion.img
+          <Image
             src={social.icon}
             alt={social.alt}
+            width={24}
+            height={24}
             className="w-6 h-6"
-            whileHover={{ scale: 1.02 }}
           />
         </motion.li>
       ))}

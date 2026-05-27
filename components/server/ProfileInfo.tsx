@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { motion, Variants } from "framer-motion";
 import ThemeToggle from "../client/ThemeToggle";
 import SocialLinks from "../client/SocialLinks";
@@ -133,7 +134,7 @@ export default function ProfileInfo({ forceStatic }: { forceStatic?: boolean }) 
       variants={containerVariants}
       initial={forceStatic ? "visible" : "hidden"}
       animate="visible"
-      className="h-auto md:h-full bg-white dark:bg-gray-900 p-6 rounded shadow-[0_10px_30px_rgba(15,23,42,0.06)] border border-gray-100 dark:border-gray-800 relative flex flex-col"
+      className="h-full bg-white dark:bg-gray-900 p-6 rounded-l-xl md:rounded-r-none shadow-[0_10px_30px_rgba(15,23,42,0.06)] border border-gray-100 dark:border-gray-800 relative flex flex-col"
     >
       <motion.div variants={itemVariants}>
         <ThemeToggle />
@@ -145,14 +146,16 @@ export default function ProfileInfo({ forceStatic }: { forceStatic?: boolean }) 
       >
         <motion.div
           variants={avatarVariants}
-          className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#FFDB14] flex-shrink-0"
+          className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#FFDB14] flex-shrink-0 relative"
           whileHover={{ scale: 1.02, rotate: 1 }}
           whileTap={{ scale: 0.95 }}
         >
-          <img
+          <Image
             src="/avatar.png"
             alt="Bitto Saha"
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
+            priority
           />
         </motion.div>
         <div className="min-w-0 flex-1">
@@ -257,10 +260,8 @@ export default function ProfileInfo({ forceStatic }: { forceStatic?: boolean }) 
         transition={{ duration: 0.2 }}
       >
         <div className="flex items-start gap-3 mb-1">
-          <motion.img
-            src="/avatar.png"
-            alt="Avatar"
-            className={`w-10 h-10 rounded-full border-2 flex-shrink-0 ${
+          <motion.div
+            className={`w-10 h-10 rounded-full border-2 flex-shrink-0 relative overflow-hidden ${
               hasBottomTypingCompleted ? "border-[#FFDB14]" : "border-transparent"
             }`}
             initial={{ opacity: 0, scale: 0.95 }}
@@ -270,7 +271,14 @@ export default function ProfileInfo({ forceStatic }: { forceStatic?: boolean }) 
             }}
             transition={{ duration: 0.25, ease: "easeOut" }}
             whileHover={{ rotate: 2 }}
-          />
+          >
+            <Image
+              src="/avatar.png"
+              alt="Avatar"
+              fill
+              className="object-cover"
+            />
+          </motion.div>
           <TypewriterText
             text="Thanks for visiting my portfolio! Explore my projects, activities, and certificates. Feel free to reach out if you'd like to collaborate or just chat."
             className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed"

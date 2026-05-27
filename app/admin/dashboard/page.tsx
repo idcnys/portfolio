@@ -45,24 +45,6 @@ interface DashboardProps {
   onLogout: () => void;
 }
 
-const renderLatex = async (element: HTMLElement | null) => {
-  if (!element) {
-    return;
-  }
-
-  const renderMathInElement = (await import("katex/contrib/auto-render"))
-    .default;
-  renderMathInElement(element, {
-    delimiters: [
-      { left: "$$", right: "$$", display: true },
-      { left: "\\[", right: "\\]", display: true },
-      { left: "$", right: "$", display: false },
-      { left: "\\(", right: "\\)", display: false },
-    ],
-    throwOnError: false,
-  });
-};
-
 const TAB_ORDER: TabType[] = [
   "certificates",
   "projects",
@@ -106,8 +88,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   const [tagsInput, setTagsInput] = useState("");
   const editorRef = useRef<any>(null);
   const noteEditorRef = useRef<any>(null);
-  const notePreviewRef = useRef<HTMLDivElement>(null);
-  const contentPreviewRef = useRef<HTMLDivElement>(null);
 
   // Notes State
   const [notes, setNotes] = useState<Note[]>([]);
@@ -132,9 +112,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     useState<PortfolioSettings | null>(null);
   const [usernameForm, setUsernameForm] = useState({
     codeforces: "",
-    cses: "",
-    leetcode: "",
-    tryhackme: "",
     github: "",
   });
   const [grindCardsEditor, setGrindCardsEditor] = useState("[]");
@@ -178,10 +155,16 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     const unsubscribeSettings = subscribeToPortfolioSettings((settings) => {
       setPortfolioSettings(settings);
       setUsernameForm(settings.grindUsernames);
-      setGrindCardsEditor(JSON.stringify(settings.grindCards, null, 2));
-      setGrindRatingsEditor(JSON.stringify(settings.grindRatings, null, 2));
-      setGrindGithubEditor(JSON.stringify(settings.grindGithubStats, null, 2));
-      setSkillsetEditor(JSON.stringify(settings.skillsetGroups, null, 2));
+      
+      // Only set editor if it's currently focused or we're initializing
+      // Note: Typing in textarea causes a re-render, but we want to avoid 
+      // resetting the editor while user is typing.
+      if (document.activeElement?.tagName !== "TEXTAREA") {
+        setGrindCardsEditor(JSON.stringify(settings.grindCards, null, 2));
+        setGrindRatingsEditor(JSON.stringify(settings.grindRatings, null, 2));
+        setGrindGithubEditor(JSON.stringify(settings.grindGithubStats, null, 2));
+        setSkillsetEditor(JSON.stringify(settings.skillsetGroups, null, 2));
+      }
     });
 
     // Log dashboard view
@@ -195,14 +178,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       unsubscribeSettings();
     };
   }, []);
-
-  useEffect(() => {
-    renderLatex(notePreviewRef.current);
-  }, [activeTab, isEditingNote, selectedNote?.content]);
-
-  useEffect(() => {
-    renderLatex(contentPreviewRef.current);
-  }, [activeTab, formData.description]);
 
   useEffect(() => {
     const savedToken = portfolioSettings?.githubToken?.trim();
@@ -1040,7 +1015,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 flex flex-col transition-colors">
       {/* Navigation */}
-      <nav className="bg-white border-b border-gray-200 px-4 md:px-8 py-3 flex items-center sticky top-0 z-50 shadow-sm dark:bg-gray-950 dark:border-gray-800">
+      <nav className="bg-white border-b border-gray-200 px-4 md:px-8 py-3 flex items-center sticky top-0 z-50 shadow-sm dark:bg-gray-950 dark:border-gray-800/50 dark:backdrop-blur-md">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-[#FFDB14] rounded-lg flex items-center justify-center font-black text-base text-gray-900 shadow-md ring-2 ring-yellow-400/20">
             B
@@ -1056,7 +1031,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                 onClick={() => handleTabClick(tab.id)}
                 className={`flex items-center gap-2 px-3 py-2 text-xs font-bold whitespace-nowrap rounded-md border transition-all ${
                   activeTab === tab.id
-                    ? "bg-[#FFDB14] text-gray-900 border-yellow-400 shadow-sm dark:text-gray-900 dark:bg-yellow-400 dark:border-yellow-300"
+                    ? "bg-[#FFDB14] text-gray-900 border-yellow-400 shadow-[0_0_15px_rgba(255,219,20,0.3)] dark:text-gray-900 dark:bg-[#FFDB14] dark:border-yellow-300 dark:shadow-[0_0_20px_rgba(255,219,20,0.4)]"
                     : "border-transparent text-gray-400 hover:text-gray-700 hover:border-gray-200 dark:text-gray-500 dark:hover:text-gray-200 dark:hover:border-gray-700"
                 } ${tab.id === "logout" ? "ml-2 text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300" : ""}`}
               >
@@ -1345,7 +1320,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       </h1>
                       <div className="prose prose-lg max-w-none rich-content">
                         <div
-                          ref={notePreviewRef}
                           className="whitespace-pre-wrap font-sans text-gray-700 leading-relaxed dark:text-gray-300"
                           dangerouslySetInnerHTML={{
                             __html: sanitizeRichHtml(selectedNote.content),
@@ -1811,7 +1785,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                     </div>
                   )}
                   <div
-                    ref={contentPreviewRef}
                     className="prose prose-sm max-w-none text-gray-700 rich-content dark:text-gray-300"
                     dangerouslySetInnerHTML={{
                       __html: sanitizeRichHtml(
@@ -2194,9 +2167,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {[
                     { key: "codeforces", label: "Codeforces" },
-                    { key: "cses", label: "CSES" },
-                    { key: "leetcode", label: "LeetCode" },
-                    { key: "tryhackme", label: "TryHackMe" },
                     { key: "github", label: "GitHub" },
                   ].map((field) => (
                     <div key={field.key}>

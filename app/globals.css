@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "katex/dist/katex.min.css";
 
 @theme {
   --color-*: initial;
@@ -34,6 +33,12 @@ body {
   font-family: "Inter", system-ui, sans-serif;
 }
 
+/* Ensure fonts are loaded properly */
+html {
+  font-family: "Inter", system-ui, sans-serif;
+  scroll-behavior: smooth;
+}
+
 /* Custom utilities for portfolio */
 .line-clamp-2 {
   display: -webkit-box;
@@ -47,12 +52,6 @@ body {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-/* Ensure fonts are loaded properly */
-html {
-  font-family: "Inter", system-ui, sans-serif;
-  scroll-behavior: smooth;
 }
 
 /* Compact, modern blog rhythm for rendered rich HTML content */
@@ -114,27 +113,11 @@ html {
   border-color: #374151;
 }
 
-/* Custom utilities for portfolio */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Smooth transitions */
-* {
-  transition-property:
-    color, background-color, border-color, text-decoration-color, fill, stroke;
+/* Theme-related smooth transitions for core elements only */
+body, nav, section, div, button {
+  transition-property: color, background-color, border-color;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  transition-duration: 200ms;
 }
 
 /* Prose dark mode heading overrides for better contrast */
@@ -157,10 +140,4 @@ html {
 
 .dark .prose em {
   color: #e5e7eb; /* gray-200 */
-}
-
-/* Ensure fonts are loaded properly */
-html {
-  font-family: "Inter", system-ui, sans-serif;
-  scroll-behavior: smooth;
 }

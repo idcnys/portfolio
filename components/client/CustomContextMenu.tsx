@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 
 interface ContextMenuPosition {
@@ -99,9 +100,11 @@ export default function CustomContextMenu() {
           onClick={() => handleSocialClick(social.url)}
           className={`w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 transition-colors ${social.color}`}
         >
-          <img
+          <Image
             src={social.icon}
             alt={social.name}
+            width={20}
+            height={20}
             className="w-5 h-5 flex-shrink-0"
           />
           <span>{social.name}</span>

@@ -310,7 +310,7 @@ Firebase write → logActivity() → Listener triggers
 ```
 
 **Default Settings Include:**
-- Grind counter cards (LeetCode, Codeforces, CSES, TryHackMe stats)
+- Grind counter cards (Codeforces, GitHub stats)
 - Grind ratings (max ratings, rankings)
 - GitHub stats
 - Skillset groups (frameworks, languages, tools, environment)
@@ -463,7 +463,7 @@ interface ActivityLog {
 // Portfolio Settings
 interface PortfolioSettings {
   githubToken: string;
-  grindUsernames: { codeforces, cses, leetcode, tryhackme, github };
+  grindUsernames: { codeforces, github };
   grindCards: GrindCounterCard[];
   grindRatings: GrindStatRow[];
   grindGithubStats: GrindStatRow[];
