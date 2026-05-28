@@ -228,6 +228,22 @@ const fetchJson = async (url: string) => {
 
 const VIEWED_ITEMS_STORAGE_KEY = "portfolio_unique_viewed_items_v1";
 
+const TECH_LOGOS = [
+  { name: "React", url: "https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=20232A" },
+  { name: "Next.js", url: "https://img.shields.io/badge/Next.js-000000?style=flat&logo=nextdotjs&logoColor=white" },
+  { name: "Firebase", url: "https://img.shields.io/badge/Firebase-FFCA28?style=flat&logo=Firebase&logoColor=039BE5" },
+  { name: "Cloudinary", url: "https://img.shields.io/badge/Cloudinary-3448C5?style=flat&logo=Cloudinary&logoColor=white" },
+  { name: "Tailwind", url: "https://img.shields.io/badge/Tailwind-38B2AC?style=flat&logo=tailwind-css&logoColor=white" },
+  { name: "TypeScript", url: "https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white" },
+  { name: "Framer", url: "https://img.shields.io/badge/Framer-0055FF?style=flat&logo=framer&logoColor=white" },
+  { name: "Node.js", url: "https://img.shields.io/badge/Node.js-339933?style=flat&logo=nodedotjs&logoColor=white" },
+  { name: "Vercel", url: "https://img.shields.io/badge/Vercel-000000?style=flat&logo=vercel&logoColor=white" },
+  { name: "GitHub", url: "https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white" },
+  { name: "ESLint", url: "https://img.shields.io/badge/ESLint-4B32C3?style=flat&logo=eslint&logoColor=white" },
+  { name: "CodeMirror", url: "https://img.shields.io/badge/CodeMirror-212121?style=flat&logo=codemirror&logoColor=white" },
+  { name: "PostCSS", url: "https://img.shields.io/badge/PostCSS-DD3A0A?style=flat&logo=postcss&logoColor=white" },
+];
+
 const incrementViewsIfUnique = async (itemId: string): Promise<void> => {
   if (typeof window === "undefined") {
     await incrementViews(itemId);
@@ -957,6 +973,25 @@ const PortfolioClient: React.FC = () => {
                         </div>
                       </div>
 
+                      {/* Tech Marquee */}
+                      <div className="absolute bottom-32 left-0 right-0 overflow-hidden border-y border-gray-100/50 dark:border-gray-800/50 bg-gray-50/30 dark:bg-gray-900/20 backdrop-blur-sm py-4 pointer-events-none">
+                        <div className="text-center mb-4">
+                          <p className="text-sm md:text-base text-amber-600 dark:text-[#FFDB14] font-playwrite opacity-90">
+                            Technologies powering this website
+                          </p>
+                        </div>
+                        <div className="animate-marquee whitespace-nowrap flex items-center gap-12">
+                          {[...TECH_LOGOS, ...TECH_LOGOS].map((logo, index) => (
+                            <img 
+                              key={`${logo.name}-${index}`} 
+                              src={logo.url} 
+                              alt={logo.name}
+                              className="h-6 md:h-8 object-contain opacity-100"
+                            />
+                          ))}
+                        </div>
+                      </div>
+
                       {/* Footer Info */}
                       <div className="absolute bottom-6 left-0 right-0 px-4 flex flex-col items-center gap-3 text-[10px] md:text-xs font-medium text-gray-400 dark:text-gray-500">
                         <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2">
@@ -978,7 +1013,7 @@ const PortfolioClient: React.FC = () => {
 
                         <div className="flex flex-col items-center gap-1">
                           <p className="opacity-80 tracking-wide">
-                            &copy; {new Date().getFullYear()} <span className="text-gray-600 dark:text-gray-300">Bitto Saha</span> — Handcrafted with <span className="text-rose-500 animate-pulse">❤️</span> & ☕
+                            &copy; {new Date().getFullYear()} <span className="text-gray-600 dark:text-gray-300">Bitto Saha</span> — Built with Code & Coffee
                           </p>
                           <div className="flex items-center gap-2 text-[9px] uppercase tracking-[0.2em] opacity-40">
                             <span>Next.js 15.5</span>
