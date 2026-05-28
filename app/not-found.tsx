@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ThemeProvider, useTheme } from "../lib/context/ThemeContext";
+import { Home, Code2, Terminal, Zap } from "lucide-react";
 
 const NotFoundComponent: React.FC = () => {
   const { isDarkMode, toggleTheme, mounted } = useTheme();
@@ -66,15 +67,15 @@ const NotFoundComponent: React.FC = () => {
           href="/"
           className="inline-flex items-center gap-3 bg-gray-900 dark:bg-white text-white dark:text-gray-100 px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-2xl hover:shadow-[#FFDB14]/20"
         >
-          <i className="fas fa-home"></i>
+          <Home className="w-5 h-5" />
           Back to Safety
         </Link>
       </div>
 
       <div className="mt-20 flex gap-6 text-gray-400 dark:text-gray-600 text-xl">
-        <i className="fas fa-code"></i>
-        <i className="fas fa-terminal"></i>
-        <i className="fas fa-bolt"></i>
+        <Code2 className="w-6 h-6" />
+        <Terminal className="w-6 h-6" />
+        <Zap className="w-6 h-6" />
       </div>
 
       <style jsx>{`

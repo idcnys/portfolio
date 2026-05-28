@@ -40,6 +40,78 @@ import {
 } from "../../../lib/sanitize";
 import { ThemeProvider, useTheme } from "../../../lib/context/ThemeContext";
 import ThemeToggle from "../../../components/client/ThemeToggle";
+import { 
+  Info, 
+  Plus, 
+  FileText, 
+  Edit as EditIcon, 
+  Trash2 as TrashIcon, 
+  Save, 
+  X, 
+  Code2, 
+  Maximize2, 
+  Link as LinkIcon, 
+  Image as ImagesIcon,
+  Image as ImageIcon,
+  List, 
+  Globe, 
+  Quote, 
+  Table, 
+  AlertTriangle, 
+  Minus, 
+  Filter, 
+  Ghost, 
+  ExternalLink, 
+  History,
+  Search as SearchIcon,
+  Check,
+  Clock,
+  LayoutGrid,
+  Hash,
+  MessageSquare as MessageIcon,
+  LogOut,
+  Send,
+  Paperclip,
+  Zap,
+  ChevronRight,
+  StickyNote,
+  Calendar,
+  Terminal as TerminalIcon,
+  Settings,
+  ChevronLeft,
+  Settings2,
+  Lock,
+  Eye,
+  RefreshCcw,
+  PlusCircle,
+  Folder,
+  Sliders,
+  User,
+  Layout,
+  Cpu,
+  Shield,
+  Layers as LayersIcon,
+  Activity,
+  Inbox,
+  Loader2,
+  LogIn
+} from "lucide-react";
+
+const GithubIcon = (props: any) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.28 1.15-.28 2.35 0 3.5-.73 1.02-1.08 2.25-1 3.5 0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+);
+
+const TwitterIcon = (props: any) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+);
+
+const YoutubeIcon = (props: any) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+);
+
+const LinkedinIcon = (props: any) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+);
 
 interface DashboardProps {
   onLogout: () => void;
@@ -232,47 +304,47 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     {
       id: "notepad" as DashboardTab,
       label: "Personal Notepad",
-      icon: "fas fa-sticky-note",
+      Icon: StickyNote,
     },
     {
       id: "publish-project" as DashboardTab,
       label: "Publish Project",
-      icon: "fas fa-code",
+      Icon: Code2,
     },
     {
       id: "publish-activity" as DashboardTab,
       label: "Publish Activity",
-      icon: "fas fa-calendar",
+      Icon: Calendar,
     },
     {
       id: "manage-content" as DashboardTab,
       label: "Manage Content",
-      icon: "fas fa-edit",
+      Icon: EditIcon,
     },
     {
       id: "media" as DashboardTab,
       label: "Upload Images",
-      icon: "fas fa-image",
+      Icon: ImageIcon,
     },
     {
       id: "codespace" as DashboardTab,
       label: "Codespace",
-      icon: "fas fa-terminal",
+      Icon: TerminalIcon,
     },
     {
       id: "portfolio-config" as DashboardTab,
       label: "Portfolio Config",
-      icon: "fas fa-sliders-h",
+      Icon: Sliders,
     },
     {
       id: "logs" as DashboardTab,
       label: "View Portfolio Logs",
-      icon: "fas fa-history",
+      Icon: History,
     },
     {
       id: "logout" as DashboardTab,
       label: "Log out",
-      icon: "fas fa-sign-out-alt",
+      Icon: LogOut,
     },
   ];
 
@@ -1078,7 +1150,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                     : "border-transparent text-gray-400 hover:text-gray-700 hover:border-gray-200 dark:text-gray-500 dark:hover:text-gray-200 dark:hover:border-gray-700"
                 } ${tab.id === "logout" ? "ml-2 text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300" : ""}`}
               >
-                <i className={tab.icon}></i>
+                <tab.Icon className="w-4 h-4" />
                 {tab.label}
               </button>
             ))}
@@ -1098,7 +1170,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               : "bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-200 dark:border-red-700"
           }`}
         >
-          <i className="fas fa-info-circle mr-2"></i> {message.text}
+          <Info className="w-4 h-4 mr-2 inline" /> {message.text}
         </div>
       )}
 
@@ -1117,7 +1189,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                     onClick={handleNewNote}
                     className="bg-[#FFDB14] text-gray-900 px-4 py-2 rounded-lg font-bold text-xs hover:bg-yellow-400 transition-all"
                   >
-                    <i className="fas fa-plus mr-2"></i>New Note
+                    <Plus className="w-4 h-4 mr-2 inline" />New Note
                   </button>
                 </div>
                 <div className="overflow-y-auto h-full p-4 space-y-3">
@@ -1144,7 +1216,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   ))}
                   {notes.length === 0 && (
                     <div className="text-center py-12 text-gray-400 dark:text-gray-500">
-                      <i className="fas fa-sticky-note text-3xl mb-4 opacity-50"></i>
+                      <FileText className="w-10 h-10 mb-4 opacity-50 mx-auto" />
                       <p className="font-bold">No notes yet</p>
                       <p className="text-xs">Click "New Note" to start</p>
                     </div>
@@ -1170,13 +1242,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           onClick={() => setIsEditingNote(true)}
                           className="bg-white text-blue-600 px-4 py-2 rounded-lg border border-blue-200 font-bold text-xs hover:bg-blue-50 transition-all shadow-sm dark:bg-gray-900 dark:text-blue-300 dark:border-blue-700 dark:hover:bg-gray-800"
                         >
-                          <i className="fas fa-edit mr-2"></i>Edit
+                          <EditIcon className="w-4 h-4 mr-2 inline" />Edit
                         </button>
                         <button
                           onClick={() => handleDeleteNote(selectedNote)}
                           className="bg-white text-red-600 px-4 py-2 rounded-lg border border-red-200 font-bold text-xs hover:bg-red-50 transition-all shadow-sm dark:bg-gray-900 dark:text-red-300 dark:border-red-700 dark:hover:bg-gray-800"
                         >
-                          <i className="fas fa-trash mr-2"></i>Delete
+                          <TrashIcon className="w-4 h-4 mr-2 inline" />Delete
                         </button>
                       </>
                     ) : (
@@ -1187,7 +1259,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           disabled={!noteForm.title.trim()}
                           className="bg-[#FFDB14] text-gray-900 px-4 py-2 rounded-lg font-bold text-xs hover:bg-yellow-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                         >
-                          <i className="fas fa-save mr-2"></i>Save
+                          <Save className="w-4 h-4 mr-2 inline" />Save
                         </button>
                         <button
                           onClick={() => {
@@ -1205,7 +1277,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           }}
                           className="bg-white text-gray-700 px-4 py-2 rounded-lg border border-gray-200 font-bold text-xs hover:bg-gray-50 transition-all shadow-sm dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800"
                         >
-                          <i className="fas fa-times mr-2"></i>Cancel
+                          <X className="w-4 h-4 mr-2 inline" />Cancel
                         </button>
                       </>
                     )}
@@ -1283,7 +1355,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                               className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                               title="Code Block"
                             >
-                              <i className="fas fa-code"></i>
+                              <Code2 className="w-4 h-4 mx-auto" />
                             </button>
                             <button
                               type="button"
@@ -1307,7 +1379,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                               className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                               title="Embed (iframe)"
                             >
-                              <i className="fas fa-window-maximize"></i>
+                              <Maximize2 className="w-4 h-4 mx-auto" />
                             </button>
 
                             {/* Media and Links */}
@@ -1317,7 +1389,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                               className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                               title="Link"
                             >
-                              <i className="fas fa-link"></i>
+                              <LinkIcon className="w-4 h-4 mx-auto" />
                             </button>
                             <button
                               type="button"
@@ -1325,7 +1397,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                               className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                               title="Image"
                             >
-                              <i className="fas fa-image"></i>
+                              <ImageIcon className="w-4 h-4 mx-auto" />
                             </button>
 
                             {/* Layout Elements */}
@@ -1335,7 +1407,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                               className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                               title="List"
                             >
-                              <i className="fas fa-list"></i>
+                              <List className="w-4 h-4 mx-auto" />
                             </button>
                           </div>
                         </div>
@@ -1373,7 +1445,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   ) : (
                     <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500">
                       <div className="text-center">
-                        <i className="fas fa-sticky-note text-4xl mb-4 opacity-50"></i>
+                        <StickyNote className="w-12 h-12 mx-auto mb-4 opacity-50" />
                         <p className="font-bold">
                           Select a note to view or create a new one
                         </p>
@@ -1514,7 +1586,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       </label>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-2 focus-within:border-[#FFDB14] dark:bg-gray-900 dark:border-gray-800">
-                          <i className="fab fa-github text-gray-400 dark:text-gray-500"></i>
+                          <GithubIcon className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                           <input
                             type="text"
                             placeholder="GitHub URL"
@@ -1529,7 +1601,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           />
                         </div>
                         <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-2 focus-within:border-[#FFDB14] dark:bg-gray-900 dark:border-gray-800">
-                          <i className="fas fa-globe text-gray-400 dark:text-gray-500"></i>
+                          <Globe className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                           <input
                             type="text"
                             placeholder="Website URL"
@@ -1544,7 +1616,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           />
                         </div>
                         <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-2 focus-within:border-[#FFDB14] dark:bg-gray-900 dark:border-gray-800">
-                          <i className="fab fa-twitter text-gray-400 dark:text-gray-500"></i>
+                          <TwitterIcon className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                           <input
                             type="text"
                             placeholder="Twitter URL"
@@ -1559,7 +1631,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           />
                         </div>
                         <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-2 focus-within:border-[#FFDB14] dark:bg-gray-900 dark:border-gray-800">
-                          <i className="fab fa-youtube text-gray-400 dark:text-gray-500"></i>
+                          <YoutubeIcon className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                           <input
                             type="text"
                             placeholder="YouTube URL"
@@ -1574,7 +1646,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           />
                         </div>
                         <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-2 focus-within:border-[#FFDB14] dark:bg-gray-900 dark:border-gray-800">
-                          <i className="fab fa-linkedin text-gray-400 dark:text-gray-500"></i>
+                          <LinkedinIcon className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                           <input
                             type="text"
                             placeholder="LinkedIn URL"
@@ -1649,7 +1721,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Code Block"
                           >
-                            <i className="fas fa-code"></i>
+                            <Code2 className="w-4 h-4 mx-auto" />
                           </button>
                           <button
                             type="button"
@@ -1673,7 +1745,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Embed (iframe)"
                           >
-                            <i className="fas fa-window-maximize"></i>
+                            <Maximize2 className="w-4 h-4 mx-auto" />
                           </button>
 
                           {/* Divider */}
@@ -1686,7 +1758,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Link"
                           >
-                            <i className="fas fa-link"></i>
+                            <LinkIcon className="w-4 h-4 mx-auto" />
                           </button>
                           <button
                             type="button"
@@ -1694,7 +1766,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Image"
                           >
-                            <i className="fas fa-image"></i>
+                            <ImageIcon className="w-4 h-4 mx-auto" />
                           </button>
 
                           {/* Divider */}
@@ -1707,7 +1779,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Quote"
                           >
-                            <i className="fas fa-quote-left"></i>
+                            <Quote className="w-4 h-4 mx-auto" />
                           </button>
                           <button
                             type="button"
@@ -1715,7 +1787,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="List"
                           >
-                            <i className="fas fa-list"></i>
+                            <List className="w-4 h-4 mx-auto" />
                           </button>
                           <button
                             type="button"
@@ -1723,7 +1795,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Table"
                           >
-                            <i className="fas fa-table"></i>
+                            <Table className="w-4 h-4 mx-auto" />
                           </button>
                           <button
                             type="button"
@@ -1731,7 +1803,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Alert Box"
                           >
-                            <i className="fas fa-exclamation-triangle"></i>
+                            <AlertTriangle className="w-4 h-4 mx-auto" />
                           </button>
                           <button
                             type="button"
@@ -1739,7 +1811,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             className="w-7 h-7 sm:w-8 sm:h-8 hover:bg-white rounded-md text-[11px] shadow-sm text-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                             title="Divider"
                           >
-                            <i className="fas fa-minus"></i>
+                            <Minus className="w-4 h-4 mx-auto" />
                           </button>
                         </div>
                       </div>
@@ -1773,9 +1845,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           ? `UPDATE ${formData.type.toUpperCase()}`
                           : `PUBLISH ${formData.type.toUpperCase()}`}
                       {!isLoading && (
-                        <i
-                          className={`fas ${editingId ? "fa-check" : "fa-paper-plane"} text-[10px]`}
-                        ></i>
+                        editingId ? <Check className="w-3 h-3" /> : <Send className="w-3 h-3" />
                       )}
                     </button>
                     {editingId && (
@@ -1853,7 +1923,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               </h2>
               <div className="flex gap-2">
                 <button className="px-4 py-2 bg-white text-gray-700 border border-gray-200 rounded-lg font-bold text-xs shadow-sm hover:bg-gray-50 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
-                  <i className="fas fa-filter mr-2"></i>All ({items.length})
+                  <Filter className="w-4 h-4 mr-2 inline" />All ({items.length})
                 </button>
               </div>
             </div>
@@ -1908,21 +1978,21 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       className="w-10 h-10 rounded-lg bg-white border border-blue-200 text-blue-600 flex items-center justify-center hover:bg-blue-50 transition-colors shadow-sm dark:bg-gray-900 dark:text-blue-300 dark:border-blue-700 dark:hover:bg-gray-800"
                       title="Edit"
                     >
-                      <i className="fas fa-edit"></i>
+                      <EditIcon className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(item.id)}
                       className="w-10 h-10 rounded-lg bg-white border border-red-200 text-red-600 flex items-center justify-center hover:bg-red-50 transition-colors shadow-sm dark:bg-gray-900 dark:text-red-300 dark:border-red-700 dark:hover:bg-gray-800"
                       title="Delete"
                     >
-                      <i className="fas fa-trash-alt"></i>
+                      <TrashIcon className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
               ))}
               {items.length === 0 && (
                 <div className="p-20 text-center text-gray-400 font-bold uppercase tracking-widest bg-white rounded-[2.5rem] border border-dashed border-gray-200 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-500">
-                  <i className="fas fa-ghost text-4xl mb-4 opacity-20"></i>
+                  <Ghost className="w-10 h-10 mb-4 opacity-20 mx-auto" />
                   <p>No content published yet.</p>
                 </div>
               )}
@@ -2156,11 +2226,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                             }}
                             className="w-full flex items-center gap-2 text-left px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-white transition-all dark:text-gray-200 dark:hover:bg-gray-800"
                           >
-                            <i
-                              className={`fas ${
-                                entry.type === "dir" ? "fa-folder" : "fa-file"
-                              } text-[10px] text-gray-400 dark:text-gray-500`}
-                            ></i>
+                            {entry.type === "dir" ? (
+                              <Folder className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
+                            ) : (
+                              <FileText className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
+                            )}
                             <span className="truncate">{entry.name}</span>
                           </button>
                         ))}
@@ -2450,11 +2520,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                     isUploading ? "opacity-50 cursor-not-allowed" : ""
                   }`}
                 >
-                  <i
-                    className={`fas ${
-                      isUploading ? "fa-circle-notch fa-spin" : "fa-cloud-upload-alt"
-                    } text-lg`}
-                  ></i>
+                  {isUploading ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <ImageIcon className="w-5 h-5" />
+                  )}
                   {isUploading ? "Uploading..." : "Upload New Image"}
                 </label>
               </div>
@@ -2478,14 +2548,14 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                         className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-900 hover:bg-[#FFDB14] transition-colors"
                         title="Copy Link"
                       >
-                        <i className="fas fa-link"></i>
+                        <LinkIcon className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => window.open(image.url, "_blank")}
                         className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-900 hover:bg-[#FFDB14] transition-colors"
                         title="View Fullsize"
                       >
-                        <i className="fas fa-external-link-alt"></i>
+                        <ExternalLink className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
@@ -2502,7 +2572,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                         className="text-red-500 hover:text-red-600 transition-colors p-2"
                         title="Delete Reference"
                       >
-                        <i className="fas fa-trash-alt text-xs"></i>
+                        <TrashIcon className="w-3 h-3" />
                       </button>
                     </div>
                   </div>
@@ -2511,7 +2581,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
 
               {media.length === 0 && !isUploading && (
                 <div className="col-span-full py-20 text-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200 dark:bg-gray-900/40 dark:border-gray-800">
-                  <i className="fas fa-images text-4xl text-gray-200 mb-4 block"></i>
+                  <ImageIcon className="w-10 h-10 text-gray-200 mb-4 block mx-auto" />
                   <p className="text-gray-400 font-bold">No images uploaded yet</p>
                   <p className="text-xs text-gray-400">
                     Your media library is empty. Start by uploading an image.
@@ -2565,21 +2635,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           <span
                             className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${getActionColor(log.action)}`}
                           >
-                            <i
-                              className={`fas ${
-                                log.action === "login"
-                                  ? "fa-sign-in-alt"
-                                  : log.action === "logout"
-                                    ? "fa-sign-out-alt"
-                                    : log.action === "create"
-                                      ? "fa-plus"
-                                      : log.action === "edit"
-                                        ? "fa-edit"
-                                        : log.action === "delete"
-                                          ? "fa-trash"
-                                          : "fa-eye"
-                              } mr-2`}
-                            ></i>
+                            {log.action === "login" && <LogIn className="w-3 h-3 mr-2" />}
+                            {log.action === "logout" && <LogOut className="w-3 h-3 mr-2" />}
+                            {log.action === "create" && <Plus className="w-3 h-3 mr-2" />}
+                            {log.action === "edit" && <EditIcon className="w-3 h-3 mr-2" />}
+                            {log.action === "delete" && <TrashIcon className="w-3 h-3 mr-2" />}
+                            {log.action === "view" && <Eye className="w-3 h-3 mr-2" />}
                             {log.action.toUpperCase()}
                           </span>
                         </td>
@@ -2604,7 +2665,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                 </table>
                 {logs.length === 0 && (
                   <div className="p-20 text-center text-gray-400 dark:text-gray-500">
-                    <i className="fas fa-history text-4xl mb-4 opacity-20"></i>
+                    <History className="w-10 h-10 mb-4 opacity-20 mx-auto" />
                     <p className="font-bold">No activity logs yet</p>
                     <p className="text-xs">
                       Actions will appear here as you use the dashboard

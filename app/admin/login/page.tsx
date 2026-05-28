@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ThemeProvider } from "../../../lib/context/ThemeContext";
 import { logActivity } from "../../../lib/firebase";
+import { AlertTriangle, RefreshCw, Loader2, LogIn, ArrowLeft } from "lucide-react";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -105,7 +106,7 @@ const Login: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
             <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm font-medium flex items-center">
-              <i className="fas fa-exclamation-triangle mr-2"></i>
+              <AlertTriangle className="w-4 h-4 mr-2" />
               {error}
             </div>
           )}
@@ -155,7 +156,7 @@ const Login: React.FC = () => {
                 aria-label="Refresh captcha"
                 disabled={isLoading}
               >
-                <i className="fas fa-rotate"></i>
+                <RefreshCw className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
               </button>
             </div>
             <input
@@ -176,12 +177,12 @@ const Login: React.FC = () => {
           >
             {isLoading ? (
               <>
-                <i className="fas fa-spinner fa-spin mr-2"></i>
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                 Signing In...
               </>
             ) : (
               <>
-                <i className="fas fa-sign-in-alt mr-2"></i>
+                <LogIn className="w-5 h-5 mr-2" />
                 Sign In
               </>
             )}
@@ -193,7 +194,7 @@ const Login: React.FC = () => {
             href="/"
             className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-sm flex items-center justify-center"
           >
-            <i className="fas fa-arrow-left mr-2"></i>
+            <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Portfolio
           </Link>
         </div>

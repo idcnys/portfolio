@@ -37,7 +37,7 @@ const defaultPortfolioSettings: PortfolioSettings = {
       title: "Codeforces",
       value: "N/A",
       subtitle: "All-time solved",
-      icon: "fa-code",
+      icon: "Code2",
       tone: "primary",
     },
     {
@@ -45,7 +45,7 @@ const defaultPortfolioSettings: PortfolioSettings = {
       title: "Total",
       value: "N/A",
       subtitle: "Problems solved",
-      icon: "fa-trophy",
+      icon: "Trophy",
       tone: "info",
     },
   ],

@@ -16,7 +16,20 @@ import {
   Layers,
   LayoutGrid,
   GitBranch, 
-  Clock
+  Clock,
+  FolderOpen,
+  Eye,
+  Heart,
+  Share2,
+  Trophy,
+  Activity,
+  Award,
+  BookOpen,
+  Code2,
+  Globe,
+  Link as LinkIcon,
+  Search as SearchIcon,
+  Settings
 } from "lucide-react";
 
 const GithubIcon = (props: any) => (
@@ -33,6 +46,10 @@ const TwitterIcon = (props: any) => (
 
 const InstagramIcon = (props: any) => (
   <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+);
+
+const YoutubeIcon = (props: any) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
 );
 import ProfileInfo from "./server/ProfileInfo";
 import TabSwitcher from "./client/TabSwitcher";
@@ -147,6 +164,29 @@ const decodeHtmlEntities = (value: string): string => {
   const textarea = document.createElement("textarea");
   textarea.innerHTML = value;
   return textarea.value;
+};
+
+const DynamicIcon = ({ name, className }: { name: string; className?: string }) => {
+  const iconName = name.startsWith("fa-") ? name.substring(3) : name;
+  
+  switch(iconName.toLowerCase()) {
+    case 'code':
+    case 'code2': return <Code2 className={className} />;
+    case 'trophy': return <Trophy className={className} />;
+    case 'award': return <Award className={className} />;
+    case 'book':
+    case 'book-open': return <BookOpen className={className} />;
+    case 'activity': return <Activity className={className} />;
+    case 'clock': return <Clock className={className} />;
+    case 'heart': return <Heart className={className} />;
+    case 'link': return <LinkIcon className={className} />;
+    case 'globe': return <Globe className={className} />;
+    case 'github': return <GithubIcon className={className} />;
+    case 'linkedin': return <LinkedinIcon className={className} />;
+    case 'twitter': return <TwitterIcon className={className} />;
+    case 'instagram': return <InstagramIcon className={className} />;
+    default: return <Settings className={className} />;
+  }
 };
 
 const getRelativeTime = (isoString: string | undefined): string => {
@@ -1246,15 +1286,17 @@ const PortfolioClient: React.FC = () => {
                           variants={cardVariants}
                           className="py-20 text-center"
                         >
-                          <motion.i
-                            className="fas fa-folder-open text-4xl text-gray-200 dark:text-gray-800 mb-4"
+                          <motion.div
+                            className="flex justify-center mb-4"
                             animate={{ rotate: [0, 10, -10, 0] }}
                             transition={{
                               duration: 2,
                               repeat: Infinity,
                               repeatDelay: 3,
                             }}
-                          />
+                          >
+                            <FolderOpen className="w-10 h-10 text-gray-200 dark:text-gray-800" />
+                          </motion.div>
                           <p className="text-gray-400 dark:text-gray-600 font-medium">
                             {activeTab === "projects" && projectSearchQuery
                               ? "No matching projects found."
@@ -1282,7 +1324,9 @@ const PortfolioClient: React.FC = () => {
                           <div
                             className={`relative overflow-hidden rounded-xl p-4 min-h-[116px] text-white shadow-md bg-gradient-to-br ${COUNTER_TONE_CLASSES[card.tone]}`}
                           >
-                            <i className={`fas ${card.icon} absolute left-3 top-3 text-4xl opacity-25`}></i>
+                            <div className="absolute left-3 top-3 opacity-25">
+                              <DynamicIcon name={card.icon} className="w-10 h-10" />
+                            </div>
                             <div className="relative z-10 pl-12">
                               <p className="text-xs uppercase tracking-wide font-semibold text-white/80">
                                 {card.title}
@@ -1621,11 +1665,11 @@ const DetailView: React.FC<{
             className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-300 mb-6"
           >
             <span className="flex items-center gap-2">
-              <i className="far fa-clock"></i>
+              <Clock className="w-4 h-4" />
               <span>{calculateReadTime(item.description)} min read</span>
             </span>
             <span className="flex items-center gap-2">
-              <i className="far fa-eye"></i>
+              <Eye className="w-4 h-4" />
               <span>{item.views || 0} views</span>
             </span>
           </motion.div>
@@ -1645,7 +1689,7 @@ const DetailView: React.FC<{
               }
             >
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                <i className="fas fa-link text-gray-500 dark:text-gray-400"></i>
+                <LinkIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                 <span className="font-medium text-gray-700 dark:text-gray-300">
                   Links:
                 </span>
@@ -1658,13 +1702,7 @@ const DetailView: React.FC<{
                     rel="noopener noreferrer"
                     className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
                   >
-                    <Image
-                      src="/icons/icons8-github-50.svg"
-                      alt="GitHub"
-                      width={24}
-                      height={24}
-                      className="w-6 h-6"
-                    />
+                    <GithubIcon className="w-6 h-6" />
                   </a>
                 )}
                 {item.links.website && (
@@ -1674,7 +1712,7 @@ const DetailView: React.FC<{
                     rel="noopener noreferrer"
                     className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
                   >
-                    <i className="fas fa-globe text-lg"></i>
+                    <Globe className="w-5 h-5" />
                   </a>
                 )}
                 {item.links.twitter && (
@@ -1684,13 +1722,7 @@ const DetailView: React.FC<{
                     rel="noopener noreferrer"
                     className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
                   >
-                    <Image
-                      src="/icons/icons8-twitter-bird.svg"
-                      alt="Twitter"
-                      width={24}
-                      height={24}
-                      className="w-6 h-6"
-                    />
+                    <TwitterIcon className="w-6 h-6" />
                   </a>
                 )}
                 {item.links.youtube && (
@@ -1700,13 +1732,7 @@ const DetailView: React.FC<{
                     rel="noopener noreferrer"
                     className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
                   >
-                    <Image
-                      src="/icons/icons8-youtube-50.svg"
-                      alt="YouTube"
-                      width={24}
-                      height={24}
-                      className="w-6 h-6"
-                    />
+                    <YoutubeIcon className="w-6 h-6" />
                   </a>
                 )}
                 {item.links.linkedin && (
@@ -1716,13 +1742,7 @@ const DetailView: React.FC<{
                     rel="noopener noreferrer"
                     className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
                   >
-                    <Image
-                      src="/icons/icons8-linkedin-50.svg"
-                      alt="LinkedIn"
-                      width={24}
-                      height={24}
-                      className="w-6 h-6"
-                    />
+                    <LinkedinIcon className="w-6 h-6" />
                   </a>
                 )}
               </div>
@@ -1780,9 +1800,9 @@ const DetailView: React.FC<{
                         : "group-hover:bg-pink-50 dark:group-hover:bg-pink-900/20"
                     }`}
                   >
-                    <i
-                      className={`${hasLiked ? "fas" : "far"} fa-heart text-lg`}
-                    ></i>
+                    <Heart
+                      className={`w-5 h-5 ${hasLiked ? "fill-current" : ""}`}
+                    />
                   </div>
                   <span className={`text-sm ${hasLiked ? "font-bold" : ""}`}>
                     {likes}
@@ -1802,7 +1822,7 @@ const DetailView: React.FC<{
                     onClick={handleShare}
                     className="w-9 h-9 rounded-full flex items-center justify-center text-gray-500 hover:text-sky-500 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-all"
                   >
-                    <i className="fas fa-share"></i>
+                    <Share2 className="w-5 h-5" />
                   </button>
                 )}
               </div>
@@ -1888,18 +1908,18 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
             className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-300 mb-3"
           >
             <span className="flex items-center gap-1">
-              <motion.i
-                className="far fa-heart text-xs"
-                whileHover={{ scale: 1.05, color: "#e91e63" }}
-              />{" "}
+              <motion.div whileHover={{ scale: 1.05, color: "#e91e63" }}>
+                <Heart className="w-3.5 h-3.5" />
+              </motion.div>{" "}
               {item.likes || 0}
             </span>
             <span className="flex items-center gap-1">
-              <motion.i
-                className="far fa-clock text-xs"
+              <motion.div
                 animate={{ rotate: [0, 10, -10, 0] }}
                 transition={{ duration: 2, repeat: Infinity, repeatDelay: 5 }}
-              />{" "}
+              >
+                <Clock className="w-3.5 h-3.5" />
+              </motion.div>{" "}
               {calculateReadTime(item.description)} min
             </span>
           </motion.div>
@@ -1922,13 +1942,7 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Image
-                  src="/icons/icons8-github-50.svg"
-                  alt="GitHub"
-                  width={24}
-                  height={24}
-                  className="w-6 h-6"
-                />
+                <GithubIcon className="w-6 h-6" />
               </motion.a>
             )}
             {item.links.website && (
@@ -1941,7 +1955,7 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <i className="fas fa-globe text-lg"></i>
+                <Globe className="w-5 h-5" />
               </motion.a>
             )}
             {item.links.twitter && (
@@ -1954,13 +1968,7 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Image
-                  src="/icons/icons8-twitter-bird.svg"
-                  alt="Twitter"
-                  width={24}
-                  height={24}
-                  className="w-6 h-6"
-                />
+                <TwitterIcon className="w-6 h-6" />
               </motion.a>
             )}
             {item.links.youtube && (
@@ -1973,13 +1981,7 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Image
-                  src="/icons/icons8-youtube-50.svg"
-                  alt="YouTube"
-                  width={24}
-                  height={24}
-                  className="w-6 h-6"
-                />
+                <YoutubeIcon className="w-6 h-6" />
               </motion.a>
             )}
             {item.links.linkedin && (
@@ -1992,13 +1994,7 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
                 whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Image
-                  src="/icons/icons8-linkedin-50.svg"
-                  alt="LinkedIn"
-                  width={24}
-                  height={24}
-                  className="w-6 h-6"
-                />
+                <LinkedinIcon className="w-6 h-6" />
               </motion.a>
             )}
           </motion.div>
