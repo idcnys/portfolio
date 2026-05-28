@@ -242,6 +242,7 @@ const TECH_LOGOS = [
   { name: "ESLint", url: "https://img.shields.io/badge/ESLint-4B32C3?style=flat&logo=eslint&logoColor=white" },
   { name: "CodeMirror", url: "https://img.shields.io/badge/CodeMirror-212121?style=flat&logo=codemirror&logoColor=white" },
   { name: "PostCSS", url: "https://img.shields.io/badge/PostCSS-DD3A0A?style=flat&logo=postcss&logoColor=white" },
+  { name: "Cal.com", url: "https://img.shields.io/badge/Cal.com-000000?style=flat&logo=caldotcom&logoColor=white" },
 ];
 
 const incrementViewsIfUnique = async (itemId: string): Promise<void> => {
