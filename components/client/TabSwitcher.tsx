@@ -73,7 +73,7 @@ export default function TabSwitcher({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="flex items-center p-2 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm shadow-[0_10px_24px_rgba(15,23,42,0.06)] shrink-0 sticky top-0 z-10"
+      className={`flex items-center p-2 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm shadow-[0_10px_24px_rgba(15,23,42,0.06)] shrink-0 sticky top-0 z-10 transition-all duration-300 ${activeTab === "home" ? "justify-center" : ""}`}
     >
       {showBackButton && onBack && (
         <motion.button
