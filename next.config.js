@@ -27,9 +27,6 @@ const nextConfig = {
       { protocol: "https", hostname: "encrypted-tbn0.gstatic.com" },
     ],
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   async headers() {
     const csp = [
       "default-src 'self'",
