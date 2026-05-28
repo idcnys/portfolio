@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function AppearingTextAnimation({ forceStatic = false }: { forceStatic?: boolean }) {
+export default function AppearingTextAnimation({ forceStatic = false, className = "" }: { forceStatic?: boolean, className?: string }) {
   const titles = [
     "Undergrad Student",
     "Problem Solver",
@@ -21,7 +21,7 @@ export default function AppearingTextAnimation({ forceStatic = false }: { forceS
   }, [titles.length]);
 
   return (
-    <div className="h-6 flex items-center overflow-hidden">
+    <div className={`h-6 flex items-center overflow-hidden ${className}`}>
       <AnimatePresence mode="wait">
         <motion.p
           key={titles[index]}

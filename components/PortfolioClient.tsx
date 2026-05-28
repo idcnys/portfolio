@@ -805,7 +805,7 @@ const PortfolioClient: React.FC = () => {
                             variants={cardVariants}
                             className="text-xl md:text-2xl font-medium text-[#FFDB14]"
                           >
-                            <AppearingTextAnimation forceStatic={true} />
+                            <AppearingTextAnimation forceStatic={true} className="justify-center" />
                           </motion.div>
                         </div>
 
@@ -816,25 +816,40 @@ const PortfolioClient: React.FC = () => {
                     </section>
 
                     {/* About & Tech Stack Section */}
-                    <section className="sticky top-0 min-h-screen flex flex-col justify-center py-20 px-4 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 z-[2] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)]">
-                      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <section className="sticky top-0 min-h-screen flex flex-col items-stretch bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 z-[2] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)] overflow-hidden">
+                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2">
+                        {/* About Side */}
                         <motion.div 
                           variants={cardVariants}
-                          className="space-y-6"
+                          className="flex flex-col justify-center p-8 md:p-12 lg:p-20 space-y-8 bg-gray-50/50 dark:bg-gray-800/10"
                         >
-                          <h2 className="text-sm font-bold text-gray-400 uppercase tracking-[0.3em]">About Me</h2>
-                          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed font-medium italic">
-                            "{portfolioSettings?.homeSettings?.summary || "I'm a Computer Science student at RUET. I love turning ideas into real products and have a deep interest in Artificial Intelligence and Cyber Security."}"
-                          </p>
+                          <div className="space-y-4">
+                            <h2 className="text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.3em]">About Me</h2>
+                            <p className="text-2xl md:text-3xl lg:text-4xl text-gray-900 dark:text-gray-100 font-bold leading-tight">
+                              {portfolioSettings?.homeSettings?.summary || "I'm a Computer Science student at RUET. I love turning ideas into real products and have a deep interest in Artificial Intelligence and Cyber Security."}
+                            </p>
+                          </div>
+                          <div className="w-16 h-1 bg-[#FFDB14] rounded-full" />
                         </motion.div>
 
-                        <motion.div variants={cardVariants} className="space-y-6">
-                           <h2 className="text-sm font-bold text-gray-400 uppercase tracking-[0.3em]">Core Tech</h2>
-                           <div className="flex flex-wrap gap-3">
-                              {(portfolioSettings?.homeSettings?.techStack || ["Next.js", "React", "TypeScript", "Node.js", "Firebase", "Tailwind CSS"]).map(tech => (
-                                <span key={tech} className="px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-300 shadow-sm">
-                                  {tech}
-                                </span>
+                        {/* Tech Stack Side */}
+                        <motion.div 
+                          variants={cardVariants}
+                          className="flex flex-col justify-center p-8 md:p-12 lg:p-20 space-y-10 bg-white dark:bg-gray-950"
+                        >
+                           <h2 className="text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.3em]">Skillset</h2>
+                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                              {SKILLSET_GROUPS.map(group => (
+                                <div key={group.id} className="space-y-3">
+                                  <h3 className="text-xs font-black text-[#FFDB14] uppercase tracking-widest border-b border-gray-100 dark:border-gray-800 pb-2">{group.title}</h3>
+                                  <div className="flex flex-wrap gap-2">
+                                    {group.badges.map(badge => (
+                                      <span key={badge.label} className="px-2.5 py-1 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-md text-[10px] md:text-xs font-bold text-gray-700 dark:text-gray-300 shadow-sm">
+                                        {badge.label}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
                               ))}
                            </div>
                         </motion.div>
