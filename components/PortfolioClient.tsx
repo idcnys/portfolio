@@ -319,17 +319,16 @@ const avatarVariants: Variants = {
 const cardVariants: Variants = {
   hidden: {
     opacity: 0,
-
-    y: 10,
-    scale: 0.98
+    y: 15,
+    filter: "blur(10px)",
   },
   show: {
     opacity: 1,
     y: 0,
-    scale: 1,
+    filter: "blur(0px)",
     transition: {
-      duration: 0.3,
-      ease: [0.25, 0.46, 0.45, 0.94]
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1],
     }
   }
 };
@@ -378,6 +377,11 @@ const PortfolioClient: React.FC = () => {
   const [isTabConfigLoading, setIsTabConfigLoading] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
   const [hasEntranceAnimated, setHasEntranceAnimated] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
@@ -980,13 +984,13 @@ const PortfolioClient: React.FC = () => {
                             Technologies powering this website
                           </p>
                         </div>
-                        <div className="animate-marquee whitespace-nowrap flex items-center gap-12">
+                        <div className="animate-marquee whitespace-nowrap flex items-center">
                           {[...TECH_LOGOS, ...TECH_LOGOS].map((logo, index) => (
                             <img 
                               key={`${logo.name}-${index}`} 
                               src={logo.url} 
                               alt={logo.name}
-                              className="h-6 md:h-8 object-contain opacity-100"
+                              className="h-6 md:h-8 object-contain opacity-100 mx-8 md:mx-12"
                             />
                           ))}
                         </div>
@@ -1007,13 +1011,13 @@ const PortfolioClient: React.FC = () => {
                           <span className="hidden md:block w-px h-3 bg-gray-200 dark:bg-gray-800" />
                           <div className="flex items-center gap-1.5">
                             <i className="far fa-clock opacity-70"></i>
-                            <span>Deployed {getRelativeTime(process.env.NEXT_PUBLIC_BUILD_TIME)}</span>
+                            <span>Deployed {mounted ? getRelativeTime(process.env.NEXT_PUBLIC_BUILD_TIME) : "Just now"}</span>
                           </div>
                         </div>
 
                         <div className="flex flex-col items-center gap-1">
                           <p className="opacity-80 tracking-wide">
-                            &copy; {new Date().getFullYear()} <span className="text-gray-600 dark:text-gray-300">Bitto Saha</span> — Built with Code & Coffee
+                            &copy; {mounted ? new Date().getFullYear() : "2024"} <span className="text-gray-600 dark:text-gray-300">Bitto Saha</span> — Built with Code & Coffee
                           </p>
                           <div className="flex items-center gap-2 text-[9px] uppercase tracking-[0.2em] opacity-40">
                             <span>Next.js 15.5</span>
