@@ -114,6 +114,17 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     codeforces: "",
     github: "",
   });
+  const [homeForm, setHomeForm] = useState({
+    quote: "",
+    quoteAuthor: "",
+    summary: "",
+    email: "",
+    location: "",
+    education: "",
+    status: "",
+    techStack: "",
+    featuredProjectIds: "",
+  });
   const [grindCardsEditor, setGrindCardsEditor] = useState("[]");
   const [grindRatingsEditor, setGrindRatingsEditor] = useState("[]");
   const [grindGithubEditor, setGrindGithubEditor] = useState("[]");
@@ -155,6 +166,20 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     const unsubscribeSettings = subscribeToPortfolioSettings((settings) => {
       setPortfolioSettings(settings);
       setUsernameForm(settings.grindUsernames);
+      
+      if (settings.homeSettings) {
+        setHomeForm({
+          quote: settings.homeSettings.quote || "",
+          quoteAuthor: settings.homeSettings.quoteAuthor || "",
+          summary: settings.homeSettings.summary || "",
+          email: settings.homeSettings.email || "",
+          location: settings.homeSettings.location || "",
+          education: settings.homeSettings.education || "",
+          status: settings.homeSettings.status || "",
+          techStack: settings.homeSettings.techStack?.join(", ") || "",
+          featuredProjectIds: settings.homeSettings.featuredProjectIds?.join(", ") || "",
+        });
+      }
       
       // Only set editor if it's currently focused or we're initializing
       // Note: Typing in textarea causes a re-render, but we want to avoid 
@@ -658,6 +683,24 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
         return "text-purple-600 bg-purple-50 dark:text-purple-200 dark:bg-purple-900/30";
       default:
         return "text-gray-600 bg-gray-50 dark:text-gray-200 dark:bg-gray-800";
+    }
+  };
+
+  const saveHomeSettings = async () => {
+    try {
+      if (!portfolioSettings) return;
+      await updatePortfolioSettings({
+        ...portfolioSettings,
+        homeSettings: {
+          ...homeForm,
+          techStack: homeForm.techStack.split(",").map(t => t.trim()).filter(Boolean),
+          featuredProjectIds: homeForm.featuredProjectIds.split(",").map(t => t.trim()).filter(Boolean),
+        },
+      });
+      setMessage({ text: "Home settings updated!", type: "success" });
+      logActivity("edit", "auth", "home-settings", "Updated Home Tab Settings");
+    } catch (error) {
+      setMessage({ text: "Failed to update home settings", type: "error" });
     }
   };
 
@@ -2153,6 +2196,87 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
             <h2 className="text-2xl font-black text-gray-900 tracking-tighter dark:text-gray-100">
               Portfolio Config
             </h2>
+
+            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 space-y-4 dark:bg-gray-900 dark:border-gray-800">
+              <h3 className="text-lg font-black text-gray-900 dark:text-gray-100">
+                Home Tab Content
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Customize your status, summary, and contact info displayed on your Home tab.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
+                    Current Status
+                  </label>
+                  <input
+                    value={homeForm.status}
+                    onChange={(e) => setHomeForm(prev => ({ ...prev, status: e.target.value }))}
+                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100"
+                    placeholder="What are you doing now?"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
+                    Summary / About
+                  </label>
+                  <textarea
+                    value={homeForm.summary}
+                    onChange={(e) => setHomeForm(prev => ({ ...prev, summary: e.target.value }))}
+                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100 min-h-[100px]"
+                    placeholder="Brief intro for your home page"
+                  />
+                </div>
+                {[
+                  { key: "email", label: "Email Address" },
+                  { key: "location", label: "Location" },
+                  { key: "education", label: "Education / University" },
+                ].map(field => (
+                  <div key={field.key}>
+                    <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
+                      {field.label}
+                    </label>
+                    <input
+                      value={homeForm[field.key as keyof typeof homeForm]}
+                      onChange={(e) => setHomeForm(prev => ({ ...prev, [field.key]: e.target.value }))}
+                      className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100"
+                      placeholder={`Enter ${field.label}`}
+                    />
+                  </div>
+                ))}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
+                    Tech Stack (Comma Separated)
+                  </label>
+                  <input
+                    value={homeForm.techStack}
+                    onChange={(e) => setHomeForm(prev => ({ ...prev, techStack: e.target.value }))}
+                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100"
+                    placeholder="e.g. Next.js, React, Python"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
+                    Featured Project IDs (Comma Separated)
+                  </label>
+                  <input
+                    value={homeForm.featuredProjectIds}
+                    onChange={(e) => setHomeForm(prev => ({ ...prev, featuredProjectIds: e.target.value }))}
+                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100"
+                    placeholder="Project IDs from content management"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={saveHomeSettings}
+                className="bg-[#FFDB14] text-gray-900 px-8 py-3 rounded-lg text-xs font-black uppercase tracking-wider hover:bg-yellow-400 transition-all shadow-sm"
+              >
+                Save Home Content
+              </button>
+            </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
               <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 space-y-4 dark:bg-gray-900 dark:border-gray-800">

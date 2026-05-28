@@ -13,9 +13,12 @@ import { useContent } from "../lib/context/ContentContext";
 import ProfileInfo from "./server/ProfileInfo";
 import TabSwitcher from "./client/TabSwitcher";
 import CustomContextMenu from "./client/CustomContextMenu";
+import AppearingTextAnimation from "./client/AppearingTextAnimation";
+import ActionButtons from "./client/ActionButtons";
 
 type DescriptionBlock =
   | { type: "html"; content: string }
+
   | { type: "code"; code: string; language?: string };
 
 type ProjectViewMode = "card" | "list" | "grid";
@@ -89,6 +92,25 @@ const SKILLSET_GROUPS: SkillsetGroup[] = [
     ],
   },
 ];
+
+const EDUCATION_DATA = [
+  {
+    year: "2025 - Present",
+    degree: "Bachelor's in CSE",
+    institution: "Rajshahi University Of Engineering & Technology, Rajshahi",
+  },
+  {
+    year: "2022 - 2024",
+    degree: "Higher Secondary Certificate (HSC)",
+    institution: "Rajshahi College, Rajshahi",
+  },
+  {
+    year: "2022",
+    degree: "Senior School Certificate (SSC)",
+    institution: "Dhunat Govt. N. U. Pilot Model High School, Bogura",
+  },
+];
+
 
 const CODE_BLOCK_REGEX =
   /<pre[^>]*>\s*<code([^>]*)>([\s\S]*?)<\/code>\s*<\/pre>/gi;
@@ -223,17 +245,21 @@ const incrementViewsIfUnique = async (itemId: string): Promise<void> => {
 
 // Animation variants
 const pageVariants: Variants = {
-  initial: { opacity: 1 },
+  initial: { opacity: 0, y: 5 },
   animate: {
     opacity: 1,
+    y: 0,
     transition: {
-      duration: 0,
+      duration: 0.3,
+      ease: "easeOut",
     },
   },
   exit: {
-    opacity: 1,
+    opacity: 0,
+    y: -5,
     transition: {
-      duration: 0,
+      duration: 0.2,
+      ease: "easeIn",
     },
   },
 };
@@ -249,9 +275,22 @@ const containerVariants: Variants = {
   }
 };
 
+const avatarVariants: Variants = {
+  hidden: { scale: 0.8, opacity: 0 },
+  show: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      duration: 0.6,
+      ease: [0.68, -0.55, 0.265, 1.55],
+    },
+  },
+};
+
 const cardVariants: Variants = {
   hidden: {
     opacity: 0,
+
     y: 10,
     scale: 0.98
   },
@@ -297,7 +336,7 @@ const PortfolioClient: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState<TabType>("certificates");
+  const [activeTab, setActiveTab] = useState<TabType>("home");
   const [viewingDetail, setViewingDetail] = useState<ContentItem | null>(null);
   const [selectedCertificate, setSelectedCertificate] = useState<string | null>(
     null,
@@ -352,14 +391,14 @@ const PortfolioClient: React.FC = () => {
   }, []);
 
   const visibleTabs = useMemo<TabType[]>(() => {
-    const order: TabType[] = ["certificates", "projects", "activity", "grind", "skillset"];
+    const order: TabType[] = ["home", "certificates", "projects", "activity", "grind", "skillset"];
     const visibility = portfolioSettings?.tabVisibility;
     if (!visibility) {
       return order;
     }
 
-    const filtered = order.filter((tab) => visibility[tab]);
-    return filtered.length > 0 ? filtered : ["certificates"];
+    const filtered = order.filter((tab) => tab === "home" || visibility[tab as keyof typeof visibility]);
+    return filtered.length > 0 ? filtered : ["home"];
   }, [portfolioSettings]);
 
   useEffect(() => {
@@ -499,6 +538,7 @@ const PortfolioClient: React.FC = () => {
 
   const contentByTab = useMemo<Record<TabType, ContentItem[]>>(
     () => ({
+      home: [],
       certificates: [],
       projects,
       activity: activities,
@@ -530,6 +570,7 @@ const PortfolioClient: React.FC = () => {
     }
 
     const allowedTabs: TabType[] = [
+      "home",
       "certificates",
       "projects",
       "activity",
@@ -612,7 +653,7 @@ const PortfolioClient: React.FC = () => {
     window.history.pushState(null, "", `/projects/${slug}`);
     incrementViewsIfUnique(item.id);
 
-    // Ensure the scroll container resets to top when opening a detail view
+    // Scroll to top
     const mainContentArea = document.querySelector(".md\\:overflow-y-auto");
     if (mainContentArea) {
       mainContentArea.scrollTo({ top: 0, behavior: "instant" });
@@ -620,6 +661,11 @@ const PortfolioClient: React.FC = () => {
       window.scrollTo({ top: 0, behavior: "instant" });
     }
   };
+
+  const featuredProjects = useMemo(() => {
+    const ids = portfolioSettings?.homeSettings?.featuredProjectIds || [];
+    return projects.filter(p => ids.includes(p.id)).slice(0, 2);
+  }, [projects, portfolioSettings?.homeSettings?.featuredProjectIds]);
 
   const ShimmerCard = () => (
     <motion.div
@@ -650,8 +696,15 @@ const PortfolioClient: React.FC = () => {
       <CustomContextMenu />
       <motion.div
         initial={!effectivelyAnimated ? { opacity: 0, x: -50 } : false}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
+        animate={{ 
+          opacity: activeTab === "home" ? 0 : 1, 
+          x: activeTab === "home" ? -40 : 0,
+          pointerEvents: activeTab === "home" ? "none" : "auto" 
+        }}
+        transition={{ 
+          duration: 0.4, 
+          ease: [0.23, 1, 0.32, 1] // Decelerate ease
+        }}
         className={`w-full md:w-[380px] h-auto md:h-full flex flex-col md:overflow-y-hidden custom-scrollbar pr-0 md:pr-0 ${isDetailView ? "hidden md:flex" : "flex"} flex-shrink-0 z-10`}
       >
         <ProfileInfo forceStatic={effectivelyAnimated} />
@@ -659,9 +712,16 @@ const PortfolioClient: React.FC = () => {
 
       <motion.div
         initial={!effectivelyAnimated ? { opacity: 0, x: 50 } : false}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
-        className="flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md rounded-r-xl md:rounded-l-none shadow-[0_12px_34px_rgba(15,23,42,0.07)] border-y border-r border-gray-100 dark:border-gray-800 overflow-hidden"
+        animate={{ 
+          opacity: 1, 
+          x: 0,
+          marginLeft: activeTab === "home" ? "-380px" : "0px"
+        }}
+        transition={{ 
+          duration: 0.4, 
+          ease: [0.23, 1, 0.32, 1] 
+        }}
+        className="flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md rounded-r-xl md:rounded-l-none shadow-[0_12px_34px_rgba(15,23,42,0.07)] border border-gray-100 dark:border-gray-800 overflow-hidden"
       >
         <TabSwitcher
           activeTab={activeTab}
@@ -710,6 +770,164 @@ const PortfolioClient: React.FC = () => {
                 exit="exit"
                 className="p-4 md:p-6 w-full"
               >
+                {activeTab === "home" && (
+                  <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="show"
+                    className="-mx-4 md:-mx-6 -mt-4 md:-mt-6 relative"
+                  >
+                    {/* Hero Section */}
+                    <section className="sticky top-0 min-h-screen flex flex-col justify-center py-20 px-4 bg-gray-100 dark:bg-gray-950 z-[1]">
+                      <div className="max-w-4xl mx-auto text-center space-y-8">
+                        <motion.div
+                          variants={avatarVariants}
+                          className="w-40 h-40 md:w-56 md:h-56 mx-auto rounded-full overflow-hidden border-4 border-[#FFDB14] shadow-2xl relative"
+                          whileHover={{ scale: 1.05, rotate: 2 }}
+                        >
+                          <Image
+                            src="/avatar.png"
+                            alt="Bitto Saha"
+                            fill
+                            className="object-cover"
+                            priority
+                          />
+                        </motion.div>
+                        
+                        <div className="space-y-4">
+                          <motion.h1 
+                            variants={cardVariants}
+                            className="text-4xl md:text-6xl font-black text-gray-900 dark:text-gray-100 tracking-tight"
+                          >
+                            Bitto Saha
+                          </motion.h1>
+                          <motion.div 
+                            variants={cardVariants}
+                            className="text-xl md:text-2xl font-medium text-[#FFDB14]"
+                          >
+                            <AppearingTextAnimation forceStatic={true} />
+                          </motion.div>
+                        </div>
+
+                        <motion.div variants={cardVariants} className="flex justify-center">
+                          <ActionButtons forceStatic={true} />
+                        </motion.div>
+                      </div>
+                    </section>
+
+                    {/* About & Tech Stack Section */}
+                    <section className="sticky top-0 min-h-screen flex flex-col justify-center py-20 px-4 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 z-[2] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)]">
+                      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        <motion.div 
+                          variants={cardVariants}
+                          className="space-y-6"
+                        >
+                          <h2 className="text-sm font-bold text-gray-400 uppercase tracking-[0.3em]">About Me</h2>
+                          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed font-medium italic">
+                            "{portfolioSettings?.homeSettings?.summary || "I'm a Computer Science student at RUET. I love turning ideas into real products and have a deep interest in Artificial Intelligence and Cyber Security."}"
+                          </p>
+                        </motion.div>
+
+                        <motion.div variants={cardVariants} className="space-y-6">
+                           <h2 className="text-sm font-bold text-gray-400 uppercase tracking-[0.3em]">Core Tech</h2>
+                           <div className="flex flex-wrap gap-3">
+                              {(portfolioSettings?.homeSettings?.techStack || ["Next.js", "React", "TypeScript", "Node.js", "Firebase", "Tailwind CSS"]).map(tech => (
+                                <span key={tech} className="px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-300 shadow-sm">
+                                  {tech}
+                                </span>
+                              ))}
+                           </div>
+                        </motion.div>
+                      </div>
+                    </section>
+
+                    {/* Education Section */}
+                    <section className="sticky top-0 min-h-screen flex flex-col justify-center py-12 px-4 bg-gray-50 dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 z-[3] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)]">
+                      <div className="max-w-4xl mx-auto w-full space-y-12">
+                        <motion.h3 
+                          variants={cardVariants}
+                          className="text-sm font-bold text-center text-gray-400 uppercase tracking-[0.3em] mb-4"
+                        >
+                          Education Journey
+                        </motion.h3>
+                        
+                        <div className="relative max-w-3xl mx-auto">
+                          {/* Vertical Line */}
+                          <div className="absolute left-[80px] md:left-[120px] top-0 bottom-0 w-[2px] bg-[#FFDB14]/30" />
+                          
+                          <div className="space-y-0 relative">
+                            {EDUCATION_DATA.map((item, index) => (
+                              <motion.div
+                                key={index}
+                                initial={{ opacity: 0, x: 20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true, margin: "-50px" }}
+                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                                className="relative flex group"
+                              >
+                                {/* Year Label (Left) */}
+                                <div className="w-[80px] md:w-[120px] pt-6 pr-6 text-right shrink-0">
+                                  <span className="text-[11px] md:text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-tighter">
+                                    {item.year}
+                                  </span>
+                                </div>
+
+                                {/* Dot */}
+                                <div className="absolute left-[80px] md:left-[120px] top-7 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-[#FFDB14] bg-white dark:bg-gray-950 z-10 transition-transform group-hover:scale-125" />
+
+                                {/* Content (Right) */}
+                                <div className={`flex-1 pt-6 pb-10 pl-8 md:pl-12 ${index !== EDUCATION_DATA.length - 1 ? 'border-b border-dashed border-gray-200 dark:border-gray-800' : ''}`}>
+                                  <h4 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 tracking-tight">
+                                    {item.degree}
+                                  </h4>
+                                  <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 font-medium">
+                                    {item.institution}
+                                  </p>
+                                </div>
+                              </motion.div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+
+                    {/* Connect Section */}
+                    <section className="sticky top-0 min-h-screen flex flex-col justify-center py-20 px-4 bg-white dark:bg-gray-900 border-t border-[#FFDB14]/20 z-[4] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)]">
+                      <div className="max-w-4xl mx-auto text-center space-y-12">
+                        <div className="space-y-4">
+                          <h2 className="text-sm font-bold text-gray-400 uppercase tracking-[0.3em]">Let's Connect</h2>
+                          <p className="text-3xl md:text-5xl font-black text-gray-900 dark:text-gray-100 italic">
+                            Hire me for your next <span className="text-[#FFDB14]">Big transformation</span>
+                          </p>
+                        </div>
+                        <div className="flex flex-wrap justify-center gap-4">
+                          {[
+                            { icon: "fa-github", label: "GitHub", url: "https://github.com/bittosaha" },
+                            { icon: "fa-linkedin", label: "LinkedIn", url: "https://linkedin.com/in/bittosaha" },
+                            { icon: "fa-twitter", label: "Twitter", url: "https://twitter.com/bittosaha" },
+                            { icon: "fa-instagram", label: "Instagram", url: "https://instagram.com/bittosaha" },
+                          ].map((social) => (
+                            <motion.a
+                              key={social.label}
+                              href={social.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              whileHover={{ y: -5, scale: 1.05 }}
+                              className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 shadow-xl border border-gray-100 dark:border-gray-700 text-sm font-bold text-gray-800 dark:text-gray-200 transition-all hover:border-[#FFDB14]"
+                            >
+                              <i className={`fab ${social.icon} text-[#FFDB14] text-lg`}></i>
+                              {social.label}
+                            </motion.a>
+                          ))}
+                        </div>
+                      </div>
+                    </section>
+                  </motion.div>
+                )}
+
+
+
+
                 {activeTab === "certificates" && (
                   <motion.div
                     variants={containerVariants}

@@ -44,7 +44,7 @@ export interface ActivityLog {
   ipAddress?: string;
 }
 
-export type TabType = "certificates" | "projects" | "activity" | "grind" | "skillset";
+export type TabType = "home" | "certificates" | "projects" | "activity" | "grind" | "skillset";
 
 export interface GrindUsernames {
   codeforces: string;
@@ -79,11 +79,24 @@ export interface SkillsetGroup {
 }
 
 export interface TabVisibilityConfig {
+  home: boolean;
   certificates: boolean;
   projects: boolean;
   activity: boolean;
   grind: boolean;
   skillset: boolean;
+}
+
+export interface HomeSettings {
+  quote: string;
+  quoteAuthor: string;
+  summary: string;
+  email: string;
+  location: string;
+  education: string;
+  status: string;
+  featuredProjectIds: string[];
+  techStack: string[];
 }
 
 export interface PortfolioSettings {
@@ -93,6 +106,7 @@ export interface PortfolioSettings {
   grindGithubStats: GrindStatRow[];
   skillsetGroups: SkillsetGroup[];
   tabVisibility: TabVisibilityConfig;
+  homeSettings?: HomeSettings;
   githubToken?: string;
 }
 

@@ -13,7 +13,7 @@ interface TabSwitcherProps {
   isLoading?: boolean;
 }
 
-const TABS: TabType[] = ["certificates", "projects", "activity", "grind", "skillset"];
+const TABS: TabType[] = ["home", "certificates", "projects", "activity", "grind", "skillset"];
 
 const mobileActiveTabVariants: Variants = {
   enter: (direction: 1 | -1) => ({
