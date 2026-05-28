@@ -875,7 +875,7 @@ const PortfolioClient: React.FC = () => {
                         
                         <div className="relative max-w-3xl mx-auto">
                           {/* Vertical Line */}
-                          <div className="absolute left-[80px] md:left-[120px] top-0 bottom-0 w-[2px] bg-amber-600/60 dark:bg-[#FFDB14]/30" />
+                          <div className="absolute left-[80px] md:left-[120px] top-0 bottom-0 w-[2px] bg-[#000]/30 dark:bg-[#FFDB14]/30" />
                           
                           <div className="space-y-0 relative">
                             {EDUCATION_DATA.map((item, index) => (
@@ -895,10 +895,10 @@ const PortfolioClient: React.FC = () => {
                                 </div>
 
                                 {/* Dot */}
-                                <div className="absolute left-[80px] md:left-[120px] top-7 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-amber-600 dark:border-[#FFDB14] bg-amber-600 dark:bg-gray-950 z-10 transition-transform group-hover:scale-125" />
+                                <div className="absolute left-[80px] md:left-[120px] top-7 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-amber-600 dark:border-[#FFDB14] bg-gray-950 dark:bg-gray-950 z-10 transition-transform group-hover:scale-125" />
 
                                 {/* Content (Right) */}
-                                <div className={`flex-1 pt-6 pb-10 pl-8 md:pl-12 ${index !== EDUCATION_DATA.length - 1 ? 'border-b border-dashed border-gray-200 dark:border-gray-800' : ''}`}>
+                                <div className={`flex-1 pt-6 pb-10 pl-8 md:pl-12 ${index !== EDUCATION_DATA.length - 1 ? 'border-b border-dashed border-gray-800 dark:border-gray-800' : ''}`}>
                                   <h4 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 tracking-tight">
                                     {item.degree}
                                   </h4>

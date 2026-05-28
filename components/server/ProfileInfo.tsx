@@ -209,11 +209,11 @@ export default function ProfileInfo({
       >
         <motion.div variants={timelineVariants} className="relative">
           <motion.span
-            className="absolute -left-[31px] top-1.5 w-3 h-3 bg-amber-600 dark:bg-[#FFDB14] rounded-full border-2 border-amber-600 dark:border-gray-900"
+            className="absolute -left-[31px] top-1.5 w-3 h-3 bg-[#FFDB14] dark:bg-[#FFDB14] rounded-full border-2 border-amber-600 dark:border-gray-900"
             whileHover={{ scale: 1.08 }}
             transition={{ type: "spring", stiffness: 300 }}
           />
-          <span className="inline-block px-2 py-0.5 bg-amber-600 dark:bg-[#FFDB14] text-[10px] font-bold rounded mb-1 text-gray-900">
+          <span className="inline-block px-2 py-0.5 bg-[#FFDB14] dark:bg-[#FFDB14] text-[10px] font-bold rounded mb-1 text-gray-900">
             2025 - Present
           </span>
           <h4 className="font-bold text-sm text-gray-900 dark:text-gray-100">
@@ -225,11 +225,11 @@ export default function ProfileInfo({
         </motion.div>
         <motion.div variants={timelineVariants} className="relative">
           <motion.span
-            className="absolute -left-[31px] top-1.5 w-3 h-3 bg-amber-600 dark:bg-[#FFDB14] rounded-full border-2 border-amber-600 dark:border-gray-900"
+            className="absolute -left-[31px] top-1.5 w-3 h-3 bg-[#FFDB14] dark:bg-[#FFDB14] rounded-full border-2 border-amber-600 dark:border-gray-900"
             whileHover={{ scale: 1.08 }}
             transition={{ type: "spring", stiffness: 300 }}
           />
-          <span className="inline-block px-2 py-0.5 bg-amber-600 dark:bg-[#FFDB14] text-[10px] font-bold rounded mb-1 text-gray-900">
+          <span className="inline-block px-2 py-0.5 bg-[#FFDB14] dark:bg-[#FFDB14] text-[10px] font-bold rounded mb-1 text-gray-900">
             2022 - 2024
           </span>
           <h4 className="font-bold text-sm text-gray-800 dark:text-gray-200">
@@ -241,11 +241,11 @@ export default function ProfileInfo({
         </motion.div>
         <motion.div variants={timelineVariants} className="relative">
           <motion.span
-            className="absolute -left-[31px] top-1.5 w-3 h-3 bg-amber-600 dark:bg-[#FFDB14] rounded-full border-2 border-amber-600 dark:border-gray-900"
+            className="absolute -left-[31px] top-1.5 w-3 h-3 bg-[#FFDB14] dark:bg-[#FFDB14] rounded-full border-2 border-amber-600 dark:border-gray-900"
             whileHover={{ scale: 1.08 }}
             transition={{ type: "spring", stiffness: 300 }}
           />
-          <span className="inline-block px-2 py-0.5 bg-amber-600 dark:bg-[#FFDB14] text-[10px] font-bold rounded mb-1 text-gray-900">
+          <span className="inline-block px-2 py-0.5 bg-[#FFDB14] dark:bg-[#FFDB14] text-[10px] font-bold rounded mb-1 text-gray-900">
             2022
           </span>
           <h4 className="font-bold text-sm text-gray-800 dark:text-gray-200">
