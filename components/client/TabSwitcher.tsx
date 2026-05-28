@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowLeft } from "lucide-react";
 import { TabType } from "@/lib/types";
 
 interface TabSwitcherProps {
@@ -82,7 +83,7 @@ export default function TabSwitcher({
           whileHover={{ x: -1 }}
           whileTap={{ scale: 0.98 }}
         >
-          <i className="fas fa-arrow-left text-xs" />
+          <ArrowLeft className="w-3 h-3" />
           <span className="text-sm font-semibold">Back</span>
         </motion.button>
       )}

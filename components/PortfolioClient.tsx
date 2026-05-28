@@ -3,13 +3,37 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { motion, AnimatePresence, Variants } from "framer-motion";
+import { motion, AnimatePresence, Variants, LazyMotion, domAnimation } from "framer-motion";
 import { ContentItem, TabType, PortfolioSettings, GrindCounterCard, GrindStatRow, SkillsetGroup, SkillBadge } from "../lib/types";
 import { INITIAL_CERTIFICATES } from "../lib/constants";
 import { incrementLikes, incrementViews, subscribeToPortfolioSettings } from "../lib/firebase";
 import { sanitizeRichHtml } from "../lib/sanitize";
 import { useTheme } from "../lib/context/ThemeContext";
 import { useContent } from "../lib/context/ContentContext";
+import { 
+  Search, 
+  Copy, 
+  Layers,
+  LayoutGrid,
+  GitBranch, 
+  Clock
+} from "lucide-react";
+
+const GithubIcon = (props: any) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.28 1.15-.28 2.35 0 3.5-.73 1.02-1.08 2.25-1 3.5 0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+);
+
+const LinkedinIcon = (props: any) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+);
+
+const TwitterIcon = (props: any) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+);
+
+const InstagramIcon = (props: any) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+);
 import ProfileInfo from "./server/ProfileInfo";
 import TabSwitcher from "./client/TabSwitcher";
 import CustomContextMenu from "./client/CustomContextMenu";
@@ -717,12 +741,13 @@ const PortfolioClient: React.FC = () => {
   );
 
   return (
-    <motion.div
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
-      className="min-h-screen md:h-screen bg-gray-100 dark:bg-gray-950 flex flex-col md:flex-row p-2 md:p-3 lg:p-4 max-w-screen transition-colors duration-300 md:overflow-hidden relative"
-    >
+    <LazyMotion features={domAnimation}>
+      <motion.div
+        variants={pageVariants}
+        initial="initial"
+        animate="animate"
+        className="min-h-screen md:h-screen bg-gray-100 dark:bg-gray-950 flex flex-col md:flex-row p-2 md:p-3 lg:p-4 max-w-screen transition-colors duration-300 md:overflow-hidden relative"
+      >
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#FFDB14]/10 blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-500/10 blur-[120px] dark:bg-blue-600/5" />
@@ -958,10 +983,10 @@ const PortfolioClient: React.FC = () => {
                         </div>
                         <div className="flex flex-wrap justify-center gap-4">
                           {[
-                            { icon: "fa-github", label: "GitHub", url: "https://github.com/bittosaha" },
-                            { icon: "fa-linkedin", label: "LinkedIn", url: "https://linkedin.com/in/bittosaha" },
-                            { icon: "fa-twitter", label: "Twitter", url: "https://twitter.com/bittosaha" },
-                            { icon: "fa-instagram", label: "Instagram", url: "https://instagram.com/bittosaha" },
+                            { Icon: GithubIcon, label: "GitHub", url: "https://github.com/bittosaha" },
+                            { Icon: LinkedinIcon, label: "LinkedIn", url: "https://linkedin.com/in/bittosaha" },
+                            { Icon: TwitterIcon, label: "Twitter", url: "https://twitter.com/bittosaha" },
+                            { Icon: InstagramIcon, label: "Instagram", url: "https://instagram.com/bittosaha" },
                           ].map((social) => (
                             <motion.a
                               key={social.label}
@@ -971,7 +996,7 @@ const PortfolioClient: React.FC = () => {
                               whileHover={{ y: -5, scale: 1.05 }}
                               className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 shadow-xl border border-gray-100 dark:border-gray-700 text-sm font-bold text-gray-800 dark:text-gray-200 transition-all hover:border-[#FFDB14]"
                             >
-                              <i className={`fab ${social.icon} text-[#FFDB14] text-lg`}></i>
+                              <social.Icon className="w-5 h-5 text-[#FFDB14]" />
                               {social.label}
                             </motion.a>
                           ))}
@@ -1006,12 +1031,12 @@ const PortfolioClient: React.FC = () => {
                           </div>
                           <span className="hidden md:block w-px h-3 bg-gray-200 dark:bg-gray-800" />
                           <div className="flex items-center gap-1.5">
-                            <i className="fas fa-code-branch opacity-70"></i>
+                            <GitBranch className="w-3 h-3 opacity-70" />
                             <span className="font-mono">v{process.env.NEXT_PUBLIC_COMMIT_ID || "dev"}</span>
                           </div>
                           <span className="hidden md:block w-px h-3 bg-gray-200 dark:bg-gray-800" />
                           <div className="flex items-center gap-1.5">
-                            <i className="far fa-clock opacity-70"></i>
+                            <Clock className="w-3 h-3 opacity-70" />
                             <span>Deployed {mounted ? getRelativeTime(process.env.NEXT_PUBLIC_BUILD_TIME) : "Just now"}</span>
                           </div>
                         </div>
@@ -1066,12 +1091,13 @@ const PortfolioClient: React.FC = () => {
                           className="overflow-hidden rounded border border-gray-100 dark:border-gray-800 group cursor-pointer bg-gray-50 dark:bg-gray-800 transition-colors hover:border-[#FFDB14]"
                           onClick={() => setSelectedCertificate(cert.imageUrl)}
                         >
-                          <motion.img
+                          <Image
                             src={cert.imageUrl}
                             alt="Certificate"
-                            className="w-full h-full object-cover"
-                            whileHover={{ scale: 1.03 }}
-                            transition={{ duration: 0.3 }}
+                            width={300}
+                            height={200}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-103"
+                            loading="lazy"
                           />
                         </motion.div>
                       ))}
@@ -1111,7 +1137,7 @@ const PortfolioClient: React.FC = () => {
                         className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between mb-2"
                       >
                         <div className="relative w-full md:max-w-sm">
-                          <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-3.5 h-3.5" />
                           <input
                             type="text"
                             value={projectSearchQuery}
@@ -1123,14 +1149,14 @@ const PortfolioClient: React.FC = () => {
 
                         <div className="inline-flex rounded-lg bg-gray-100/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 p-1 self-start md:self-auto">
                           {([
-                            { mode: "card", icon: "fa-clone", label: "Card" },
-                            { mode: "list", icon: "fa-list", label: "List" },
-                            { mode: "grid", icon: "fa-grip", label: "Grid" },
+                            { mode: "card", icon: Copy, label: "Card" },
+                            { mode: "list", icon: Layers, label: "List" },
+                            { mode: "grid", icon: LayoutGrid, label: "Grid" },
                           ] as {
                             mode: ProjectViewMode;
-                            icon: string;
+                            icon: any;
                             label: string;
-                          }[]).map(({ mode, icon, label }) => (
+                          }[]).map(({ mode, icon: Icon, label }) => (
                             <button
                               key={mode}
                               type="button"
@@ -1141,7 +1167,7 @@ const PortfolioClient: React.FC = () => {
                                   : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                               }`}
                             >
-                              <i className={`fas ${icon} text-[10px]`}></i>
+                              <Icon className="w-3 h-3" />
                               {label}
                             </button>
                           ))}
@@ -1420,11 +1446,12 @@ const PortfolioClient: React.FC = () => {
         className="block md:hidden w-full bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 py-3"
       >
         <p className="text-center text-xs text-gray-600 dark:text-gray-400 font-medium">
-          <i className="far fa-copyright text-red-500 mr-1"></i>
+          <span className="text-red-500 mr-1">©</span>
           Bitto Saha
         </p>
       </motion.div>
     </motion.div>
+    </LazyMotion>
   );
 };
 

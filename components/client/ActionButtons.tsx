@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, Variants } from "framer-motion";
+import { Calendar, FileText } from "lucide-react";
 
 const buttonVariants: Variants = {
   hover: {
@@ -51,10 +52,9 @@ export default function ActionButtons({ forceStatic = false }: { forceStatic?: b
         whileTap="tap"
         className="flex-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 py-2.5 px-3 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all shadow-sm"
       >
-        <motion.i
-          variants={iconVariants}
-          className="fas fa-calendar-alt text-xs"
-        />
+        <motion.div variants={iconVariants}>
+          <Calendar className="w-4 h-4" />
+        </motion.div>
         Schedule
       </motion.button>
       <motion.button
@@ -64,7 +64,9 @@ export default function ActionButtons({ forceStatic = false }: { forceStatic?: b
         whileTap="tap"
         className="flex-1 bg-[#FFDB14] text-gray-900 py-2.5 px-4 rounded-lg text-sm font-bold flex items-center justify-center gap-2 hover:bg-[#e6c512] transition-colors shadow-md shadow-[#FFDB14]/20"
       >
-        <motion.i variants={iconVariants} className="fas fa-file-alt text-xs" />
+        <motion.div variants={iconVariants}>
+          <FileText className="w-4 h-4" />
+        </motion.div>
         Resume
       </motion.button>
     </motion.div>
