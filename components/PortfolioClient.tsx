@@ -789,7 +789,7 @@ const PortfolioClient: React.FC = () => {
                       <div className="max-w-4xl mx-auto text-center space-y-8">
                         <motion.div
                           variants={avatarVariants}
-                          className="w-40 h-40 md:w-56 md:h-56 mx-auto rounded-full overflow-hidden border-4 border-[#FFDB14] shadow-2xl relative"
+                          className="w-40 h-40 md:w-56 md:h-56 mx-auto rounded-full overflow-hidden border-4 border-amber-600 dark:border-[#FFDB14] shadow-2xl relative"
                           whileHover={{ scale: 1.05, rotate: 2 }}
                         >
                           <Image
@@ -810,7 +810,7 @@ const PortfolioClient: React.FC = () => {
                           </motion.h1>
                           <motion.div 
                             variants={cardVariants}
-                            className="text-xl md:text-2xl font-medium text-[#FFDB14]"
+                            className="text-xl md:text-2xl font-medium text-amber-600 dark:text-[#FFDB14]"
                           >
                             <AppearingTextAnimation forceStatic={true} className="justify-center" />
                           </motion.div>
@@ -823,7 +823,7 @@ const PortfolioClient: React.FC = () => {
                     </section>
 
                     {/* About & Tech Stack Section */}
-                    <section className="sticky top-0 min-h-screen flex flex-col items-stretch bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 z-[2] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)] overflow-hidden">
+                    <section className="sticky top-0 min-h-screen flex flex-col items-stretch bg-gray-50 dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 z-[2] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)] overflow-hidden">
                       <div className="flex-1 grid grid-cols-1 lg:grid-cols-2">
                         {/* About Side */}
                         <motion.div 
@@ -831,24 +831,24 @@ const PortfolioClient: React.FC = () => {
                           className="flex flex-col justify-center p-8 md:p-12 lg:p-20 space-y-8 bg-gray-50/50 dark:bg-gray-800/10"
                         >
                           <div className="space-y-4">
-                            <h2 className="text-2xl text-[#FFDB14] font-playwrite">About Me</h2>
+                            <h2 className="text-2xl text-amber-600 dark:text-[#FFDB14] font-playwrite">About Me</h2>
                             <p className="text-2xl md:text-3xl lg:text-4xl text-gray-900 dark:text-gray-100 font-bold leading-tight">
                               {portfolioSettings?.homeSettings?.summary || "I'm a Computer Science student at RUET. I love turning ideas into real products and have a deep interest in Artificial Intelligence and Cyber Security."}
                             </p>
                           </div>
-                          <div className="w-16 h-1 bg-[#FFDB14] rounded-full" />
+                          <div className="w-16 h-1 bg-amber-600 dark:bg-[#FFDB14] rounded-full" />
                         </motion.div>
 
                         {/* Tech Stack Side */}
                         <motion.div 
                           variants={cardVariants}
-                          className="flex flex-col justify-center p-8 md:p-12 lg:p-20 space-y-10 bg-white dark:bg-gray-950"
+                          className="flex flex-col justify-center p-8 md:p-12 lg:p-20 space-y-10 bg-gray-50 dark:bg-gray-950"
                         >
-                           <h2 className="text-2xl text-[#FFDB14] font-playwrite">Skillset</h2>
+                           <h2 className="text-2xl text-amber-600 dark:text-[#FFDB14] font-playwrite">Skillset</h2>
                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                               {SKILLSET_GROUPS.map(group => (
                                 <div key={group.id} className="space-y-3">
-                                  <h3 className="text-xs font-black text-[#FFDB14] uppercase tracking-widest border-b border-gray-100 dark:border-gray-800 pb-2">{group.title}</h3>
+                                  <h3 className="text-xs font-black text-amber-600 dark:text-[#FFDB14] uppercase tracking-widest border-b border-gray-100 dark:border-gray-800 pb-2">{group.title}</h3>
                                   <div className="flex flex-wrap gap-2">
                                     {group.badges.map(badge => (
                                       <span key={badge.label} className="px-2.5 py-1 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-md text-[10px] md:text-xs font-bold text-gray-700 dark:text-gray-300 shadow-sm">
@@ -868,14 +868,14 @@ const PortfolioClient: React.FC = () => {
                       <div className="max-w-4xl mx-auto w-full space-y-12">
                         <motion.h3 
                           variants={cardVariants}
-                          className="text-2xl text-center text-[#FFDB14] font-playwrite mb-4"
+                          className="text-2xl text-center text-amber-600 dark:text-[#FFDB14] font-playwrite mb-4"
                         >
                           Education Journey
                         </motion.h3>
                         
                         <div className="relative max-w-3xl mx-auto">
                           {/* Vertical Line */}
-                          <div className="absolute left-[80px] md:left-[120px] top-0 bottom-0 w-[2px] bg-[#FFDB14]/30" />
+                          <div className="absolute left-[80px] md:left-[120px] top-0 bottom-0 w-[2px] bg-amber-600/60 dark:bg-[#FFDB14]/30" />
                           
                           <div className="space-y-0 relative">
                             {EDUCATION_DATA.map((item, index) => (
@@ -895,7 +895,7 @@ const PortfolioClient: React.FC = () => {
                                 </div>
 
                                 {/* Dot */}
-                                <div className="absolute left-[80px] md:left-[120px] top-7 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-[#FFDB14] bg-white dark:bg-gray-950 z-10 transition-transform group-hover:scale-125" />
+                                <div className="absolute left-[80px] md:left-[120px] top-7 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-amber-600 dark:border-[#FFDB14] bg-amber-600 dark:bg-gray-950 z-10 transition-transform group-hover:scale-125" />
 
                                 {/* Content (Right) */}
                                 <div className={`flex-1 pt-6 pb-10 pl-8 md:pl-12 ${index !== EDUCATION_DATA.length - 1 ? 'border-b border-dashed border-gray-200 dark:border-gray-800' : ''}`}>
@@ -914,12 +914,12 @@ const PortfolioClient: React.FC = () => {
                     </section>
 
                     {/* Connect Section */}
-                    <section className="sticky top-0 min-h-screen flex flex-col justify-center py-20 px-4 bg-white dark:bg-gray-900 border-t border-[#FFDB14]/20 z-[4] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)]">
+                    <section className="sticky top-0 min-h-screen flex flex-col justify-center py-20 px-4 bg-gray-50 dark:bg-gray-950 border-t border-[#FFDB14]/20 z-[4] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)]">
                       <div className="max-w-4xl mx-auto text-center space-y-12">
                         <div className="space-y-4">
-                          <h2 className="text-2xl text-[#FFDB14] font-playwrite">Let's Connect</h2>
+                          <h2 className="text-2xl text-amber-600 dark:text-[#FFDB14] font-playwrite">Let's Connect</h2>
                           <p className="text-3xl md:text-5xl font-black text-gray-900 dark:text-gray-100 italic">
-                            Hire me for your next <span className="text-[#FFDB14]">Big transformation</span>
+                            Hire me for your next <span className="text-amber-600 dark:text-[#FFDB14]">Big transformation</span>
                           </p>
                         </div>
                         <div className="flex flex-wrap justify-center gap-4">

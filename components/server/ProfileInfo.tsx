@@ -154,7 +154,7 @@ export default function ProfileInfo({
       >
         <motion.div
           variants={avatarVariants}
-          className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#FFDB14] flex-shrink-0 relative"
+          className="w-16 h-16 rounded-full overflow-hidden border-2 border-amber-600 dark:border-[#FFDB14] flex-shrink-0 relative"
           whileHover={{ scale: 1.02, rotate: 1 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -199,21 +199,21 @@ export default function ProfileInfo({
 
       <motion.h3
         variants={itemVariants}
-        className="text-xl mb-4 text-[#FFDB14] font-playwrite"
+        className="text-xl mb-4 text-amber-600 dark:text-[#FFDB14] font-playwrite"
       >
         Education
       </motion.h3>
       <motion.div
         variants={containerVariants}
-        className="space-y-4 relative border-l-2 border-gray-200 dark:border-gray-700 ml-2 pl-6"
+        className="space-y-4 relative border-l-2 border-amber-600/40 dark:border-gray-700 ml-2 pl-6"
       >
         <motion.div variants={timelineVariants} className="relative">
           <motion.span
-            className="absolute -left-[31px] top-1.5 w-3 h-3 bg-[#FFDB14] rounded-full border-2 border-white dark:border-gray-900"
+            className="absolute -left-[31px] top-1.5 w-3 h-3 bg-amber-600 dark:bg-[#FFDB14] rounded-full border-2 border-amber-600 dark:border-gray-900"
             whileHover={{ scale: 1.08 }}
             transition={{ type: "spring", stiffness: 300 }}
           />
-          <span className="inline-block px-2 py-0.5 bg-[#FFDB14] text-[10px] font-bold rounded mb-1 text-gray-900">
+          <span className="inline-block px-2 py-0.5 bg-amber-600 dark:bg-[#FFDB14] text-[10px] font-bold rounded mb-1 text-gray-900">
             2025 - Present
           </span>
           <h4 className="font-bold text-sm text-gray-900 dark:text-gray-100">
@@ -225,11 +225,11 @@ export default function ProfileInfo({
         </motion.div>
         <motion.div variants={timelineVariants} className="relative">
           <motion.span
-            className="absolute -left-[31px] top-1.5 w-3 h-3 bg-[#FFDB14] rounded-full border-2 border-white dark:border-gray-900"
+            className="absolute -left-[31px] top-1.5 w-3 h-3 bg-amber-600 dark:bg-[#FFDB14] rounded-full border-2 border-amber-600 dark:border-gray-900"
             whileHover={{ scale: 1.08 }}
             transition={{ type: "spring", stiffness: 300 }}
           />
-          <span className="inline-block px-2 py-0.5 bg-[#FFDB14] text-[10px] font-bold rounded mb-1 text-gray-900">
+          <span className="inline-block px-2 py-0.5 bg-amber-600 dark:bg-[#FFDB14] text-[10px] font-bold rounded mb-1 text-gray-900">
             2022 - 2024
           </span>
           <h4 className="font-bold text-sm text-gray-800 dark:text-gray-200">
@@ -241,11 +241,11 @@ export default function ProfileInfo({
         </motion.div>
         <motion.div variants={timelineVariants} className="relative">
           <motion.span
-            className="absolute -left-[31px] top-1.5 w-3 h-3 bg-[#FFDB14] rounded-full border-2 border-white dark:border-gray-900"
+            className="absolute -left-[31px] top-1.5 w-3 h-3 bg-amber-600 dark:bg-[#FFDB14] rounded-full border-2 border-amber-600 dark:border-gray-900"
             whileHover={{ scale: 1.08 }}
             transition={{ type: "spring", stiffness: 300 }}
           />
-          <span className="inline-block px-2 py-0.5 bg-[#FFDB14] text-[10px] font-bold rounded mb-1 text-gray-900">
+          <span className="inline-block px-2 py-0.5 bg-amber-600 dark:bg-[#FFDB14] text-[10px] font-bold rounded mb-1 text-gray-900">
             2022
           </span>
           <h4 className="font-bold text-sm text-gray-800 dark:text-gray-200">
