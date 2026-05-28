@@ -199,7 +199,7 @@ export default function ProfileInfo({
 
       <motion.h3
         variants={itemVariants}
-        className="text-lg font-bold mb-4 text-gray-900 dark:text-gray-100 tracking-wider text-xs"
+        className="text-xl mb-4 text-[#FFDB14] font-playwrite"
       >
         Education
       </motion.h3>

@@ -831,7 +831,7 @@ const PortfolioClient: React.FC = () => {
                           className="flex flex-col justify-center p-8 md:p-12 lg:p-20 space-y-8 bg-gray-50/50 dark:bg-gray-800/10"
                         >
                           <div className="space-y-4">
-                            <h2 className="text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.3em]">About Me</h2>
+                            <h2 className="text-2xl text-[#FFDB14] font-playwrite">About Me</h2>
                             <p className="text-2xl md:text-3xl lg:text-4xl text-gray-900 dark:text-gray-100 font-bold leading-tight">
                               {portfolioSettings?.homeSettings?.summary || "I'm a Computer Science student at RUET. I love turning ideas into real products and have a deep interest in Artificial Intelligence and Cyber Security."}
                             </p>
@@ -844,7 +844,7 @@ const PortfolioClient: React.FC = () => {
                           variants={cardVariants}
                           className="flex flex-col justify-center p-8 md:p-12 lg:p-20 space-y-10 bg-white dark:bg-gray-950"
                         >
-                           <h2 className="text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.3em]">Skillset</h2>
+                           <h2 className="text-2xl text-[#FFDB14] font-playwrite">Skillset</h2>
                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                               {SKILLSET_GROUPS.map(group => (
                                 <div key={group.id} className="space-y-3">
@@ -868,7 +868,7 @@ const PortfolioClient: React.FC = () => {
                       <div className="max-w-4xl mx-auto w-full space-y-12">
                         <motion.h3 
                           variants={cardVariants}
-                          className="text-sm font-bold text-center text-gray-400 uppercase tracking-[0.3em] mb-4"
+                          className="text-2xl text-center text-[#FFDB14] font-playwrite mb-4"
                         >
                           Education Journey
                         </motion.h3>
@@ -917,7 +917,7 @@ const PortfolioClient: React.FC = () => {
                     <section className="sticky top-0 min-h-screen flex flex-col justify-center py-20 px-4 bg-white dark:bg-gray-900 border-t border-[#FFDB14]/20 z-[4] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)]">
                       <div className="max-w-4xl mx-auto text-center space-y-12">
                         <div className="space-y-4">
-                          <h2 className="text-sm font-bold text-gray-400 uppercase tracking-[0.3em]">Let's Connect</h2>
+                          <h2 className="text-2xl text-[#FFDB14] font-playwrite">Let's Connect</h2>
                           <p className="text-3xl md:text-5xl font-black text-gray-900 dark:text-gray-100 italic">
                             Hire me for your next <span className="text-[#FFDB14]">Big transformation</span>
                           </p>
