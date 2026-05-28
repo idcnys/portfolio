@@ -641,8 +641,12 @@ const PortfolioClient: React.FC = () => {
       variants={pageVariants}
       initial="initial"
       animate="animate"
-      className="min-h-screen md:h-screen bg-gray-100 dark:bg-gray-950 flex flex-col md:flex-row p-2 md:p-3 lg:p-4 max-w-screen transition-colors duration-300 md:overflow-hidden"
+      className="min-h-screen md:h-screen bg-gray-100 dark:bg-gray-950 flex flex-col md:flex-row p-2 md:p-3 lg:p-4 max-w-screen transition-colors duration-300 md:overflow-hidden relative"
     >
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#FFDB14]/10 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-500/10 blur-[120px] dark:bg-blue-600/5" />
+      </div>
       <CustomContextMenu />
       <motion.div
         initial={!effectivelyAnimated ? { opacity: 0, x: -50 } : false}
@@ -657,7 +661,7 @@ const PortfolioClient: React.FC = () => {
         initial={!effectivelyAnimated ? { opacity: 0, x: 50 } : false}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
-        className="flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white dark:bg-gray-900 rounded-r-xl md:rounded-l-none shadow-[0_12px_34px_rgba(15,23,42,0.07)] border-y border-r border-gray-100 dark:border-gray-800 overflow-hidden"
+        className="flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md rounded-r-xl md:rounded-l-none shadow-[0_12px_34px_rgba(15,23,42,0.07)] border-y border-r border-gray-100 dark:border-gray-800 overflow-hidden"
       >
         <TabSwitcher
           activeTab={activeTab}
@@ -787,11 +791,11 @@ const PortfolioClient: React.FC = () => {
                             value={projectSearchQuery}
                             onChange={(e) => setProjectSearchQuery(e.target.value)}
                             placeholder="Search projects..."
-                            className="w-full h-10 pl-9 pr-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100 placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-[#FFDB14]/40 focus:border-[#FFDB14]"
+                            className="w-full h-10 pl-9 pr-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm text-sm text-gray-800 dark:text-gray-100 placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-[#FFDB14]/40 focus:border-[#FFDB14]"
                           />
                         </div>
 
-                        <div className="inline-flex rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-1 self-start md:self-auto">
+                        <div className="inline-flex rounded-lg bg-gray-100/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 p-1 self-start md:self-auto">
                           {([
                             { mode: "card", icon: "fa-clone", label: "Card" },
                             { mode: "list", icon: "fa-list", label: "List" },
@@ -1474,7 +1478,7 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
         transition: { duration: 0.2 },
       }}
       whileTap={{ scale: 0.98 }}
-      className="flex flex-col sm:flex-row gap-0 p-0 rounded-lg border-2 border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 transition-all bg-white dark:bg-gray-900 shadow-[0_6px_22px_rgba(15,23,42,0.05)] cursor-pointer overflow-hidden"
+      className="flex flex-col sm:flex-row gap-0 p-0 rounded-lg border-2 border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 transition-all bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm shadow-[0_6px_22px_rgba(15,23,42,0.05)] cursor-pointer overflow-hidden"
       onClick={onReadMore}
     >
       <div className="flex-1 flex flex-col justify-between min-w-0 order-2 sm:order-1 p-5">
@@ -1678,7 +1682,7 @@ const ProjectListCard: React.FC<{ item: ContentItem; onReadMore: () => void }> =
   return (
     <div
       onClick={onReadMore}
-      className="p-4 rounded-lg border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-[0_5px_18px_rgba(15,23,42,0.04)] cursor-pointer hover:border-gray-200 dark:hover:border-gray-700 transition-colors"
+      className="p-4 rounded-lg border border-gray-100 dark:border-gray-800 bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm shadow-[0_5px_18px_rgba(15,23,42,0.04)] cursor-pointer hover:border-gray-200 dark:hover:border-gray-700 transition-colors"
     >
       <div className="flex items-center gap-4">
         <div className="w-20 h-20 relative rounded-lg overflow-hidden flex-shrink-0">
@@ -1712,7 +1716,7 @@ const ProjectGridCard: React.FC<{ item: ContentItem; onReadMore: () => void }> =
   return (
     <div
       onClick={onReadMore}
-      className="rounded-lg border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-[0_5px_18px_rgba(15,23,42,0.04)] overflow-hidden cursor-pointer hover:border-gray-200 dark:hover:border-gray-700 transition-colors"
+      className="rounded-lg border border-gray-100 dark:border-gray-800 bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm shadow-[0_5px_18px_rgba(15,23,42,0.04)] overflow-hidden cursor-pointer hover:border-gray-200 dark:hover:border-gray-700 transition-colors"
     >
       <div className="w-full h-40 relative">
         <Image

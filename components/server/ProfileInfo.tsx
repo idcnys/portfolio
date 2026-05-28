@@ -134,7 +134,7 @@ export default function ProfileInfo({ forceStatic }: { forceStatic?: boolean }) 
       variants={containerVariants}
       initial={forceStatic ? "visible" : "hidden"}
       animate="visible"
-      className="h-full bg-white dark:bg-gray-900 p-6 rounded-l-xl md:rounded-r-none shadow-[0_10px_30px_rgba(15,23,42,0.06)] border border-gray-100 dark:border-gray-800 relative flex flex-col"
+      className="h-full bg-white/70 dark:bg-gray-900/70 backdrop-blur-md p-6 rounded-l-xl md:rounded-r-none shadow-[0_10px_30px_rgba(15,23,42,0.06)] border border-gray-100 dark:border-gray-800 relative flex flex-col"
     >
       <motion.div variants={itemVariants}>
         <ThemeToggle />
