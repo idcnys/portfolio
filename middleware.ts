@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminSessionToken } from "@/lib/security/session";
 
-export const runtime = "experimental-edge";
-
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("admin_session")?.value;

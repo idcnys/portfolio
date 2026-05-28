@@ -176,6 +176,7 @@ const defaultPortfolioSettings: PortfolioSettings = {
     },
   ],
   tabVisibility: {
+    home: true,
     certificates: true,
     projects: true,
     activity: true,
