@@ -125,6 +125,19 @@ const decodeHtmlEntities = (value: string): string => {
   return textarea.value;
 };
 
+const getRelativeTime = (isoString: string | undefined): string => {
+  if (!isoString) return "Just now";
+  const date = new Date(isoString);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  if (diffInSeconds < 60) return "just now";
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+  if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+
 const extractLanguage = (codeAttributes: string): string | undefined => {
   const languageMatch =
     codeAttributes.match(/language-([a-z0-9#+-]+)/i) ||
@@ -945,24 +958,35 @@ const PortfolioClient: React.FC = () => {
                       </div>
 
                       {/* Footer Info */}
-                      <div className="absolute bottom-4 left-0 right-0 px-4 flex flex-col items-center gap-1 text-[10px] md:text-xs font-medium text-gray-400 dark:text-gray-600">
-                        <div className="flex items-center gap-3">
-                          <span>&copy; {new Date().getFullYear()} Bitto Saha</span>
-                          <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
-                          <span className="font-mono">Build: {process.env.NEXT_PUBLIC_COMMIT_ID || 'dev'}</span>
+                      <div className="absolute bottom-6 left-0 right-0 px-4 flex flex-col items-center gap-3 text-[10px] md:text-xs font-medium text-gray-400 dark:text-gray-500">
+                        <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2">
+                          <div className="flex items-center gap-2">
+                            <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="uppercase tracking-widest text-[9px]">System Operational</span>
+                          </div>
+                          <span className="hidden md:block w-px h-3 bg-gray-200 dark:bg-gray-800" />
+                          <div className="flex items-center gap-1.5">
+                            <i className="fas fa-code-branch opacity-70"></i>
+                            <span className="font-mono">v{process.env.NEXT_PUBLIC_COMMIT_ID || "dev"}</span>
+                          </div>
+                          <span className="hidden md:block w-px h-3 bg-gray-200 dark:bg-gray-800" />
+                          <div className="flex items-center gap-1.5">
+                            <i className="far fa-clock opacity-70"></i>
+                            <span>Deployed {getRelativeTime(process.env.NEXT_PUBLIC_BUILD_TIME)}</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <i className="far fa-clock opacity-70"></i>
-                          <span>
-                            Last Deployed: {process.env.NEXT_PUBLIC_BUILD_TIME ? new Date(process.env.NEXT_PUBLIC_BUILD_TIME).toLocaleString('en-US', { 
-                              day: '2-digit', 
-                              month: 'short', 
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              hour12: true 
-                            }) : 'Just now'}
-                          </span>
+
+                        <div className="flex flex-col items-center gap-1">
+                          <p className="opacity-80 tracking-wide">
+                            &copy; {new Date().getFullYear()} <span className="text-gray-600 dark:text-gray-300">Bitto Saha</span> — Handcrafted with <span className="text-rose-500 animate-pulse">❤️</span> & ☕
+                          </p>
+                          <div className="flex items-center gap-2 text-[9px] uppercase tracking-[0.2em] opacity-40">
+                            <span>Next.js 15.5</span>
+                            <span className="w-1 h-1 rounded-full bg-current" />
+                            <span>React 19</span>
+                            <span className="w-1 h-1 rounded-full bg-current" />
+                            <span>Tailwind 4</span>
+                          </div>
                         </div>
                       </div>
                     </section>
