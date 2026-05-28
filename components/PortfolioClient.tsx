@@ -943,6 +943,28 @@ const PortfolioClient: React.FC = () => {
                           ))}
                         </div>
                       </div>
+
+                      {/* Footer Info */}
+                      <div className="absolute bottom-4 left-0 right-0 px-4 flex flex-col items-center gap-1 text-[10px] md:text-xs font-medium text-gray-400 dark:text-gray-600">
+                        <div className="flex items-center gap-3">
+                          <span>&copy; {new Date().getFullYear()} Bitto Saha</span>
+                          <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
+                          <span className="font-mono">Build: {process.env.NEXT_PUBLIC_COMMIT_ID || 'dev'}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <i className="far fa-clock opacity-70"></i>
+                          <span>
+                            Last Deployed: {process.env.NEXT_PUBLIC_BUILD_TIME ? new Date(process.env.NEXT_PUBLIC_BUILD_TIME).toLocaleString('en-US', { 
+                              day: '2-digit', 
+                              month: 'short', 
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              hour12: true 
+                            }) : 'Just now'}
+                          </span>
+                        </div>
+                      </div>
                     </section>
                   </motion.div>
                 )}

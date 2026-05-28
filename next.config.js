@@ -1,5 +1,19 @@
 /** @type {import('next').NextConfig} */
+const { execSync } = require('child_process');
+
+const getCommitId = () => {
+  try {
+    return execSync('git rev-parse --short HEAD').toString().trim();
+  } catch {
+    return 'unknown';
+  }
+};
+
 const nextConfig = {
+  env: {
+    NEXT_PUBLIC_COMMIT_ID: getCommitId(),
+    NEXT_PUBLIC_BUILD_TIME: new Date().toISOString(),
+  },
   images: {
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
