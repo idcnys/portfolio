@@ -699,13 +699,19 @@ const PortfolioClient: React.FC = () => {
         animate={{ 
           opacity: activeTab === "home" ? 0 : 1, 
           x: activeTab === "home" ? -40 : 0,
-          pointerEvents: activeTab === "home" ? "none" : "auto" 
+          pointerEvents: activeTab === "home" ? "none" : "auto",
+          // Use height: 0 on mobile to prevent empty space when hidden
+          height: activeTab === "home" ? "0px" : "auto",
+          // On desktop, we want h-full
+          transitionEnd: {
+            height: activeTab === "home" ? "0px" : "auto"
+          }
         }}
         transition={{ 
           duration: 0.4, 
           ease: [0.23, 1, 0.32, 1] // Decelerate ease
         }}
-        className={`w-full md:w-[380px] h-auto md:h-full flex flex-col md:overflow-y-hidden custom-scrollbar pr-0 md:pr-0 ${isDetailView ? "hidden md:flex" : "flex"} flex-shrink-0 z-10`}
+        className={`w-full md:w-[380px] md:h-full flex flex-col md:overflow-y-hidden custom-scrollbar pr-0 md:pr-0 ${isDetailView || activeTab === "home" ? "hidden md:flex" : "flex"} flex-shrink-0 z-10`}
       >
         <ProfileInfo forceStatic={effectivelyAnimated} />
       </motion.div>
@@ -715,13 +721,14 @@ const PortfolioClient: React.FC = () => {
         animate={{ 
           opacity: 1, 
           x: 0,
-          marginLeft: activeTab === "home" ? "-380px" : "0px"
         }}
         transition={{ 
           duration: 0.4, 
           ease: [0.23, 1, 0.32, 1] 
         }}
-        className="flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md rounded-r-xl md:rounded-l-none shadow-[0_12px_34px_rgba(15,23,42,0.07)] border border-gray-100 dark:border-gray-800 overflow-hidden"
+        className={`flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md rounded-xl md:rounded-l-none shadow-[0_12px_34px_rgba(15,23,42,0.07)] border border-gray-100 dark:border-gray-800 overflow-hidden transition-all duration-500 ease-[0.23,1,0.32,1] ${
+          activeTab === "home" ? "md:-ml-[380px]" : "ml-0"
+        }`}
       >
         <TabSwitcher
           activeTab={activeTab}
