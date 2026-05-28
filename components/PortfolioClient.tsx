@@ -1323,12 +1323,7 @@ const PortfolioClient: React.FC = () => {
         transition={{ delay: 1, duration: 0.5 }}
         className="fixed bottom-1 left-4 hidden md:block z-30"
       >
-        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-lg px-3 py-0 shadow-sm">
-          <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
-            <i className="far fa-copyright text-red-500 mr-1"></i>
-            Bitto Saha
-          </p>
-        </div>
+      
       </motion.div>
 
       {/* Mobile Footer */}
