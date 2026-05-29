@@ -344,7 +344,7 @@ const pageVariants: Variants = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.3,
+      duration: 0.2,
       ease: "easeOut",
     },
   },
@@ -352,7 +352,7 @@ const pageVariants: Variants = {
     opacity: 0,
     y: -5,
     transition: {
-      duration: 0.2,
+      duration: 0.15,
       ease: "easeIn",
     },
   },
@@ -363,7 +363,7 @@ const containerVariants: Variants = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.05,
+      staggerChildren: 0.03,
       duration: 0.1
     }
   }
@@ -375,8 +375,8 @@ const avatarVariants: Variants = {
     scale: 1,
     opacity: 1,
     transition: {
-      duration: 0.6,
-      ease: [0.68, -0.55, 0.265, 1.55],
+      duration: 0.4,
+      ease: [0.23, 1, 0.32, 1],
     },
   },
 };
@@ -384,16 +384,16 @@ const avatarVariants: Variants = {
 const cardVariants: Variants = {
   hidden: {
     opacity: 0,
-    y: 15,
-    filter: "blur(10px)",
+    y: 10,
+    filter: "blur(4px)",
   },
   show: {
     opacity: 1,
     y: 0,
     filter: "blur(0px)",
     transition: {
-      duration: 0.8,
-      ease: [0.16, 1, 0.3, 1],
+      duration: 0.4,
+      ease: [0.23, 1, 0.32, 1],
     }
   }
 };
@@ -435,7 +435,12 @@ const PortfolioClient: React.FC = () => {
     null,
   );
   const [hasAnimatedProjectsTab, setHasAnimatedProjectsTab] = useState(false);
+  const [hasAnimatedActivityTab, setHasAnimatedActivityTab] = useState(false);
   const [projectSearchQuery, setProjectSearchQuery] = useState("");
+  const [projectsPage, setProjectsPage] = useState(1);
+  const [activitiesPage, setActivitiesPage] = useState(1);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const ITEMS_PER_PAGE = 5;
   const [projectViewMode, setProjectViewMode] = useState<ProjectViewMode>("card");
   const [portfolioSettings, setPortfolioSettings] =
     useState<PortfolioSettings | null>(null);
@@ -634,6 +639,40 @@ const PortfolioClient: React.FC = () => {
     });
   }, [projects, projectSearchQuery]);
 
+  const paginatedProjects = useMemo(() => {
+    return filteredProjects.slice(0, projectsPage * ITEMS_PER_PAGE);
+  }, [filteredProjects, projectsPage]);
+
+  const paginatedActivities = useMemo(() => {
+    return activities.slice(0, activitiesPage * ITEMS_PER_PAGE);
+  }, [activities, activitiesPage]);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      if (scrollTop + clientHeight >= scrollHeight - 100) {
+        if (activeTab === "projects") {
+          if (projectsPage * ITEMS_PER_PAGE < filteredProjects.length) {
+            setProjectsPage((prev) => prev + 1);
+          }
+        } else if (activeTab === "activity") {
+          if (activitiesPage * ITEMS_PER_PAGE < activities.length) {
+            setActivitiesPage((prev) => prev + 1);
+          }
+        }
+      }
+    };
+
+    container.addEventListener("scroll", handleScroll);
+    // Initial check for very large screens
+    handleScroll();
+    
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [activeTab, projectsPage, activitiesPage, filteredProjects.length, activities.length]);
+
   const contentByTab = useMemo<Record<TabType, ContentItem[]>>(
     () => ({
       home: [],
@@ -647,15 +686,28 @@ const PortfolioClient: React.FC = () => {
   );
 
   useEffect(() => {
-    const sharePathPrefix = "/projects/";
+    const projectPrefix = "/projects/";
+    const activityPrefix = "/activity/";
     let deepLinkSlug = null;
+    let autoTab: TabType | null = null;
     
-    if (pathname.startsWith(sharePathPrefix)) {
-      const parts = pathname.slice(sharePathPrefix.length).split("/");
-      if (parts[0] && parts[0] !== "share=") {
-         deepLinkSlug = decodeURIComponent(parts[0]);
-      } else if (parts[0] === "share=") {
-         deepLinkSlug = decodeURIComponent(pathname.slice(sharePathPrefix.length + 6));
+    if (pathname.startsWith(projectPrefix)) {
+      autoTab = "projects";
+      const rest = pathname.slice(projectPrefix.length);
+      if (rest.startsWith("share=")) {
+         deepLinkSlug = decodeURIComponent(rest.slice(6));
+      } else {
+         const parts = rest.split("/");
+         if (parts[0]) deepLinkSlug = decodeURIComponent(parts[0]);
+      }
+    } else if (pathname.startsWith(activityPrefix)) {
+      autoTab = "activity";
+      const rest = pathname.slice(activityPrefix.length);
+      if (rest.startsWith("share=")) {
+         deepLinkSlug = decodeURIComponent(rest.slice(6));
+      } else {
+         const parts = rest.split("/");
+         if (parts[0]) deepLinkSlug = decodeURIComponent(parts[0]);
       }
     }
 
@@ -679,7 +731,7 @@ const PortfolioClient: React.FC = () => {
     const requestedTab: TabType =
       deepLinkView && allowedTabs.includes(deepLinkView as TabType)
         ? (deepLinkView as TabType)
-        : "projects";
+        : (autoTab || "projects");
 
     if (!visibleTabs.includes(requestedTab)) {
       return;
@@ -717,19 +769,24 @@ const PortfolioClient: React.FC = () => {
     if (activeTab === "projects" && !hasAnimatedProjectsTab) {
       setHasAnimatedProjectsTab(true);
     }
-  }, [activeTab, hasAnimatedProjectsTab]);
+    if (activeTab === "activity" && !hasAnimatedActivityTab) {
+      setHasAnimatedActivityTab(true);
+    }
+  }, [activeTab, hasAnimatedProjectsTab, hasAnimatedActivityTab]);
 
   const handleBack = () => {
     if (viewingDetail) {
       setViewingDetail(null);
 
-      const hasSlugInPath = pathname.startsWith("/projects/") && pathname !== "/projects";
+      const isProjectSlug = pathname.startsWith("/projects/") && pathname !== "/projects";
+      const isActivitySlug = pathname.startsWith("/activity/") && pathname !== "/activity";
       const hasShareInQuery = searchParams.has("share");
       
-      if (hasSlugInPath || hasShareInQuery) {
+      if (isProjectSlug || isActivitySlug || hasShareInQuery) {
         const viewValue = searchParams.get("view") || activeTab;
+        const baseUrl = activeTab === "activity" ? "/activity" : "/projects";
         // Navigation is handled internally by state, router.push is just for URL sync
-        window.history.replaceState(null, "", `/projects?view=${encodeURIComponent(viewValue)}`);
+        window.history.replaceState(null, "", `${baseUrl}?view=${encodeURIComponent(viewValue)}`);
       }
 
       return;
@@ -742,13 +799,24 @@ const PortfolioClient: React.FC = () => {
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
     setViewingDetail(null);
+    if (tab === "projects") setProjectsPage(1);
+    if (tab === "activity") setActivitiesPage(1);
+
+    // Update URL to reflect tab change
+    const baseUrl = tab === "activity" ? "/activity" : (tab === "projects" ? "/projects" : "/");
+    const query = tab !== "home" ? `?view=${tab}` : "";
+    window.history.pushState(null, "", `${baseUrl}${query}`);
   };
 
   const handleOpenDetail = (item: ContentItem) => {
     const slug = item.slug || item.id;
     setViewingDetail(item);
+    
+    // Choose base path based on tab
+    const baseUrl = activeTab === "activity" ? "/activity" : "/projects";
+    
     // Silent URL update to prevent route change flash/reload
-    window.history.pushState(null, "", `/projects/${slug}`);
+    window.history.pushState(null, "", `${baseUrl}/${slug}`);
     incrementViewsIfUnique(item.id);
 
     // Scroll to top
@@ -838,7 +906,10 @@ const PortfolioClient: React.FC = () => {
           isLoading={isTabConfigLoading}
         />
 
-        <div className="flex-1 h-auto md:overflow-y-auto custom-scrollbar relative">
+        <div 
+          ref={scrollContainerRef}
+          className="flex-1 h-auto md:overflow-y-auto custom-scrollbar relative"
+        >
           <AnimatePresence mode="popLayout" initial={false}>
             {viewingDetail ? (
               <motion.div
@@ -1215,19 +1286,41 @@ const PortfolioClient: React.FC = () => {
                       </motion.div>
                     )}
 
-                    {isLoading
-                      ? Array(3)
-                          .fill(0)
-                          .map((_, i) => <ShimmerCard key={i} />)
-                      : activeTab === "projects"
-                        ? projectViewMode === "grid"
-                          ? (
-                            <motion.div
+                    <AnimatePresence mode="popLayout" initial={false}>
+                      {(isLoading || !isHydrated) && 
+                       ((activeTab === "projects" && projects.length === 0) || 
+                        (activeTab === "activity" && activities.length === 0)) ? (
+                        <motion.div
+                          key="shimmer"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="space-y-4"
+                        >
+                          {Array(3)
+                            .fill(0)
+                            .map((_, i) => (
+                              <ShimmerCard key={i} />
+                            ))}
+                        </motion.div>
+                      ) : activeTab === "projects" ? (
+                        <motion.div
+                          key="projects-content"
+                          variants={containerVariants}
+                          initial={hasAnimatedProjectsTab ? "show" : "hidden"}
+                          animate="show"
+                          exit={{ opacity: 0, x: -10 }}
+                          className="w-full"
+                        >
+                          {projectViewMode === "grid" ? (
+                            <motion.div 
                               variants={containerVariants}
+                              initial={hasAnimatedProjectsTab ? "show" : "hidden"}
+                              animate="show"
                               className="grid grid-cols-1 md:grid-cols-2 gap-4"
                             >
-                              {filteredProjects.map((item, index) => (
-                                <motion.div key={item.id} variants={cardVariants} custom={index}>
+                              {paginatedProjects.map((item) => (
+                                <motion.div key={item.id} variants={cardVariants}>
                                   <ProjectGridCard
                                     item={item}
                                     onReadMore={() => handleOpenDetail(item)}
@@ -1235,48 +1328,86 @@ const PortfolioClient: React.FC = () => {
                                 </motion.div>
                               ))}
                             </motion.div>
-                          )
-                          : projectViewMode === "list"
-                            ? (
-                              filteredProjects.map((item, index) => (
-                                <motion.div
-                                  key={item.id}
-                                  variants={cardVariants}
-                                  custom={index}
-                                >
+                          ) : projectViewMode === "list" ? (
+                            <motion.div 
+                              variants={containerVariants}
+                              initial={hasAnimatedProjectsTab ? "show" : "hidden"}
+                              animate="show"
+                              className="space-y-4"
+                            >
+                              {paginatedProjects.map((item) => (
+                                <motion.div key={item.id} variants={cardVariants}>
                                   <ProjectListCard
                                     item={item}
                                     onReadMore={() => handleOpenDetail(item)}
                                   />
                                 </motion.div>
-                              ))
-                            )
-                            : (
-                              filteredProjects.map((item, index) => (
-                                <motion.div
-                                  key={item.id}
-                                  variants={cardVariants}
-                                  custom={index}
-                                >
+                              ))}
+                            </motion.div>
+                          ) : (
+                            <motion.div 
+                              variants={containerVariants}
+                              initial={hasAnimatedProjectsTab ? "show" : "hidden"}
+                              animate="show"
+                              className="space-y-4"
+                            >
+                              {paginatedProjects.map((item) => (
+                                <motion.div key={item.id} variants={cardVariants}>
                                   <ContentCard
                                     item={item}
                                     onReadMore={() => handleOpenDetail(item)}
                                   />
                                 </motion.div>
-                              ))
-                            )
-                        : activities.map((item, index) => (
-                            <motion.div
-                              key={item.id}
-                              variants={cardVariants}
-                              custom={index}
-                            >
+                              ))}
+                            </motion.div>
+                          )}
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="activity-content"
+                          variants={containerVariants}
+                          initial={hasAnimatedActivityTab ? "show" : "hidden"}
+                          animate="show"
+                          exit={{ opacity: 0, x: 10 }}
+                          className="space-y-4"
+                        >
+                          {paginatedActivities.map((item) => (
+                            <motion.div key={item.id} variants={cardVariants}>
                               <ContentCard
                                 item={item}
                                 onReadMore={() => handleOpenDetail(item)}
                               />
                             </motion.div>
                           ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Infinite Scroll Loaders */}
+                    {activeTab === "projects" && paginatedProjects.length < filteredProjects.length && (
+                      <div className="py-8 flex flex-col items-center gap-3">
+                        <div className="flex gap-1.5">
+                          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                        </div>
+                        <span className="text-xs font-bold tracking-widest text-gray-400 dark:text-gray-500 uppercase">
+                          Loading More Projects
+                        </span>
+                      </div>
+                    )}
+                    {activeTab === "activity" && paginatedActivities.length < activities.length && (
+                      <div className="py-8 flex flex-col items-center gap-3">
+                        <div className="flex gap-1.5">
+                          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                        </div>
+                        <span className="text-xs font-bold tracking-widest text-gray-400 dark:text-gray-500 uppercase">
+                          Loading More Activities
+                        </span>
+                      </div>
+                    )}
 
                     {!isLoading &&
                       (activeTab === "projects"
@@ -1565,7 +1696,8 @@ const DetailView: React.FC<{
 
   const handleShare = async () => {
     const shareUrl = new URL(window.location.origin);
-    shareUrl.pathname = `/projects/share=${encodeURIComponent(item.id)}`;
+    const baseUrl = activeTab === "activity" ? "/activity" : "/projects";
+    shareUrl.pathname = `${baseUrl}/share=${encodeURIComponent(item.id)}`;
     shareUrl.searchParams.set("view", activeTab);
 
     try {
