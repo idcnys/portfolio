@@ -56,6 +56,7 @@ import TabSwitcher from "./client/TabSwitcher";
 import CustomContextMenu from "./client/CustomContextMenu";
 import AppearingTextAnimation from "./client/AppearingTextAnimation";
 import ActionButtons from "./client/ActionButtons";
+import ThemeToggle from "./client/ThemeToggle";
 
 type DescriptionBlock =
   | { type: "html"; content: string }
@@ -344,15 +345,15 @@ const pageVariants: Variants = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.4,
-      ease: "easeOut",
+      duration: 0.3,
+      ease: [0.22, 1, 0.36, 1],
     },
   },
   exit: {
     opacity: 0,
     y: -8,
     transition: {
-      duration: 0.3,
+      duration: 0.2,
       ease: "easeIn",
     },
   },
@@ -363,8 +364,8 @@ const containerVariants: Variants = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.05,
-      duration: 0.2
+      staggerChildren: 0.04,
+      duration: 0.15
     }
   }
 };
@@ -375,7 +376,7 @@ const avatarVariants: Variants = {
     scale: 1,
     opacity: 1,
     transition: {
-      duration: 0.6,
+      duration: 0.5,
       ease: [0.22, 1, 0.36, 1], // easeOutQuart
     },
   },
@@ -384,7 +385,7 @@ const avatarVariants: Variants = {
 const cardVariants: Variants = {
   hidden: {
     opacity: 0,
-    y: 15,
+    y: 12,
     filter: "blur(6px)",
   },
   show: {
@@ -392,7 +393,7 @@ const cardVariants: Variants = {
     y: 0,
     filter: "blur(0px)",
     transition: {
-      duration: 0.55,
+      duration: 0.45,
       ease: [0.22, 1, 0.36, 1],
     }
   }
@@ -832,6 +833,19 @@ const PortfolioClient: React.FC = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-500/10 blur-[120px] dark:bg-blue-600/5" />
       </div>
       <CustomContextMenu />
+      <AnimatePresence>
+        {activeTab === "home" && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, x: 20 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            exit={{ opacity: 0, scale: 0.8, x: 20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="fixed top-6 right-6 z-[100]"
+          >
+            <ThemeToggle className="relative w-9 h-9 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-center" />
+          </motion.div>
+        )}
+      </AnimatePresence>
       <motion.div
         initial={!effectivelyAnimated ? { opacity: 0, x: -50 } : false}
         animate={{ 

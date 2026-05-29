@@ -7,6 +7,7 @@ import ThemeToggle from "../client/ThemeToggle";
 import SocialLinks from "../client/SocialLinks";
 import AppearingTextAnimation from "../client/AppearingTextAnimation";
 import ActionButtons from "../client/ActionButtons";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const TypewriterText: React.FC<{
   text: string;
@@ -127,6 +128,12 @@ export default function ProfileInfo({
 }) {
   const [hasBottomTypingStarted, setHasBottomTypingStarted] = useState(false);
   const [hasBottomTypingCompleted, setHasBottomTypingCompleted] = useState(false);
+
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const view = searchParams.get("view");
+  const isHome = !view && pathname === "/";
+
   const handleBottomTypingStart = useCallback(() => {
     setHasBottomTypingStarted(true);
   }, []);
@@ -142,7 +149,7 @@ export default function ProfileInfo({
       animate="visible"
       className={`h-full ${embedded ? "bg-transparent border-none shadow-none p-0" : "bg-white/70 dark:bg-gray-900/70 backdrop-blur-md p-6 rounded-l-xl md:rounded-r-none shadow-[0_10px_30px_rgba(15,23,42,0.06)] border border-gray-100 dark:border-gray-800"} relative flex flex-col`}
     >
-      {!embedded && (
+      {!embedded && !isHome && (
         <motion.div variants={itemVariants}>
           <ThemeToggle />
         </motion.div>
