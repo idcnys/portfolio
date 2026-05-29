@@ -29,7 +29,9 @@ import {
   Globe,
   Link as LinkIcon,
   Search as SearchIcon,
-  Settings
+  Settings,
+  Maximize2,
+  Minimize2
 } from "lucide-react";
 
 const GithubIcon = (props: any) => (
@@ -446,6 +448,7 @@ const PortfolioClient: React.FC = () => {
   const [isNavigating, setIsNavigating] = useState(false);
   const [hasEntranceAnimated, setHasEntranceAnimated] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isEdgeToEdge, setIsEdgeToEdge] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -826,7 +829,7 @@ const PortfolioClient: React.FC = () => {
         variants={pageVariants}
         initial="initial"
         animate="animate"
-        className="min-h-screen md:h-screen bg-gray-100 dark:bg-gray-950 flex flex-col md:flex-row p-2 md:p-3 lg:p-4 max-w-screen transition-colors duration-300 md:overflow-hidden relative"
+        className={`min-h-screen md:h-screen bg-gray-100 dark:bg-gray-950 flex flex-col md:flex-row ${isEdgeToEdge ? "p-0" : "p-2 md:p-3 lg:p-4"} max-w-screen transition-all duration-500 ease-[0.22,1,0.36,1] md:overflow-hidden relative`}
       >
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#FFDB14]/10 blur-[120px]" />
@@ -840,8 +843,27 @@ const PortfolioClient: React.FC = () => {
             animate={{ opacity: 1, scale: 1, x: 0 }}
             exit={{ opacity: 0, scale: 0.8, x: 20 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed top-6 right-6 z-[100]"
+            className={`fixed ${isEdgeToEdge ? "top-3 right-3" : "top-6 right-6"} z-[100] flex items-center gap-2 transition-all duration-500`}
           >
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsEdgeToEdge(!isEdgeToEdge)}
+              className="w-9 h-9 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              title={isEdgeToEdge ? "Collapse Layout" : "Expand Layout"}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={isEdgeToEdge ? "minimize" : "maximize"}
+                  initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {isEdgeToEdge ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                </motion.div>
+              </AnimatePresence>
+            </motion.button>
             <ThemeToggle className="relative w-9 h-9 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-center" />
           </motion.div>
         )}
@@ -865,7 +887,7 @@ const PortfolioClient: React.FC = () => {
         }}
         className={`w-full md:w-[380px] md:h-full flex flex-col md:overflow-y-hidden custom-scrollbar pr-0 md:pr-0 ${isDetailView || activeTab === "home" ? "hidden md:flex" : "flex"} flex-shrink-0 z-10`}
       >
-        <ProfileInfo forceStatic={effectivelyAnimated} />
+        <ProfileInfo forceStatic={effectivelyAnimated} isEdgeToEdge={isEdgeToEdge} />
       </motion.div>
 
       <motion.div
@@ -878,7 +900,7 @@ const PortfolioClient: React.FC = () => {
           duration: 0.4, 
           ease: [0.23, 1, 0.32, 1] 
         }}
-        className={`flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md rounded-xl md:rounded-l-none shadow-[0_12px_34px_rgba(15,23,42,0.07)] border border-gray-100 dark:border-gray-800 overflow-hidden transition-all duration-500 ease-[0.23,1,0.32,1] ${
+        className={`flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md ${isEdgeToEdge ? "rounded-none" : "rounded-xl md:rounded-l-none"} shadow-[0_12px_34px_rgba(15,23,42,0.07)] border border-gray-100 dark:border-gray-800 overflow-hidden transition-all duration-500 ease-[0.23,1,0.32,1] ${
           activeTab === "home" ? "md:-ml-[380px]" : "ml-0"
         }`}
       >
@@ -930,14 +952,14 @@ const PortfolioClient: React.FC = () => {
                 initial={effectivelyAnimated ? "animate" : "initial"}
                 animate="animate"
                 exit="exit"
-                className="p-4 md:p-6 w-full"
+                className={`${isEdgeToEdge ? "p-0" : "p-4 md:p-6"} w-full`}
               >
                 {activeTab === "home" && (
                   <motion.div
                     variants={containerVariants}
                     initial="hidden"
                     animate="show"
-                    className="-mx-4 md:-mx-6 -mt-4 md:-mt-6 relative"
+                    className={`${isEdgeToEdge ? "" : "-mx-4 md:-mx-6 -mt-4 md:-mt-6 -mb-4 md:-mb-6"} relative`}
                   >
                     {/* Hero Section */}
                     <section className="sticky top-0 min-h-screen flex flex-col justify-center py-20 px-4 bg-gray-100 dark:bg-gray-950 z-[1]">
@@ -1069,15 +1091,15 @@ const PortfolioClient: React.FC = () => {
                     </section>
 
                     {/* Connect Section */}
-                    <section className="sticky top-0 min-h-screen flex flex-col justify-center py-20 px-4 bg-gray-50 dark:bg-gray-950 border-t border-[#FFDB14]/20 z-[4] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)]">
-                      <div className="max-w-4xl mx-auto text-center space-y-12">
-                        <div className="space-y-4">
-                          <h2 className="text-2xl text-amber-600 dark:text-[#FFDB14] font-playwrite">Let's Connect</h2>
-                          <p className="text-3xl md:text-5xl font-black text-gray-900 dark:text-gray-100 italic">
+                    <section className="sticky top-0 min-h-screen flex flex-col justify-start pt-16 md:pt-24 pb-20 px-4 bg-gray-50 dark:bg-gray-950 border-t border-[#FFDB14]/20 z-[4] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)]">
+                      <div className="max-w-4xl mx-auto text-center space-y-8 md:space-y-10">
+                        <div className="space-y-3 md:space-y-4">
+                          <h2 className="text-xl md:text-2xl text-amber-600 dark:text-[#FFDB14] font-playwrite">Let's Connect</h2>
+                          <p className="text-2xl md:text-5xl font-black text-gray-900 dark:text-gray-100 italic">
                             Hire me for your next <span className="text-amber-600 dark:text-[#FFDB14]">Big transformation</span>
                           </p>
                         </div>
-                        <div className="flex flex-wrap justify-center gap-4">
+                        <div className="flex flex-wrap justify-center gap-3 md:gap-4">
                           {[
                             { Icon: GithubIcon, label: "GitHub", url: "https://github.com/bittosaha" },
                             { Icon: LinkedinIcon, label: "LinkedIn", url: "https://linkedin.com/in/bittosaha" },
@@ -1090,7 +1112,7 @@ const PortfolioClient: React.FC = () => {
                               target="_blank"
                               rel="noopener noreferrer"
                               whileHover={{ y: -5, scale: 1.05 }}
-                              className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 shadow-xl border border-gray-100 dark:border-gray-700 text-sm font-bold text-gray-800 dark:text-gray-200 transition-all hover:border-[#FFDB14]"
+                              className="flex items-center gap-2 px-6 py-3 md:px-8 md:py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 shadow-xl border border-gray-100 dark:border-gray-700 text-sm font-bold text-gray-800 dark:text-gray-200 transition-all hover:border-[#FFDB14]"
                             >
                               <social.Icon className="w-5 h-5 text-[#FFDB14]" />
                               {social.label}
