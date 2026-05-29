@@ -59,6 +59,7 @@ import CustomContextMenu from "./client/CustomContextMenu";
 import AppearingTextAnimation from "./client/AppearingTextAnimation";
 import ActionButtons from "./client/ActionButtons";
 import ThemeToggle from "./client/ThemeToggle";
+import MatrixRain from "./client/MatrixRain";
 
 type DescriptionBlock =
   | { type: "html"; content: string }
@@ -962,8 +963,9 @@ const PortfolioClient: React.FC = () => {
                     className={`${isEdgeToEdge ? "" : "-mx-4 md:-mx-6 -mt-4 md:-mt-6 -mb-4 md:-mb-6"} relative`}
                   >
                     {/* Hero Section */}
-                    <section className="sticky top-0 min-h-screen flex flex-col justify-center py-20 px-4 bg-gray-100 dark:bg-gray-950 z-[1]">
-                      <div className="max-w-4xl mx-auto text-center space-y-8">
+                    <section className="sticky top-0 min-h-screen flex flex-col justify-center py-20 px-4 bg-gray-100 dark:bg-gray-950 z-[1] overflow-hidden">
+                      <MatrixRain />
+                      <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
                         <motion.div
                           variants={avatarVariants}
                           className="w-40 h-40 md:w-56 md:h-56 mx-auto rounded-full overflow-hidden border-4 border-amber-600 dark:border-[#FFDB14] shadow-2xl relative"
