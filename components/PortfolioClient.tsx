@@ -339,20 +339,20 @@ const incrementViewsIfUnique = async (itemId: string): Promise<void> => {
 
 // Animation variants
 const pageVariants: Variants = {
-  initial: { opacity: 0, y: 5 },
+  initial: { opacity: 0, y: 8 },
   animate: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.2,
+      duration: 0.4,
       ease: "easeOut",
     },
   },
   exit: {
     opacity: 0,
-    y: -5,
+    y: -8,
     transition: {
-      duration: 0.15,
+      duration: 0.3,
       ease: "easeIn",
     },
   },
@@ -363,20 +363,20 @@ const containerVariants: Variants = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.03,
-      duration: 0.1
+      staggerChildren: 0.05,
+      duration: 0.2
     }
   }
 };
 
 const avatarVariants: Variants = {
-  hidden: { scale: 0.8, opacity: 0 },
+  hidden: { scale: 0.9, opacity: 0 },
   show: {
     scale: 1,
     opacity: 1,
     transition: {
-      duration: 0.4,
-      ease: [0.23, 1, 0.32, 1],
+      duration: 0.6,
+      ease: [0.22, 1, 0.36, 1], // easeOutQuart
     },
   },
 };
@@ -384,16 +384,16 @@ const avatarVariants: Variants = {
 const cardVariants: Variants = {
   hidden: {
     opacity: 0,
-    y: 10,
-    filter: "blur(4px)",
+    y: 15,
+    filter: "blur(6px)",
   },
   show: {
     opacity: 1,
     y: 0,
     filter: "blur(0px)",
     transition: {
-      duration: 0.4,
-      ease: [0.23, 1, 0.32, 1],
+      duration: 0.55,
+      ease: [0.22, 1, 0.36, 1],
     }
   }
 };
@@ -401,24 +401,21 @@ const cardVariants: Variants = {
 const certificateVariants: Variants = {
   hidden: {
     opacity: 0,
-    scale: 0.9,
-    rotate: -2
+    scale: 0.95,
   },
   show: {
     opacity: 1,
     scale: 1,
-    rotate: 0,
     transition: {
-      duration: 0.2,
-      ease: [0.68, -0.55, 0.265, 1.55]
+      duration: 0.4,
+      ease: [0.22, 1, 0.36, 1]
     }
   },
   hover: {
-    scale: 1.02,
-    rotate: 0,
-    boxShadow: "0 6px 16px rgba(0,0,0,0.08)",
+    scale: 1.03,
     transition: {
-      duration: 0.15
+      duration: 0.3,
+      ease: "easeOut"
     }
   }
 };
@@ -646,32 +643,6 @@ const PortfolioClient: React.FC = () => {
   const paginatedActivities = useMemo(() => {
     return activities.slice(0, activitiesPage * ITEMS_PER_PAGE);
   }, [activities, activitiesPage]);
-
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = container;
-      if (scrollTop + clientHeight >= scrollHeight - 100) {
-        if (activeTab === "projects") {
-          if (projectsPage * ITEMS_PER_PAGE < filteredProjects.length) {
-            setProjectsPage((prev) => prev + 1);
-          }
-        } else if (activeTab === "activity") {
-          if (activitiesPage * ITEMS_PER_PAGE < activities.length) {
-            setActivitiesPage((prev) => prev + 1);
-          }
-        }
-      }
-    };
-
-    container.addEventListener("scroll", handleScroll);
-    // Initial check for very large screens
-    handleScroll();
-    
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [activeTab, projectsPage, activitiesPage, filteredProjects.length, activities.length]);
 
   const contentByTab = useMemo<Record<TabType, ContentItem[]>>(
     () => ({
@@ -1383,29 +1354,37 @@ const PortfolioClient: React.FC = () => {
                       )}
                     </AnimatePresence>
 
-                    {/* Infinite Scroll Loaders */}
+                    {/* Load More Button */}
                     {activeTab === "projects" && paginatedProjects.length < filteredProjects.length && (
-                      <div className="py-8 flex flex-col items-center gap-3">
-                        <div className="flex gap-1.5">
-                          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                        </div>
-                        <span className="text-xs font-bold tracking-widest text-gray-400 dark:text-gray-500 uppercase">
-                          Loading More Projects
-                        </span>
+                      <div className="py-8 flex justify-center">
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => setProjectsPage(prev => prev + 1)}
+                          className="px-6 py-2.5 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm text-sm font-bold text-gray-700 dark:text-gray-200 hover:border-amber-500 dark:hover:border-amber-500 transition-colors flex items-center gap-2 group"
+                        >
+                          Show More Projects
+                          <div className="flex gap-1">
+                            <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1 h-1 rounded-full bg-amber-500" />
+                            <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1 h-1 rounded-full bg-amber-500" />
+                          </div>
+                        </motion.button>
                       </div>
                     )}
                     {activeTab === "activity" && paginatedActivities.length < activities.length && (
-                      <div className="py-8 flex flex-col items-center gap-3">
-                        <div className="flex gap-1.5">
-                          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                        </div>
-                        <span className="text-xs font-bold tracking-widest text-gray-400 dark:text-gray-500 uppercase">
-                          Loading More Activities
-                        </span>
+                      <div className="py-8 flex justify-center">
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => setActivitiesPage(prev => prev + 1)}
+                          className="px-6 py-2.5 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm text-sm font-bold text-gray-700 dark:text-gray-200 hover:border-amber-500 dark:hover:border-amber-500 transition-colors flex items-center gap-2 group"
+                        >
+                          Show More Activities
+                          <div className="flex gap-1">
+                            <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1 h-1 rounded-full bg-amber-500" />
+                            <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1 h-1 rounded-full bg-amber-500" />
+                          </div>
+                        </motion.button>
                       </div>
                     )}
 
