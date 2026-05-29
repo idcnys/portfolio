@@ -311,6 +311,8 @@ const TECH_LOGOS = [
   { name: "CodeMirror", url: "https://img.shields.io/badge/CodeMirror-212121?style=flat&logo=codemirror&logoColor=white" },
   { name: "PostCSS", url: "https://img.shields.io/badge/PostCSS-DD3A0A?style=flat&logo=postcss&logoColor=white" },
   { name: "Cal.com", url: "https://img.shields.io/badge/Cal.com-000000?style=flat&logo=caldotcom&logoColor=white" },
+  { name: "Shields.io", url: "https://img.shields.io/badge/Shields.io-333333?style=flat&logo=shieldsdotio&logoColor=white" },
+  { name: "Icons8", url: "https://img.shields.io/badge/Icons8-1FBAD6?style=flat&logo=icons8&logoColor=white" },
 ];
 
 const incrementViewsIfUnique = async (itemId: string): Promise<void> => {
