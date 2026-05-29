@@ -881,7 +881,7 @@ const PortfolioClient: React.FC = () => {
           ref={scrollContainerRef}
           className="flex-1 h-auto md:overflow-y-auto custom-scrollbar relative"
         >
-          <AnimatePresence mode="popLayout" initial={false}>
+          <AnimatePresence mode="wait" initial={false}>
             {viewingDetail ? (
               <motion.div
                 key="detail"
@@ -1257,7 +1257,7 @@ const PortfolioClient: React.FC = () => {
                       </motion.div>
                     )}
 
-                    <AnimatePresence mode="popLayout" initial={false}>
+                    <AnimatePresence mode="wait" initial={false}>
                       {(isLoading || !isHydrated) && 
                        ((activeTab === "projects" && projects.length === 0) || 
                         (activeTab === "activity" && activities.length === 0)) ? (
