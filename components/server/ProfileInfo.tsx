@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, Variants } from "framer-motion";
+import { motion, Variants, AnimatePresence } from "framer-motion";
 import ThemeToggle from "../client/ThemeToggle";
 import SocialLinks from "../client/SocialLinks";
 import AppearingTextAnimation from "../client/AppearingTextAnimation";
@@ -130,6 +130,7 @@ export default function ProfileInfo({
 }) {
   const [hasBottomTypingStarted, setHasBottomTypingStarted] = useState(false);
   const [hasBottomTypingCompleted, setHasBottomTypingCompleted] = useState(false);
+  const [isBottomTextVisible, setIsBottomTextVisible] = useState(true);
 
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -142,6 +143,10 @@ export default function ProfileInfo({
 
   const handleBottomTypingComplete = useCallback(() => {
     setHasBottomTypingCompleted(true);
+    // Hide text after 5 seconds
+    setTimeout(() => {
+      setIsBottomTextVisible(false);
+    }, 5000);
   }, []);
 
   return (
@@ -270,40 +275,47 @@ export default function ProfileInfo({
         <ActionButtons forceStatic={forceStatic} />
       </motion.div>
 
-      <motion.div
-        variants={itemVariants}
-        className="hidden md:block bg-gradient-to-br mt-auto from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-850 p-2 rounded shadow-[0_10px_26px_rgba(15,23,42,0.1)] relative z-0"
-        whileHover={{ scale: 1.01 }}
-        transition={{ duration: 0.2 }}
-      >
-        <div className="flex items-start gap-3 mb-1">
+      <AnimatePresence>
+        {isBottomTextVisible && (
           <motion.div
-            className={`w-10 h-10 rounded-full border-2 flex-shrink-0 relative overflow-hidden ${
-              hasBottomTypingCompleted ? "border-[#FFDB14]" : "border-transparent"
-            }`}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{
-              opacity: hasBottomTypingStarted ? 1 : 0,
-              scale: hasBottomTypingStarted ? 1 : 0.95,
-            }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-            whileHover={{ rotate: 2 }}
+            variants={itemVariants}
+            initial="hidden"
+            animate="visible"
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            className="hidden md:block bg-gradient-to-br mt-auto from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-850 p-2 rounded shadow-[0_10px_26px_rgba(15,23,42,0.1)] relative z-0"
+            whileHover={{ scale: 1.01 }}
+            transition={{ duration: 0.2 }}
           >
-            <Image
-              src="/avatar.png"
-              alt="Avatar"
-              fill
-              className="object-cover"
-            />
+            <div className="flex items-start gap-3 mb-1">
+              <motion.div
+                className={`w-10 h-10 rounded-full border-2 flex-shrink-0 relative overflow-hidden ${
+                  hasBottomTypingCompleted ? "border-[#FFDB14]" : "border-transparent"
+                }`}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{
+                  opacity: hasBottomTypingStarted ? 1 : 0,
+                  scale: hasBottomTypingStarted ? 1 : 0.95,
+                }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                whileHover={{ rotate: 2 }}
+              >
+                <Image
+                  src="/avatar.png"
+                  alt="Avatar"
+                  fill
+                  className="object-cover"
+                />
+              </motion.div>
+              <TypewriterText
+                text="Thanks for visiting my portfolio! Explore my projects, activities, and certificates. Feel free to reach out if you'd like to collaborate or just chat."
+                className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed"
+                onStart={handleBottomTypingStart}
+                onComplete={handleBottomTypingComplete}
+              />
+            </div>
           </motion.div>
-          <TypewriterText
-            text="Thanks for visiting my portfolio! Explore my projects, activities, and certificates. Feel free to reach out if you'd like to collaborate or just chat."
-            className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed"
-            onStart={handleBottomTypingStart}
-            onComplete={handleBottomTypingComplete}
-          />
-        </div>
-      </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

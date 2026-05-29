@@ -915,7 +915,7 @@ const PortfolioClient: React.FC = () => {
 
         <div 
           ref={scrollContainerRef}
-          className="flex-1 h-auto md:overflow-y-auto custom-scrollbar relative"
+          className="flex-1 h-auto md:overflow-y-auto custom-scrollbar relative overscroll-none"
         >
           <AnimatePresence mode="wait" initial={false}>
             {viewingDetail ? (
@@ -952,7 +952,7 @@ const PortfolioClient: React.FC = () => {
                 initial={effectivelyAnimated ? "animate" : "initial"}
                 animate="animate"
                 exit="exit"
-                className={`${isEdgeToEdge ? "p-0" : "p-4 md:p-6"} w-full`}
+                className={`${isEdgeToEdge && activeTab === "home" ? "p-0" : "p-4 md:p-6"} w-full`}
               >
                 {activeTab === "home" && (
                   <motion.div
