@@ -38,7 +38,7 @@ const MatrixRain: React.FC<MatrixRainProps> = ({ startDelayMs = 0, revealDirecti
         const columns = Math.floor(width / 20);
         const drops: number[] = new Array(columns).fill(1).map(() => Math.random() * height / 20);
 
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%\"\'#&_(),.;:?!\\|{}<>[]^~";
+        const chars = "font-playwriteEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%\"\'#&_(),.;:?!\\|{}<>[]^~";
 
         let animationFrameId: number;
         let lastTime = 0;

@@ -53,6 +53,10 @@ const InstagramIcon = (props: any) => (
 const YoutubeIcon = (props: any) => (
   <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
 );
+
+const UserIcon = (props: any) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+);
 import ProfileInfo from "./server/ProfileInfo";
 import TabSwitcher from "./client/TabSwitcher";
 import CustomContextMenu from "./client/CustomContextMenu";
@@ -140,12 +144,12 @@ const SKILLSET_GROUPS: SkillsetGroup[] = [
 
 const EDUCATION_DATA = [
   {
-    year: "2025 - Present",
+    year: "Present",
     degree: "Bachelor's in CSE",
     institution: "Rajshahi University Of Engineering & Technology, Rajshahi",
   },
   {
-    year: "2022 - 2024",
+    year: "2024",
     degree: "Higher Secondary Certificate (HSC)",
     institution: "Rajshahi College, Rajshahi",
   },
@@ -1049,7 +1053,7 @@ const PortfolioClient: React.FC = () => {
                   >
                     {/* Hero Section */}
                     <section className="sticky top-0 min-h-screen flex flex-col justify-center py-20 px-4 bg-gray-100 dark:bg-gray-950 z-[1] overflow-hidden">
-                      <MatrixRain startDelayMs={4200} revealDirection="ltr" />
+                      <MatrixRain startDelayMs={3200} revealDirection="ltr" />
                       <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
                         <motion.div
                           variants={avatarVariants}
@@ -1068,7 +1072,7 @@ const PortfolioClient: React.FC = () => {
                         <div className="space-y-4">
                           <motion.h1 
                             variants={cardVariants}
-                            className="text-4xl md:text-6xl font-black text-gray-900 dark:text-gray-100 tracking-tight"
+                            className="text-4xl md:text-6xl font-black text-gray-900 dark:text-gray-100 abcdefghijtight"
                           >
                             Bitto Saha
                           </motion.h1>
@@ -1112,7 +1116,7 @@ const PortfolioClient: React.FC = () => {
                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                               {SKILLSET_GROUPS.map(group => (
                                 <div key={group.id} className="space-y-3">
-                                  <h3 className="text-xs font-black text-amber-600 dark:text-[#FFDB14] uppercase tracking-widest border-b border-gray-100 dark:border-gray-800 pb-2">{group.title}</h3>
+                                  <h3 className="text-xs font-black text-amber-600 dark:text-[#FFDB14] abcdefgh abcdefghijwidest border-b border-gray-100 dark:border-gray-800 pb-2">{group.title}</h3>
                                   <div className="flex flex-wrap gap-2">
                                     {group.badges.map(badge => (
                                       <span key={badge.label} className="px-2.5 py-1 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-md text-[10px] md:text-xs font-bold text-gray-700 dark:text-gray-300 shadow-sm">
@@ -1153,7 +1157,7 @@ const PortfolioClient: React.FC = () => {
                               >
                                 {/* Year Label (Left) */}
                                 <div className="w-[80px] md:w-[120px] pt-6 pr-6 text-right shrink-0">
-                                  <span className="text-[11px] md:text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-tighter">
+                                  <span className="text-[11px] md:text-xs font-black text-gray-400 dark:text-gray-500 abcdefgh abcdefghijtighter">
                                     {item.year}
                                   </span>
                                 </div>
@@ -1163,7 +1167,7 @@ const PortfolioClient: React.FC = () => {
 
                                 {/* Content (Right) */}
                                 <div className={`flex-1 pt-6 pb-10 pl-8 md:pl-12 ${index !== EDUCATION_DATA.length - 1 ? 'border-b border-dashed border-gray-800 dark:border-gray-800' : ''}`}>
-                                  <h4 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 tracking-tight">
+                                  <h4 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 abcdefghijtight">
                                     {item.degree}
                                   </h4>
                                   <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 font-medium">
@@ -1180,7 +1184,7 @@ const PortfolioClient: React.FC = () => {
                     {/* Connect Section */}
                     <section className="sticky top-0 min-h-screen flex flex-col justify-start pt-16 md:pt-24 pb-20 px-4 bg-gray-50 dark:bg-gray-950 border-t border-[#FFDB14]/20 z-[4] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)]">
                       <div className="max-w-4xl mx-auto text-center space-y-8 md:space-y-10">
-                        <div className="space-y-3 md:space-y-4">
+                        <div className="space-y-3 md:space-y-4 mt-20">
                           <h2 className="text-xl md:text-2xl text-amber-600 dark:text-[#FFDB14] font-playwrite">Let's Connect</h2>
                           <p className="text-2xl md:text-5xl font-black text-gray-900 dark:text-gray-100 italic">
                             Hire me for your next <span className="text-amber-600 dark:text-[#FFDB14]">Big transformation</span>
@@ -1188,21 +1192,20 @@ const PortfolioClient: React.FC = () => {
                         </div>
                         <div className="flex flex-wrap justify-center gap-3 md:gap-4">
                           {[
-                            { Icon: GithubIcon, label: "GitHub", url: "https://github.com/bittosaha" },
+                            { Icon: GithubIcon, label: "GitHub", url: "https://github.com/idcnys" },
                             { Icon: LinkedinIcon, label: "LinkedIn", url: "https://linkedin.com/in/bittosaha" },
                             { Icon: TwitterIcon, label: "Twitter", url: "https://twitter.com/bittosaha" },
-                            { Icon: InstagramIcon, label: "Instagram", url: "https://instagram.com/bittosaha" },
                           ].map((social) => (
                             <motion.a
                               key={social.label}
                               href={social.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              whileHover={{ y: -5, scale: 1.05 }}
-                              className="flex items-center gap-2 px-6 py-3 md:px-8 md:py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 shadow-xl border border-gray-100 dark:border-gray-700 text-sm font-bold text-gray-800 dark:text-gray-200 transition-all hover:border-[#FFDB14]"
+                              whileHover={{ scale: 1.02 }}
+                              className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-md bg-transparent border border-transparent text-sm font-semibold text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-gray-200 dark:hover:border-gray-700"
                             >
-                              <social.Icon className="w-5 h-5 text-[#FFDB14]" />
-                              {social.label}
+                              <social.Icon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                              <span className="leading-none">{social.label}</span>
                             </motion.a>
                           ))}
                         </div>
@@ -1232,7 +1235,7 @@ const PortfolioClient: React.FC = () => {
                         <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2">
                           <div className="flex items-center gap-2">
                             <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                            <span className="uppercase tracking-widest text-[9px]">System Operational</span>
+                            <span className="abcdefgh abcdefghijwidest text-[9px]">System Operational</span>
                           </div>
                           <span className="hidden md:block w-px h-3 bg-gray-200 dark:bg-gray-800" />
                           <div className="flex items-center gap-1.5">
@@ -1244,19 +1247,31 @@ const PortfolioClient: React.FC = () => {
                             <Clock className="w-3 h-3 opacity-70" />
                             <span>Deployed {mounted ? getRelativeTime(process.env.NEXT_PUBLIC_BUILD_TIME) : "Just now"}</span>
                           </div>
+                          <span className="hidden md:block w-px h-3 bg-gray-200 dark:bg-gray-800" />
+                          <div className="flex items-center gap-1.5">
+                            <GitBranch className="w-3 h-3 opacity-70" />
+                            <span>main</span>
+                          </div>
+                          <span className="hidden md:block w-px h-3 bg-gray-200 dark:bg-gray-800" />
+                          <div className="flex items-center gap-1.5">
+                            <a
+                              href="https://github.com/idcnys"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                              title="GitHub: idcnys"
+                            >
+                              <UserIcon className="w-3 h-3 opacity-70" />
+                              <span className="">idcnys</span>
+                            </a>
+                          </div>
                         </div>
 
                         <div className="flex flex-col items-center gap-1">
-                          <p className="opacity-80 tracking-wide">
+                          <p className="opacity-80 abcdefghijwide">
                             &copy; {mounted ? new Date().getFullYear() : "2024"} <span className="text-gray-600 dark:text-gray-300">Bitto Saha</span> — Built with Code & Coffee
                           </p>
-                          <div className="flex items-center gap-2 text-[9px] uppercase tracking-[0.2em] opacity-40">
-                            <span>Next.js 15.5</span>
-                            <span className="w-1 h-1 rounded-full bg-current" />
-                            <span>React 19</span>
-                            <span className="w-1 h-1 rounded-full bg-current" />
-                            <span>Tailwind 4</span>
-                          </div>
+                          
                         </div>
                       </div>
                     </section>
@@ -1546,7 +1561,7 @@ const PortfolioClient: React.FC = () => {
                       <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
                         Grind Dashboard
                       </h2>
-                      <span className="text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <span className="text-xs font-bold text-gray-500 dark:text-gray-300 abcdefgh abcdefghijwider">
                         Competitive Snapshot
                       </span>
                     </motion.div>
@@ -1561,7 +1576,7 @@ const PortfolioClient: React.FC = () => {
                               <DynamicIcon name={card.icon} className="w-10 h-10" />
                             </div>
                             <div className="relative z-10 pl-12">
-                              <p className="text-xs uppercase tracking-wide font-semibold text-white/80">
+                              <p className="text-xs abcdefgh abcdefghijwide font-semibold text-white/80">
                                 {card.title}
                               </p>
                               <p className="text-3xl font-black leading-tight mt-1">{card.value}</p>
@@ -1577,7 +1592,7 @@ const PortfolioClient: React.FC = () => {
                         variants={cardVariants}
                         className="rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-[0_6px_20px_rgba(15,23,42,0.05)]"
                       >
-                        <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-4">
+                        <h3 className="text-sm font-bold abcdefgh text-gray-500 dark:text-gray-400 mb-4">
                           Max Ratings
                         </h3>
                         <div className="space-y-3">
@@ -1597,7 +1612,7 @@ const PortfolioClient: React.FC = () => {
                         variants={cardVariants}
                         className="rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-[0_6px_20px_rgba(15,23,42,0.05)]"
                       >
-                        <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-4">
+                        <h3 className="text-sm font-bold abcdefgh abcdefghij[0.2em] text-gray-500 dark:text-gray-400 mb-4">
                           GitHub Contributions
                         </h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1606,7 +1621,7 @@ const PortfolioClient: React.FC = () => {
                               key={item.id}
                               className="rounded-lg border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/70 px-3 py-3"
                             >
-                              <p className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">
+                              <p className="text-[11px] abcdefgh abcdefghijwide text-gray-500 dark:text-gray-400 mb-1">
                                 {item.label}
                               </p>
                               <p className="text-lg font-black text-gray-900 dark:text-gray-100">{item.value}</p>
@@ -1624,7 +1639,7 @@ const PortfolioClient: React.FC = () => {
                       <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
                         Skillset Matrix
                       </h2>
-                      <span className="text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <span className="text-xs font-bold text-gray-500 dark:text-gray-300 abcdefgh abcdefghijwider">
                         Shields.io Badges
                       </span>
                     </motion.div>
@@ -1636,7 +1651,7 @@ const PortfolioClient: React.FC = () => {
                           variants={cardVariants}
                           className="rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-[0_6px_20px_rgba(15,23,42,0.05)]"
                         >
-                          <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-2">
+                          <h3 className="text-sm font-bold abcdefgh abcdefghij[0.2em] text-gray-500 dark:text-gray-400 mb-2">
                             {group.title}
                           </h3>
                           <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">

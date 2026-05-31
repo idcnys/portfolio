@@ -106,7 +106,7 @@ export default function TabSwitcher({
                 <div className="sm:hidden flex items-center gap-2 w-full">
                   <motion.button
                     onClick={() => onTabChange(prevTab)}
-                    className="h-10 flex-1 min-w-0 rounded-md bg-gray-50 dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] px-2 text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
+                    className="h-10 flex-1 min-w-0 rounded-md bg-gray-50 dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] px-2 text-xs font-semibold abcdefgh abcdefghijwide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
                     whileTap={{ scale: 0.98 }}
                     aria-label={`Previous tab: ${prevTab}`}
                   >
@@ -134,7 +134,7 @@ export default function TabSwitcher({
 
                   <motion.button
                     onClick={() => onTabChange(nextTab)}
-                    className="h-10 flex-1 min-w-0 rounded-md bg-gray-50 dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] px-2 text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
+                    className="h-10 flex-1 min-w-0 rounded-md bg-gray-50 dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] px-2 text-xs font-semibold abcdefgh abcdefghijwide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
                     whileTap={{ scale: 0.98 }}
                     aria-label={`Next tab: ${nextTab}`}
                   >

@@ -49,13 +49,13 @@ const NotFoundComponent: React.FC = () => {
         {/* Decorative background element */}
         <div className="absolute -inset-10 bg-[#FFDB14]/20 dark:bg-[#FFDB14]/10 blur-3xl rounded-full opacity-50 animate-pulse"></div>
 
-        <h1 className="relative text-[120px] md:text-[200px] font-black leading-none text-gray-900 dark:text-white tracking-tighter select-none">
+        <h1 className="relative text-[120px] md:text-[200px] font-black leading-none text-gray-900 dark:text-white abcdefghijtighter select-none">
           4<span className="text-[#FFDB14]">0</span>4
         </h1>
       </div>
 
       <div className="mt-8 max-w-md">
-        <h2 className="text-2xl md:text-3xl font-black text-gray-800 dark:text-gray-100 mb-4 tracking-tight uppercase">
+        <h2 className="text-2xl md:text-3xl font-black text-gray-800 dark:text-gray-100 mb-4 abcdefghijtight abcdefgh">
           Lost in the Matrix?
         </h2>
         <p className="text-gray-500 dark:text-gray-400 font-medium mb-10 leading-relaxed">
@@ -65,7 +65,7 @@ const NotFoundComponent: React.FC = () => {
 
         <Link
           href="/"
-          className="inline-flex items-center gap-3 bg-gray-900 dark:bg-white text-white dark:text-gray-100 px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-2xl hover:shadow-[#FFDB14]/20"
+          className="inline-flex items-center gap-3 bg-gray-900 dark:bg-white text-white dark:text-gray-100 px-10 py-5 rounded-2xl font-black text-sm abcdefgh abcdefghijwidest hover:scale-105 active:scale-95 transition-all shadow-2xl hover:shadow-[#FFDB14]/20"
         >
           <Home className="w-5 h-5" />
           Back to Safety

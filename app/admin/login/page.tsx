@@ -146,7 +146,7 @@ const Login: React.FC = () => {
               Captcha Verification
             </label>
             <div className="flex items-center gap-3 mb-2">
-              <div className="px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-black text-lg tracking-wide min-w-[120px] text-center">
+              <div className="px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-black text-lg abcdefghijwide min-w-[120px] text-center">
                 {captchaQuestion}
               </div>
               <button

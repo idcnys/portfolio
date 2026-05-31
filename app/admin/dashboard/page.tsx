@@ -642,8 +642,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   <table class="min-w-full bg-white dark:bg-gray-800">
     <thead class="bg-gray-50 dark:bg-gray-700/70">
       <tr>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Header 1</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Header 2</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 abcdefgh abcdefghijwider">Header 1</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 abcdefgh abcdefghijwider">Header 2</th>
       </tr>
     </thead>
     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -1302,7 +1302,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       {/* Enhanced Content Editor for Notes */}
                       <div className="mb-4">
                         <div className="flex items-center justify-between mb-4">
-                          <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] dark:text-gray-500">
+                          <label className="block text-[10px] font-black text-gray-400 abcdefgh abcdefghij[0.3em] dark:text-gray-500">
                             Note Content
                           </label>
                           <div className="flex flex-wrap gap-1 p-1 bg-gray-50 rounded-lg border border-gray-100 dark:bg-gray-900/60 dark:border-gray-700">
@@ -1468,12 +1468,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               <div className="xl:col-span-2 bg-white shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
                 <div className="p-8 md:p-14 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-6 dark:border-gray-800">
                   <div>
-                    <h1 className="text-4xl font-black text-gray-900 tracking-tighter capitalize dark:text-gray-100">
+                    <h1 className="text-4xl font-black text-gray-900 abcdefghijtighter capitalize dark:text-gray-100">
                       {editingId
                         ? `Updating ${formData.type}`
                         : `New ${formData.type}`}
                     </h1>
-                    <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-2 dark:text-gray-500">
+                    <p className="text-gray-400 font-bold abcdefgh text-[10px] abcdefghij[0.3em] mt-2 dark:text-gray-500">
                       Create and manage your {formData.type} posts
                     </p>
                   </div>
@@ -1487,7 +1487,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                     <input
                       type="text"
                       placeholder={`Enter a compelling ${formData.type} title...`}
-                      className="w-full text-4xl md:text-6xl font-black border-none outline-none focus:ring-0 bg-transparent text-gray-900 placeholder:text-gray-100 tracking-tight dark:text-gray-100 dark:placeholder:text-gray-700"
+                      className="w-full text-4xl md:text-6xl font-black border-none outline-none focus:ring-0 bg-transparent text-gray-900 placeholder:text-gray-100 abcdefghijtight dark:text-gray-100 dark:placeholder:text-gray-700"
                       value={formData.title}
                       onChange={(e) => {
                         const title = e.target.value;
@@ -1507,7 +1507,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-3 dark:text-gray-500">
+                        <label className="block text-[10px] font-black text-gray-400 abcdefgh abcdefghij[0.3em] mb-3 dark:text-gray-500">
                           URL Slug (Lowercase, no spaces)
                         </label>
                         <input
@@ -1527,7 +1527,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                         />
                       </div>
                       <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-3 dark:text-gray-500">
+                        <label className="block text-[10px] font-black text-gray-400 abcdefgh abcdefghij[0.3em] mb-3 dark:text-gray-500">
                           Published Date (Display)
                         </label>
                         <input
@@ -1541,7 +1541,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                         />
                       </div>
                       <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-3 dark:text-gray-500">
+                        <label className="block text-[10px] font-black text-gray-400 abcdefgh abcdefghij[0.3em] mb-3 dark:text-gray-500">
                           Cover Image URL
                         </label>
                         <input
@@ -1560,7 +1560,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-3 dark:text-gray-500">
+                      <label className="block text-[10px] font-black text-gray-400 abcdefgh abcdefghij[0.3em] mb-3 dark:text-gray-500">
                         Technology Tags (comma-separated)
                       </label>
                       <input
@@ -1581,7 +1581,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-3 dark:text-gray-500">
+                      <label className="block text-[10px] font-black text-gray-400 abcdefgh abcdefghij[0.3em] mb-3 dark:text-gray-500">
                         Project Links
                       </label>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1665,7 +1665,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
 
                     <div>
                       <div className="flex items-center justify-between mb-4 px-2">
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] dark:text-gray-500">
+                        <label className="block text-[10px] font-black text-gray-400 abcdefgh abcdefghij[0.3em] dark:text-gray-500">
                           Content Description
                         </label>
                         <div className="flex flex-wrap gap-1 p-1 bg-gray-50 rounded-lg border border-gray-100 max-w-2xl dark:bg-gray-900/60 dark:border-gray-700">
@@ -1837,7 +1837,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="bg-gray-900 text-white px-10 py-4 rounded-lg font-black text-sm uppercase tracking-widest hover:bg-black hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3 disabled:opacity-50 shadow-sm dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+                      className="bg-gray-900 text-white px-10 py-4 rounded-lg font-black text-sm abcdefgh abcdefghijwidest hover:bg-black hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3 disabled:opacity-50 shadow-sm dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
                     >
                       {isLoading
                         ? "WORKING..."
@@ -1852,7 +1852,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       <button
                         type="button"
                         onClick={resetForm}
-                        className="px-8 py-4 rounded-lg border border-gray-200 font-black text-xs uppercase tracking-widest text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                        className="px-8 py-4 rounded-lg border border-gray-200 font-black text-xs abcdefgh abcdefghijwidest text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
                       >
                         Discard Changes
                       </button>
@@ -1918,7 +1918,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
         <div className="flex-1 p-6 md:p-12">
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-black text-gray-900 tracking-tighter dark:text-gray-100">
+              <h2 className="text-2xl font-black text-gray-900 abcdefghijtighter dark:text-gray-100">
                 Manage Published Content
               </h2>
               <div className="flex gap-2">
@@ -1944,7 +1944,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       <h4 className="font-black text-lg text-gray-900 truncate dark:text-gray-100">
                         {item.title}
                       </h4>
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1 dark:text-gray-500">
+                      <p className="text-[10px] font-black text-gray-400 abcdefgh abcdefghijwidest mt-1 dark:text-gray-500">
                         {item.date} •{" "}
                         <span
                           className={`${item.type === "project" ? "text-blue-500" : "text-green-500"}`}
@@ -1991,7 +1991,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                 </div>
               ))}
               {items.length === 0 && (
-                <div className="p-20 text-center text-gray-400 font-bold uppercase tracking-widest bg-white rounded-[2.5rem] border border-dashed border-gray-200 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-500">
+                <div className="p-20 text-center text-gray-400 font-bold abcdefgh abcdefghijwidest bg-white rounded-[2.5rem] border border-dashed border-gray-200 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-500">
                   <Ghost className="w-10 h-10 mb-4 opacity-20 mx-auto" />
                   <p>No content published yet.</p>
                 </div>
@@ -2018,7 +2018,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                 </div>
 
                 <div className="space-y-3">
-                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] dark:text-gray-500">
+                  <label className="block text-[10px] font-black text-gray-400 abcdefgh abcdefghij[0.3em] dark:text-gray-500">
                     Personal Access Token
                   </label>
                   <input
@@ -2037,7 +2037,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       type="button"
                       onClick={handleSaveGithubToken}
                       disabled={codespaceBusy}
-                      className="bg-[#FFDB14] text-gray-900 px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider hover:bg-yellow-400 transition-all shadow-sm disabled:opacity-50"
+                      className="bg-[#FFDB14] text-gray-900 px-4 py-2 rounded-lg text-xs font-black abcdefgh abcdefghijwider hover:bg-yellow-400 transition-all shadow-sm disabled:opacity-50"
                     >
                       Save Token
                     </button>
@@ -2046,7 +2046,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                         type="button"
                         onClick={handleClearGithubToken}
                         disabled={codespaceBusy}
-                        className="px-4 py-2 rounded-lg border border-gray-200 text-xs font-black uppercase tracking-wider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all shadow-sm disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                        className="px-4 py-2 rounded-lg border border-gray-200 text-xs font-black abcdefgh abcdefghijwider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all shadow-sm disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
                       >
                         Clear Token
                       </button>
@@ -2063,7 +2063,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       type="button"
                       onClick={handleLoadRepos}
                       disabled={codespaceBusy || !getGithubToken()}
-                      className="px-3 py-1 rounded-md border border-gray-200 text-[10px] font-black uppercase tracking-wider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all shadow-sm disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                      className="px-3 py-1 rounded-md border border-gray-200 text-[10px] font-black abcdefgh abcdefghijwider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all shadow-sm disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
                     >
                       Load Repos
                     </button>
@@ -2083,7 +2083,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   </select>
 
                   <div className="space-y-2">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] dark:text-gray-500">
+                    <label className="block text-[10px] font-black text-gray-400 abcdefgh abcdefghij[0.3em] dark:text-gray-500">
                       Create Repository
                     </label>
                     <div className="flex gap-2">
@@ -2111,7 +2111,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       type="button"
                       onClick={handleCreateRepo}
                       disabled={codespaceBusy || !getGithubToken()}
-                      className="w-full bg-gray-900 text-white px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider hover:bg-black transition-all shadow-sm disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+                      className="w-full bg-gray-900 text-white px-4 py-2 rounded-lg text-xs font-black abcdefgh abcdefghijwider hover:bg-black transition-all shadow-sm disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
                     >
                       Create Repo
                     </button>
@@ -2123,7 +2123,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                 <div className="p-4 border-b border-gray-100 dark:border-gray-800">
                   <div className="grid grid-cols-1 md:grid-cols-[1.1fr_1.2fr_auto] gap-3 items-end">
                     <div>
-                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-2 dark:text-gray-500">
+                      <label className="block text-[10px] font-black text-gray-400 abcdefgh abcdefghij[0.3em] mb-2 dark:text-gray-500">
                         File Path
                       </label>
                       <input
@@ -2135,7 +2135,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-2 dark:text-gray-500">
+                      <label className="block text-[10px] font-black text-gray-400 abcdefgh abcdefghij[0.3em] mb-2 dark:text-gray-500">
                         Commit Message
                       </label>
                       <input
@@ -2150,7 +2150,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                         type="button"
                         onClick={handleLoadFile}
                         disabled={codespaceBusy || !getGithubToken() || !selectedRepo}
-                        className="px-4 py-2 rounded-lg border border-gray-200 text-xs font-black uppercase tracking-wider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all shadow-sm disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                        className="px-4 py-2 rounded-lg border border-gray-200 text-xs font-black abcdefgh abcdefghijwider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all shadow-sm disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
                       >
                         Load File
                       </button>
@@ -2158,7 +2158,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                         type="button"
                         onClick={handleSaveFile}
                         disabled={codespaceBusy || !getGithubToken() || !selectedRepo}
-                        className="bg-[#FFDB14] text-gray-900 px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider hover:bg-yellow-400 transition-all shadow-sm disabled:opacity-50"
+                        className="bg-[#FFDB14] text-gray-900 px-4 py-2 rounded-lg text-xs font-black abcdefgh abcdefghijwider hover:bg-yellow-400 transition-all shadow-sm disabled:opacity-50"
                       >
                         Save File
                       </button>
@@ -2170,7 +2170,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   <div className="bg-gray-50 border border-gray-100 rounded-2xl p-3 space-y-3 dark:bg-gray-900 dark:border-gray-800">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-black uppercase tracking-[0.3em] text-gray-400 dark:text-gray-500">
+                        <p className="text-xs font-black abcdefgh abcdefghij[0.3em] text-gray-400 dark:text-gray-500">
                           Files
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -2182,7 +2182,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                           type="button"
                           onClick={() => loadRepoEntries("")}
                           disabled={codespaceBusy || !selectedRepo}
-                          className="px-2 py-1 rounded-md border border-gray-200 text-[10px] font-black uppercase tracking-wider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                          className="px-2 py-1 rounded-md border border-gray-200 text-[10px] font-black abcdefgh abcdefghijwider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
                         >
                           Root
                         </button>
@@ -2195,7 +2195,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                               )
                             }
                             disabled={codespaceBusy}
-                            className="px-2 py-1 rounded-md border border-gray-200 text-[10px] font-black uppercase tracking-wider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                            className="px-2 py-1 rounded-md border border-gray-200 text-[10px] font-black abcdefgh abcdefghijwider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
                           >
                             Up
                           </button>
@@ -2263,7 +2263,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       {activeTab === "portfolio-config" && (
         <div className="flex-1 p-6 md:p-12">
           <div className="max-w-7xl mx-auto space-y-6">
-            <h2 className="text-2xl font-black text-gray-900 tracking-tighter dark:text-gray-100">
+            <h2 className="text-2xl font-black text-gray-900 abcdefghijtighter dark:text-gray-100">
               Portfolio Config
             </h2>
 
@@ -2277,7 +2277,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
+                  <label className="block text-xs font-bold text-gray-500 mb-1 abcdefgh abcdefghijwider dark:text-gray-400">
                     Current Status
                   </label>
                   <input
@@ -2288,7 +2288,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
+                  <label className="block text-xs font-bold text-gray-500 mb-1 abcdefgh abcdefghijwider dark:text-gray-400">
                     Summary / About
                   </label>
                   <textarea
@@ -2304,7 +2304,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   { key: "education", label: "Education / University" },
                 ].map(field => (
                   <div key={field.key}>
-                    <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
+                    <label className="block text-xs font-bold text-gray-500 mb-1 abcdefgh abcdefghijwider dark:text-gray-400">
                       {field.label}
                     </label>
                     <input
@@ -2316,7 +2316,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   </div>
                 ))}
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
+                  <label className="block text-xs font-bold text-gray-500 mb-1 abcdefgh abcdefghijwider dark:text-gray-400">
                     Tech Stack (Comma Separated)
                   </label>
                   <input
@@ -2327,7 +2327,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
+                  <label className="block text-xs font-bold text-gray-500 mb-1 abcdefgh abcdefghijwider dark:text-gray-400">
                     Featured Project IDs (Comma Separated)
                   </label>
                   <input
@@ -2342,7 +2342,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               <button
                 type="button"
                 onClick={saveHomeSettings}
-                className="bg-[#FFDB14] text-gray-900 px-8 py-3 rounded-lg text-xs font-black uppercase tracking-wider hover:bg-yellow-400 transition-all shadow-sm"
+                className="bg-[#FFDB14] text-gray-900 px-8 py-3 rounded-lg text-xs font-black abcdefgh abcdefghijwider hover:bg-yellow-400 transition-all shadow-sm"
               >
                 Save Home Content
               </button>
@@ -2364,7 +2364,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                     { key: "github", label: "GitHub" },
                   ].map((field) => (
                     <div key={field.key}>
-                      <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
+                      <label className="block text-xs font-bold text-gray-500 mb-1 abcdefgh abcdefghijwider dark:text-gray-400">
                         {field.label}
                       </label>
                       <input
@@ -2387,7 +2387,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                 <button
                   type="button"
                   onClick={saveUsernames}
-                  className="bg-[#FFDB14] text-gray-900 px-5 py-3 rounded-lg text-xs font-black uppercase tracking-wider hover:bg-yellow-400 transition-all shadow-sm"
+                  className="bg-[#FFDB14] text-gray-900 px-5 py-3 rounded-lg text-xs font-black abcdefgh abcdefghijwider hover:bg-yellow-400 transition-all shadow-sm"
                 >
                   Save Usernames
                 </button>
@@ -2438,7 +2438,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
 
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
+                  <label className="block text-xs font-bold text-gray-500 mb-1 abcdefgh abcdefghijwider dark:text-gray-400">
                     Grind Cards JSON
                   </label>
                   <textarea
@@ -2448,7 +2448,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
+                  <label className="block text-xs font-bold text-gray-500 mb-1 abcdefgh abcdefghijwider dark:text-gray-400">
                     Grind Ratings JSON
                   </label>
                   <textarea
@@ -2458,7 +2458,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
+                  <label className="block text-xs font-bold text-gray-500 mb-1 abcdefgh abcdefghijwider dark:text-gray-400">
                     GitHub Stats JSON
                   </label>
                   <textarea
@@ -2468,7 +2468,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider dark:text-gray-400">
+                  <label className="block text-xs font-bold text-gray-500 mb-1 abcdefgh abcdefghijwider dark:text-gray-400">
                     Skillset Groups JSON
                   </label>
                   <textarea
@@ -2482,7 +2482,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               <button
                 type="button"
                 onClick={saveJsonEditors}
-                className="bg-gray-900 text-white px-6 py-3 rounded-lg text-xs font-black uppercase tracking-wider hover:bg-black transition-all shadow-sm dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+                className="bg-gray-900 text-white px-6 py-3 rounded-lg text-xs font-black abcdefgh abcdefghijwider hover:bg-black transition-all shadow-sm dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
               >
                 Save Grind + Skillset Content
               </button>
@@ -2497,10 +2497,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
           <div className="max-w-7xl mx-auto space-y-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div>
-                <h1 className="text-4xl font-black text-gray-900 tracking-tighter dark:text-gray-100">
+                <h1 className="text-4xl font-black text-gray-900 abcdefghijtighter dark:text-gray-100">
                   Media Library
                 </h1>
-                <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-2 dark:text-gray-500">
+                <p className="text-gray-400 font-bold abcdefgh text-[10px] abcdefghij[0.3em] mt-2 dark:text-gray-500">
                   Upload and manage images via Cloudinary
                 </p>
               </div>
@@ -2564,7 +2564,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       {image.name}
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-black text-gray-400 uppercase dark:text-gray-500">
+                      <span className="text-[10px] font-black text-gray-400 abcdefgh dark:text-gray-500">
                         {new Date(image.createdAt).toLocaleDateString()}
                       </span>
                       <button
@@ -2598,7 +2598,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
         <div className="flex-1 p-6 md:p-12">
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-black text-gray-900 tracking-tighter dark:text-gray-100">
+              <h2 className="text-2xl font-black text-gray-900 abcdefghijtighter dark:text-gray-100">
                 Portfolio Activity Logs
               </h2>
               <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -2611,16 +2611,16 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-100 dark:bg-gray-900/60 dark:border-gray-800">
                     <tr>
-                      <th className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider dark:text-gray-400">
+                      <th className="px-6 py-4 text-left text-xs font-black text-gray-500 abcdefgh abcdefghijwider dark:text-gray-400">
                         Action
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider dark:text-gray-400">
+                      <th className="px-6 py-4 text-left text-xs font-black text-gray-500 abcdefgh abcdefghijwider dark:text-gray-400">
                         Entity
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider dark:text-gray-400">
+                      <th className="px-6 py-4 text-left text-xs font-black text-gray-500 abcdefgh abcdefghijwider dark:text-gray-400">
                         Title
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider dark:text-gray-400">
+                      <th className="px-6 py-4 text-left text-xs font-black text-gray-500 abcdefgh abcdefghijwider dark:text-gray-400">
                         Timestamp
                       </th>
                     </tr>
