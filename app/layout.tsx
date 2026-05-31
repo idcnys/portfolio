@@ -1,11 +1,19 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Patrick_Hand } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ThemeProvider } from "../lib/context/ThemeContext";
 
 const inter = Inter({
   subsets: ["latin"],
+});
+
+const patrickHand = Patrick_Hand({
+  subsets: ["latin"],
+  variable: "--font-playwrite",
+  weight: "400",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -93,7 +101,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.className} antialiased`}
+        className={`${inter.className} ${patrickHand.variable} antialiased`}
         style={{
           backgroundColor: "var(--loading-bg, #ffffff)",
           color: "var(--loading-gear-color, #263238)",

@@ -175,8 +175,10 @@ export default function ProfileInfo({
           <Image
             src="/avatar.png"
             alt="Bitto Saha"
-            fill
-            className="object-cover"
+            width={64}
+            height={64}
+            sizes="64px"
+            className="w-full h-full object-cover"
             priority
           />
         </motion.div>
@@ -302,8 +304,10 @@ export default function ProfileInfo({
                 <Image
                   src="/avatar.png"
                   alt="Avatar"
-                  fill
-                  className="object-cover"
+                    width={40}
+                    height={40}
+                    sizes="40px"
+                    className="w-full h-full object-cover"
                 />
               </motion.div>
               <TypewriterText

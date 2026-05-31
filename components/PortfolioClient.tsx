@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence, Variants, LazyMotion, domAnimation } from "framer-motion";
 import { ContentItem, TabType, PortfolioSettings, GrindCounterCard, GrindStatRow, SkillsetGroup, SkillBadge, ExperienceItem } from "../lib/types";
@@ -63,7 +64,10 @@ import CustomContextMenu from "./client/CustomContextMenu";
 import AppearingTextAnimation from "./client/AppearingTextAnimation";
 import ActionButtons from "./client/ActionButtons";
 import ThemeToggle from "./client/ThemeToggle";
-import MatrixRain from "./client/MatrixRain";
+const MatrixRain = dynamic(() => import("./client/MatrixRain"), {
+  ssr: false,
+  loading: () => null,
+});
 
 type DescriptionBlock =
   | { type: "html"; content: string }
@@ -455,30 +459,17 @@ const PortfolioClient: React.FC = () => {
   const [isNavigating, setIsNavigating] = useState(false);
   const [hasEntranceAnimated, setHasEntranceAnimated] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [isEdgeToEdge, setIsEdgeToEdge] = useState(false);
+  const [isEdgeToEdge, setIsEdgeToEdge] = useState(true);
   const [showEdgeHighlight, setShowEdgeHighlight] = useState(false);
-  const [showResizeToggle, setShowResizeToggle] = useState(true);
-  const hasAutoFullscreenRef = useRef(false);
+  const showResizeToggle = false;
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (!mounted || hasAutoFullscreenRef.current) {
-      return;
-    }
-
-    hasAutoFullscreenRef.current = true;
-    const timer = window.setTimeout(() => {
-      setIsEdgeToEdge(true);
-      window.setTimeout(() => {
-        setShowResizeToggle(false);
-      }, 900);
-    }, 2000);
-
-    return () => window.clearTimeout(timer);
-  }, [mounted]);
+    setIsEdgeToEdge(true);
+  }, []);
 
   useEffect(() => {
     if (!isEdgeToEdge) {
@@ -874,7 +865,7 @@ const PortfolioClient: React.FC = () => {
 
   return (
     <LazyMotion features={domAnimation}>
-      <motion.div
+      <motion.main
         layout
         variants={pageVariants}
         initial="initial"
@@ -883,6 +874,7 @@ const PortfolioClient: React.FC = () => {
           layout: { duration: 0.22, ease: "linear" },
         }}
         className={`min-h-screen md:h-screen bg-gray-100 dark:bg-gray-950 flex flex-col md:flex-row ${isEdgeToEdge ? "p-0" : "p-2 md:p-3 lg:p-4"} max-w-screen transition-all duration-500 ease-[0.22,1,0.36,1] md:overflow-hidden relative`}
+        aria-label="Portfolio content"
       >
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#FFDB14]/10 blur-[120px]" />
@@ -1072,8 +1064,10 @@ const PortfolioClient: React.FC = () => {
                           <Image
                             src="/avatar.png"
                             alt="Bitto Saha"
-                            fill
-                            className="object-cover"
+                            width={224}
+                            height={224}
+                            sizes="(max-width: 768px) 160px, 224px"
+                            className="w-full h-full object-cover"
                             priority
                           />
                         </motion.div>
@@ -1870,7 +1864,7 @@ const PortfolioClient: React.FC = () => {
           Bitto Saha
         </p>
       </motion.div>
-    </motion.div>
+      </motion.main>
     </LazyMotion>
   );
 };
