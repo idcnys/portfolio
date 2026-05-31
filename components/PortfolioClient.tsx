@@ -1787,6 +1787,8 @@ const PortfolioClient: React.FC = () => {
                                   alt={badge.label}
                                   className="h-full w-auto"
                                   loading="lazy"
+                                  width={100}
+                                  height={24}
                                 />
                               </div>
                             ))}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { useTheme } from '@/lib/context/ThemeContext';
 
 interface MatrixRainProps {
@@ -102,16 +102,12 @@ const MatrixRain: React.FC<MatrixRainProps> = ({ startDelayMs = 0, revealDirecti
     return (
         <canvas
             ref={canvasRef}
-            className="absolute inset-0 w-full h-full pointer-events-none"
-            style={{ 
+            className={`absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-700 ${
+                isRevealed ? 'opacity-100' : 'opacity-0'
+            }`}
+            style={{
                 opacity: isDarkMode ? 0.26 : 0.5,
-                clipPath: isRevealed
-                    ? (revealDirection === "ltr" ? 'inset(0 0 0 0)' : 'circle(150% at 0% 0%)')
-                    : (revealDirection === "ltr" ? 'inset(0 100% 0 0)' : 'circle(0% at 0% 0%)'),
-                transform: isRevealed ? 'scale(1)' : 'scale(0.97)',
-                transition: revealDirection === "ltr"
-                    ? 'clip-path 900ms linear, transform 900ms linear, opacity 700ms ease-out'
-                    : 'clip-path 1200ms cubic-bezier(0.22, 1, 0.36, 1), transform 1200ms cubic-bezier(0.22, 1, 0.36, 1), opacity 900ms ease-out',
+                willChange: 'opacity',
             }}
         />
     );

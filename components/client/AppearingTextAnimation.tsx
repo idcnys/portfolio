@@ -30,9 +30,9 @@ export default function AppearingTextAnimation({ forceStatic = false, className 
           {titles[index].split("").map((char, i) => (
             <motion.span
               key={`${titles[index]}-${i}`}
-              initial={{ opacity: 0, y: 10, filter: "blur(8px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -10, filter: "blur(8px)" }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
               transition={{
                 duration: 0.4,
                 delay: i * 0.03,
