@@ -175,6 +175,7 @@ const defaultPortfolioSettings: PortfolioSettings = {
       ],
     },
   ],
+  experiences: [],
   tabVisibility: {
     home: true,
     certificates: true,
@@ -215,6 +216,10 @@ const mergePortfolioSettings = (incoming: Partial<PortfolioSettings> | null | un
       incoming?.skillsetGroups && incoming.skillsetGroups.length > 0
         ? incoming.skillsetGroups
         : defaultPortfolioSettings.skillsetGroups,
+    experiences:
+      Array.isArray(incoming?.experiences)
+        ? incoming.experiences
+        : defaultPortfolioSettings.experiences,
   };
 };
 

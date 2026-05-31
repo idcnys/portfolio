@@ -78,6 +78,17 @@ export interface SkillsetGroup {
   badges: SkillBadge[];
 }
 
+export interface ExperienceItem {
+  id: string;
+  period: string;
+  role: string;
+  company: string;
+  description: string;
+  stack: string[];
+  thumbnail?: string;
+  latest?: boolean;
+}
+
 export interface TabVisibilityConfig {
   home: boolean;
   certificates: boolean;
@@ -106,6 +117,7 @@ export interface PortfolioSettings {
   grindRatings: GrindStatRow[];
   grindGithubStats: GrindStatRow[];
   skillsetGroups: SkillsetGroup[];
+  experiences: ExperienceItem[];
   tabVisibility: TabVisibilityConfig;
   homeSettings?: HomeSettings;
   githubToken?: string;
@@ -116,6 +128,7 @@ export type DashboardTab =
   | "publish-project"
   | "publish-activity"
   | "manage-content"
+  | "manage-experience"
   | "media"
   | "codespace"
   | "portfolio-config"

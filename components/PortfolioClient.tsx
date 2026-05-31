@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence, Variants, LazyMotion, domAnimation } from "framer-motion";
-import { ContentItem, TabType, PortfolioSettings, GrindCounterCard, GrindStatRow, SkillsetGroup, SkillBadge } from "../lib/types";
+import { ContentItem, TabType, PortfolioSettings, GrindCounterCard, GrindStatRow, SkillsetGroup, SkillBadge, ExperienceItem } from "../lib/types";
 import { INITIAL_CERTIFICATES } from "../lib/constants";
 import { incrementLikes, incrementViews, subscribeToPortfolioSettings } from "../lib/firebase";
 import { sanitizeRichHtml } from "../lib/sanitize";
@@ -157,53 +157,6 @@ const EDUCATION_DATA = [
     year: "2022",
     degree: "Senior School Certificate (SSC)",
     institution: "Dhunat Govt. N. U. Pilot Model High School, Bogura",
-  },
-];
-
-const EXPERIENCE_ITEMS = [
-  {
-    id: "exp-1",
-    period: "2025 - Present",
-    role: "Frontend Engineer",
-    company: "Nebula Labs",
-    description:
-      "Leading development of a component-driven portfolio platform with realtime publishing workflows, polished motion design, and strong accessibility defaults.",
-    stack: ["Next.js", "TypeScript", "Tailwind", "Framer Motion", "Firebase"],
-    thumbnail: "/certificates/cs50x.png",
-    latest: true,
-  },
-  {
-    id: "exp-2",
-    period: "2024 - 2025",
-    role: "Product Engineering Intern",
-    company: "Orbit Systems",
-    description:
-      "Built internal dashboard modules, reduced render costs through memoized view models, and shipped admin tooling used by cross-functional stakeholders.",
-    stack: ["React", "Node.js", "PostgreSQL", "Zod", "Vercel"],
-    thumbnail: "/certificates/jsb.png",
-    latest: false,
-  },
-  {
-    id: "exp-3",
-    period: "2023 - 2024",
-    role: "Freelance Web Developer",
-    company: "Independent Clients",
-    description:
-      "Delivered portfolio and landing page projects with CMS-backed content, conversion-focused layouts, and maintainable design systems.",
-    stack: ["Next.js", "Tailwind", "Cloudinary", "SEO", "Figma"],
-    thumbnail: "/certificates/psb.png",
-    latest: false,
-  },
-  {
-    id: "exp-4",
-    period: "2022 - 2023",
-    role: "Competitive Programming Mentor",
-    company: "Campus Coding Circle",
-    description:
-      "Mentored beginner cohorts in data structures and algorithms while creating practice roadmaps, solution notes, and weekly contests.",
-    stack: ["C++", "Python", "Problem Solving", "Teaching"],
-    thumbnail: "/certificates/pyb.png",
-    latest: false,
   },
 ];
 
@@ -593,6 +546,11 @@ const PortfolioClient: React.FC = () => {
     );
     return filtered.length > 0 ? filtered : ["home"];
   }, [portfolioSettings]);
+
+  const experienceItems = useMemo<ExperienceItem[]>(() => {
+    const source = portfolioSettings?.experiences || [];
+    return [...source].sort((a, b) => Number(!!b.latest) - Number(!!a.latest));
+  }, [portfolioSettings?.experiences]);
 
   useEffect(() => {
     if (!visibleTabs.includes(activeTab)) {
@@ -1351,8 +1309,35 @@ const PortfolioClient: React.FC = () => {
                     <motion.div variants={containerVariants} className="relative pl-6 sm:pl-8">
                       <div className="pointer-events-none absolute left-[7px] top-2 bottom-2 w-px bg-gray-200 dark:bg-gray-700" />
 
+                      {isTabConfigLoading ? (
+                        <div className="space-y-3" aria-label="Loading experiences">
+                          {Array.from({ length: 3 }).map((_, index) => (
+                            <div
+                              key={`exp-shimmer-${index}`}
+                              className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4"
+                            >
+                              <div className="h-3 w-24 shimmer rounded mb-2" />
+                              <div className="h-5 w-52 shimmer rounded mb-2" />
+                              <div className="h-4 w-40 shimmer rounded mb-3" />
+                              <div className="h-4 w-full shimmer rounded mb-2" />
+                              <div className="h-4 w-11/12 shimmer rounded mb-3" />
+                              <div className="flex gap-2">
+                                <div className="h-5 w-14 shimmer rounded-full" />
+                                <div className="h-5 w-16 shimmer rounded-full" />
+                                <div className="h-5 w-12 shimmer rounded-full" />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : experienceItems.length === 0 ? (
+                        <div className="rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-8 text-center">
+                          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                            No experience added
+                          </p>
+                        </div>
+                      ) : (
                       <ol className="space-y-3" aria-label="Experience items">
-                        {EXPERIENCE_ITEMS.map((item, index) => (
+                        {experienceItems.map((item, index) => (
                           <motion.li key={item.id} variants={cardVariants} className="relative">
                             <span
                               className={`absolute -left-6 sm:-left-8 top-6 h-3.5 w-3.5 rounded-full border-2 ${
@@ -1389,7 +1374,7 @@ const PortfolioClient: React.FC = () => {
                                   </p>
 
                                   <ul className="flex flex-wrap gap-1.5" aria-label={`${item.role} technologies`}>
-                                    {item.stack.map((tag) => (
+                                    {(item.stack || []).map((tag) => (
                                       <li
                                         key={`${item.id}-${tag}`}
                                         className="rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
@@ -1402,7 +1387,7 @@ const PortfolioClient: React.FC = () => {
 
                                 <div className="hidden sm:block w-20 h-14 lg:w-24 lg:h-16 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 shrink-0">
                                   <Image
-                                    src={item.thumbnail}
+                                    src={item.thumbnail || "/avatar.png"}
                                     alt={`${item.role} preview`}
                                     width={192}
                                     height={128}
@@ -1415,6 +1400,7 @@ const PortfolioClient: React.FC = () => {
                           </motion.li>
                         ))}
                       </ol>
+                      )}
                     </motion.div>
                   </motion.section>
                 )}
