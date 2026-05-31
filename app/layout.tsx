@@ -11,16 +11,14 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Bitto Saha - Portfolio",
   description:
-    "Computer Science student at RUET with expertise in AI and Cyber Security",
+    "Undergraduate Computer Science student with expertise in programming.",
   keywords: [
     "Bitto Saha",
     "Portfolio",
-    "RUET",
-    "Computer Science",
-    "AI",
-    "Cyber Security",
+    "Computer Science Student",
+    "a.k.a idcnys",
   ],
-  authors: [{ name: "Bitto Saha", url: "https://bittosaha.com" }],
+  authors: [{ name: "Bitto Saha", url: "https://ibitto.vercel.app" }],
   icons: {
     icon: "/avatar.png",
     shortcut: "/avatar.png",
