@@ -48,6 +48,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="preconnect" href="https://img.shields.io" crossOrigin="" />
+        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="" />
+        <link rel="preload" href="/avatar.png" as="image" fetchPriority="high" />
         <style
           dangerouslySetInnerHTML={{
             __html: `

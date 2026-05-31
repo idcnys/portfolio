@@ -180,6 +180,7 @@ export default function ProfileInfo({
             sizes="64px"
             className="w-full h-full object-cover"
             priority
+            fetchPriority="high"
           />
         </motion.div>
         <div className="min-w-0 flex-1">

@@ -1090,6 +1090,7 @@ const PortfolioClient: React.FC = () => {
                             sizes="(max-width: 768px) 160px, 224px"
                             className="w-full h-full object-cover"
                             priority
+                            fetchPriority="high"
                           />
                         </motion.div>
                         
