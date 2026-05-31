@@ -1,11 +1,28 @@
 "use client";
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTheme } from '@/lib/context/ThemeContext';
 
-const MatrixRain: React.FC = () => {
+interface MatrixRainProps {
+    startDelayMs?: number;
+}
+
+const MatrixRain: React.FC<MatrixRainProps> = ({ startDelayMs = 0 }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { isDarkMode } = useTheme();
+    const [isRevealed, setIsRevealed] = useState(startDelayMs === 0);
+
+    useEffect(() => {
+        setIsRevealed(startDelayMs === 0);
+
+        const revealTimer = window.setTimeout(() => {
+            setIsRevealed(true);
+        }, startDelayMs);
+
+        return () => {
+            window.clearTimeout(revealTimer);
+        };
+    }, [startDelayMs]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -24,7 +41,7 @@ const MatrixRain: React.FC = () => {
 
         let animationFrameId: number;
         let lastTime = 0;
-        const fps = 20; // Slower frame rate for a more cinematic feel
+        const fps = 14; // Slower frame rate for a smoother, more laminar feel
         const interval = 1000 / fps;
 
         const draw = (timestamp: number) => {
@@ -37,7 +54,7 @@ const MatrixRain: React.FC = () => {
 
             // Create the trailing effect by painting a semi-transparent version 
             // of the background color instead of clearing the screen
-            ctx.fillStyle = isDarkMode ? 'rgba(3, 7, 18, 0.15)' : 'rgba(243, 244, 246, 0.15)';
+            ctx.fillStyle = isDarkMode ? 'rgba(3, 7, 18, 0.08)' : 'rgba(243, 244, 246, 0.15)';
             ctx.fillRect(0, 0, width, height);
 
             ctx.font = '15px monospace';
@@ -47,7 +64,7 @@ const MatrixRain: React.FC = () => {
                 
                 // Switch between dark gold and bright gold depending on theme
                 ctx.fillStyle = isDarkMode 
-                    ? 'rgba(255, 219, 20, 0.7)' // Vibrant gold for dark mode
+                    ? 'rgba(255, 219, 20, 0.48)' // Softer gold for dark mode
                     : 'rgba(184, 134, 11, 0.6)'; // Solid bronze/gold for light mode
                 
                 ctx.fillText(char, i * 20, drops[i] * 20);
@@ -86,7 +103,10 @@ const MatrixRain: React.FC = () => {
             ref={canvasRef}
             className="absolute inset-0 w-full h-full pointer-events-none"
             style={{ 
-                opacity: isDarkMode ? 0.4 : 0.5,
+                opacity: isDarkMode ? 0.26 : 0.5,
+                clipPath: isRevealed ? 'circle(150% at 0% 0%)' : 'circle(0% at 0% 0%)',
+                transform: isRevealed ? 'scale(1)' : 'scale(0.97)',
+                transition: 'clip-path 1200ms cubic-bezier(0.22, 1, 0.36, 1), transform 1200ms cubic-bezier(0.22, 1, 0.36, 1), opacity 900ms ease-out',
             }}
         />
     );

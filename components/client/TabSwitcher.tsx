@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, Variants } from "framer-motion";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ArrowLeft } from "lucide-react";
 import { TabType } from "@/lib/types";
 
@@ -12,6 +12,7 @@ interface TabSwitcherProps {
   onBack?: () => void;
   visibleTabs?: TabType[];
   isLoading?: boolean;
+  homeActions?: ReactNode;
 }
 
 const TABS: TabType[] = ["home", "certificates", "projects", "activity", "grind", "skillset"];
@@ -38,6 +39,7 @@ export default function TabSwitcher({
   onBack,
   visibleTabs,
   isLoading = false,
+  homeActions,
 }: TabSwitcherProps) {
   const tabs = visibleTabs && visibleTabs.length > 0 ? visibleTabs : TABS;
   const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
@@ -74,77 +76,80 @@ export default function TabSwitcher({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`flex items-center p-2 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm shadow-[0_10px_24px_rgba(15,23,42,0.06)] shrink-0 sticky top-0 z-10 transition-all duration-300 ${activeTab === "home" ? "justify-center" : ""}`}
+      className="flex flex-col gap-2 p-2 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm shadow-[0_10px_24px_rgba(15,23,42,0.06)] shrink-0 sticky top-0 z-10 transition-all duration-300 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center"
     >
-      {showBackButton && onBack && (
-        <motion.button
-          onClick={onBack}
-          className="mr-3 h-9 px-3 rounded-md bg-white dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
-          whileHover={{ x: -1 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <ArrowLeft className="w-3 h-3" />
-          <span className="text-sm font-semibold">Back</span>
-        </motion.button>
-      )}
+      <div className="flex w-full min-w-0 items-center gap-2 sm:col-start-1 sm:justify-self-start">
+        {showBackButton && onBack && (
+          <motion.button
+            onClick={onBack}
+            className="h-9 px-3 rounded-md bg-white dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+            whileHover={{ x: -1 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <ArrowLeft className="w-3 h-3" />
+            <span className="text-sm font-semibold">Back</span>
+          </motion.button>
+        )}
 
-      {!showBackButton && (
-        <>
-          {isLoading ? (
-            <>
-              <div className="sm:hidden flex items-center gap-2 w-full animate-pulse">
-                <div className="h-10 flex-1 rounded-md bg-gray-100 dark:bg-gray-800" />
-                <div className="h-10 flex-[1.35] rounded-md bg-gray-200 dark:bg-gray-700" />
-                <div className="h-10 flex-1 rounded-md bg-gray-100 dark:bg-gray-800" />
-              </div>
+        {!showBackButton && (
+          <>
+            {isLoading ? (
+              <>
+                <div className="sm:hidden flex items-center gap-2 w-full animate-pulse">
+                  <div className="h-10 flex-1 rounded-md bg-gray-100 dark:bg-gray-800" />
+                  <div className="h-10 flex-[1.35] rounded-md bg-gray-200 dark:bg-gray-700" />
+                  <div className="h-10 flex-1 rounded-md bg-gray-100 dark:bg-gray-800" />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="sm:hidden flex items-center gap-2 w-full">
+                  <motion.button
+                    onClick={() => onTabChange(prevTab)}
+                    className="h-10 flex-1 min-w-0 rounded-md bg-gray-50 dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] px-2 text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
+                    whileTap={{ scale: 0.98 }}
+                    aria-label={`Previous tab: ${prevTab}`}
+                  >
+                    {prevTab}
+                  </motion.button>
 
-              <div className="hidden sm:inline-flex rounded-lg bg-gray-100 dark:bg-gray-800 p-1 shadow-[0_8px_20px_rgba(15,23,42,0.1)] relative animate-pulse gap-1">
-                <div className="h-9 w-24 rounded-md bg-gray-200 dark:bg-gray-700" />
-                <div className="h-9 w-24 rounded-md bg-gray-200 dark:bg-gray-700" />
-                <div className="h-9 w-24 rounded-md bg-gray-200 dark:bg-gray-700" />
-              </div>
-            </>
-          ) : (
-            <>
-          <div className="sm:hidden flex items-center gap-2 w-full">
-            <motion.button
-              onClick={() => onTabChange(prevTab)}
-              className="h-10 flex-1 min-w-0 rounded-md bg-gray-50 dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] px-2 text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
-              whileTap={{ scale: 0.98 }}
-              aria-label={`Previous tab: ${prevTab}`}
-            >
-              {prevTab}
-            </motion.button>
+                  <div className="relative h-10 flex-[1.35] min-w-0 overflow-hidden rounded-md bg-[#FFDB14] shadow-[0_6px_16px_rgba(234,179,8,0.34)]">
+                    <AnimatePresence mode="wait" initial={false} custom={slideDirection}>
+                      <motion.button
+                        key={activeTab}
+                        custom={slideDirection}
+                        variants={mobileActiveTabVariants}
+                        initial="enter"
+                        animate="center"
+                        exit="exit"
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        className="absolute inset-0 z-10 px-2 text-sm font-bold capitalize text-gray-900 truncate"
+                        onClick={() => onTabChange(activeTab)}
+                        aria-current="page"
+                      >
+                        {activeTab}
+                      </motion.button>
+                    </AnimatePresence>
+                  </div>
 
-            <div className="relative h-10 flex-[1.35] min-w-0 overflow-hidden rounded-md bg-[#FFDB14] shadow-[0_6px_16px_rgba(234,179,8,0.34)]">
-              <AnimatePresence mode="wait" initial={false} custom={slideDirection}>
-                <motion.button
-                  key={activeTab}
-                  custom={slideDirection}
-                  variants={mobileActiveTabVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                  className="absolute inset-0 z-10 px-2 text-sm font-bold capitalize text-gray-900 truncate"
-                  onClick={() => onTabChange(activeTab)}
-                  aria-current="page"
-                >
-                  {activeTab}
-                </motion.button>
-              </AnimatePresence>
-            </div>
+                  <motion.button
+                    onClick={() => onTabChange(nextTab)}
+                    className="h-10 flex-1 min-w-0 rounded-md bg-gray-50 dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] px-2 text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
+                    whileTap={{ scale: 0.98 }}
+                    aria-label={`Next tab: ${nextTab}`}
+                  >
+                    {nextTab}
+                  </motion.button>
+                </div>
 
-            <motion.button
-              onClick={() => onTabChange(nextTab)}
-              className="h-10 flex-1 min-w-0 rounded-md bg-gray-50 dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] px-2 text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
-              whileTap={{ scale: 0.98 }}
-              aria-label={`Next tab: ${nextTab}`}
-            >
-              {nextTab}
-            </motion.button>
-          </div>
+              </>
+            )}
+          </>
+        )}
+      </div>
 
+      {!showBackButton && !isLoading && (
+        <div className="hidden sm:flex sm:col-start-2 sm:justify-self-center">
           <div className="hidden sm:inline-flex rounded-lg bg-gray-100 dark:bg-gray-800 p-1 shadow-[0_8px_20px_rgba(15,23,42,0.1)] relative">
             {tabs.map((tab) => (
               <motion.button
@@ -175,9 +180,29 @@ export default function TabSwitcher({
               </motion.button>
             ))}
           </div>
-            </>
-          )}
-        </>
+        </div>
+      )}
+
+      {!showBackButton && isLoading && (
+        <div className="hidden sm:flex sm:col-start-2 sm:justify-self-center">
+          <div className="inline-flex rounded-lg bg-gray-100 dark:bg-gray-800 p-1 shadow-[0_8px_20px_rgba(15,23,42,0.1)] relative animate-pulse gap-1">
+            <div className="h-9 w-24 rounded-md bg-gray-200 dark:bg-gray-700" />
+            <div className="h-9 w-24 rounded-md bg-gray-200 dark:bg-gray-700" />
+            <div className="h-9 w-24 rounded-md bg-gray-200 dark:bg-gray-700" />
+          </div>
+        </div>
+      )}
+
+      {!showBackButton && homeActions && !isLoading && (
+        <div className="hidden sm:flex sm:col-start-3 sm:justify-self-end sm:justify-end gap-2">
+          {homeActions}
+        </div>
+      )}
+
+      {!showBackButton && homeActions && !isLoading && (
+        <div className="flex w-full justify-end gap-2 sm:hidden">
+          {homeActions}
+        </div>
       )}
     </motion.div>
   );

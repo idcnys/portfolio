@@ -839,38 +839,6 @@ const PortfolioClient: React.FC = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-500/10 blur-[120px] dark:bg-blue-600/5" />
       </div>
       <CustomContextMenu />
-      <AnimatePresence>
-        {activeTab === "home" && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, x: 20 }}
-            animate={{ opacity: 1, scale: 1, x: 0 }}
-            exit={{ opacity: 0, scale: 0.8, x: 20 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className={`fixed ${isEdgeToEdge ? "top-3 right-3" : "top-6 right-6"} z-[100] flex items-center gap-2 transition-all duration-500`}
-          >
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setIsEdgeToEdge(!isEdgeToEdge)}
-              className="w-9 h-9 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              title={isEdgeToEdge ? "Collapse Layout" : "Expand Layout"}
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={isEdgeToEdge ? "minimize" : "maximize"}
-                  initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                  exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {isEdgeToEdge ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-                </motion.div>
-              </AnimatePresence>
-            </motion.button>
-            <ThemeToggle className="relative w-9 h-9 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-center" />
-          </motion.div>
-        )}
-      </AnimatePresence>
       <motion.div
         initial={!effectivelyAnimated ? { opacity: 0, x: -50 } : false}
         animate={{ 
@@ -914,6 +882,32 @@ const PortfolioClient: React.FC = () => {
           onBack={handleBack}
           visibleTabs={visibleTabs}
           isLoading={isTabConfigLoading}
+          homeActions={
+            activeTab === "home" ? (
+              <>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsEdgeToEdge(!isEdgeToEdge)}
+                  className="w-9 h-9 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  title={isEdgeToEdge ? "Collapse Layout" : "Expand Layout"}
+                >
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={isEdgeToEdge ? "minimize" : "maximize"}
+                      initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
+                      animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                      exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {isEdgeToEdge ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                    </motion.div>
+                  </AnimatePresence>
+                </motion.button>
+                <ThemeToggle className="w-9 h-9 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-center" />
+              </>
+            ) : undefined
+          }
         />
 
         <div 
@@ -966,7 +960,7 @@ const PortfolioClient: React.FC = () => {
                   >
                     {/* Hero Section */}
                     <section className="sticky top-0 min-h-screen flex flex-col justify-center py-20 px-4 bg-gray-100 dark:bg-gray-950 z-[1] overflow-hidden">
-                      <MatrixRain />
+                      <MatrixRain startDelayMs={1500} />
                       <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
                         <motion.div
                           variants={avatarVariants}
