@@ -26,8 +26,10 @@ const MatrixRain: React.FC<MatrixRainProps> = ({ startDelayMs = 0, revealDirecti
     }, [startDelayMs]);
 
     useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
+                if (!isRevealed) return;
+
+                const canvas = canvasRef.current;
+                if (!canvas) return;
 
         const ctx = canvas.getContext('2d');
         if (!ctx) return;

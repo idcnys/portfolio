@@ -4,9 +4,11 @@ import { Patrick_Hand } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ThemeProvider } from "../lib/context/ThemeContext";
+import { cookies } from "next/headers";
 
 const inter = Inter({
   subsets: ["latin"],
+  display: "swap",
 });
 
 const patrickHand = Patrick_Hand({
@@ -40,13 +42,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const themeCookie = (await cookies()).get("theme")?.value;
+  const initialHtmlClass = themeCookie === "light" ? "" : "dark";
+
   return (
-    <html lang="en">
+    <html lang="en" className={initialHtmlClass}>
       <head>
         <link rel="preconnect" href="https://img.shields.io" crossOrigin="" />
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="" />

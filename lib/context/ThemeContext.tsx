@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 interface ThemeToggleOrigin {
   x: number;
@@ -46,10 +47,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsTransitioning(true);
     setMounted(true);
 
-    // Add transition styles immediately
-    document.documentElement.style.transition =
-      "background-color 0.8s ease, color 0.8s ease";
-
     // Delay initial theme detection for smooth appearance
     setTimeout(() => {
       // Check localStorage on mount
@@ -63,22 +60,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
           document.documentElement.classList.remove("dark");
         }
       } else {
-        // Check system preference
-        const prefersDark = window.matchMedia(
-          "(prefers-color-scheme: dark)",
-        ).matches;
-        setIsDarkMode(prefersDark);
-        if (prefersDark) {
-          document.documentElement.classList.add("dark");
-        }
-        localStorage.setItem("theme", prefersDark ? "dark" : "light");
+        // Default to dark mode on first open; do not sync with system preference
+        setIsDarkMode(true);
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("theme", "dark");
       }
 
       // End initial transition after theme is applied
       setTimeout(() => {
         setIsTransitioning(false);
         setInitialLoad(false);
-        document.documentElement.style.transition = "";
       }, 800); // Match the transition duration
     }, 500); // Delay for smooth initial appearance
   }, []);
@@ -141,19 +132,22 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     <ThemeContext.Provider
       value={{ isDarkMode, toggleTheme, mounted, isTransitioning }}
     >
-      {ripple.visible && (
-        <div
-          key={ripple.key}
-          className="theme-ripple-overlay"
-          style={{
-            left: `${ripple.x - ripple.size}px`,
-            top: `${ripple.y - ripple.size}px`,
-            width: `${ripple.size * 2}px`,
-            height: `${ripple.size * 2}px`,
-            backgroundColor: ripple.nextDark ? "#0f0f0f" : "#ffffff",
-          }}
-        />
-      )}
+      {typeof document !== "undefined" &&
+        ripple.visible &&
+        createPortal(
+          <div
+            key={ripple.key}
+            className="theme-ripple-overlay"
+            style={{
+              left: `${ripple.x - ripple.size}px`,
+              top: `${ripple.y - ripple.size}px`,
+              width: `${ripple.size * 2}px`,
+              height: `${ripple.size * 2}px`,
+              backgroundColor: ripple.nextDark ? "#0f0f0f" : "#ffffff",
+            }}
+          />,
+          document.body,
+        )}
       {children}
       <style jsx global>{`
         .theme-ripple-overlay {

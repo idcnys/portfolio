@@ -475,7 +475,21 @@ const PortfolioClient: React.FC = () => {
 
   useEffect(() => {
     setMounted(true);
+    // Keep SSR placeholder in DOM to allow React to hydrate in place and avoid reflow.
   }, []);
+
+  // Remove the SSR placeholder once the client is fully ready (mounted and data loaded)
+  useEffect(() => {
+    if (!mounted) return;
+    if (isTabConfigLoading || isLoading) return;
+
+    try {
+      const placeholder = document.getElementById("portfolio-ssr");
+      if (placeholder && placeholder.parentNode) placeholder.parentNode.removeChild(placeholder);
+    } catch (e) {
+      // ignore
+    }
+  }, [mounted, isTabConfigLoading, isLoading]);
 
   useEffect(() => {
     setIsEdgeToEdge(true);
@@ -894,7 +908,7 @@ const PortfolioClient: React.FC = () => {
         transition={{
           layout: { duration: 0.22, ease: "linear" },
         }}
-        className={`min-h-screen md:h-screen bg-gray-100 dark:bg-gray-950 flex flex-col md:flex-row ${isEdgeToEdge ? "p-0" : "p-2 md:p-3 lg:p-4"} max-w-screen transition-all duration-500 ease-[0.22,1,0.36,1] md:overflow-hidden relative`}
+        className={`min-h-screen md:h-screen bg-gray-100 dark:bg-gray-950 flex flex-col md:flex-row ${isEdgeToEdge ? "p-0" : "p-2 md:p-3 lg:p-4"} max-w-screen ${mounted ? 'transition-all duration-500 ease-[0.22,1,0.36,1]' : ''} md:overflow-hidden relative`}
         aria-label="Portfolio content"
       >
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -927,7 +941,7 @@ const PortfolioClient: React.FC = () => {
       </AnimatePresence>
       <motion.div
         layout
-        initial={!effectivelyAnimated ? { opacity: 0, x: -50 } : false}
+        initial={!effectivelyAnimated && activeTab !== "home" ? { opacity: 0, x: -50 } : false}
         animate={{ 
           opacity: activeTab === "home" ? 0 : 1, 
           x: activeTab === "home" ? -40 : 0,
@@ -946,12 +960,12 @@ const PortfolioClient: React.FC = () => {
         }}
         className={`w-full md:w-[380px] md:h-full flex flex-col md:overflow-y-hidden custom-scrollbar pr-0 md:pr-0 ${isDetailView || activeTab === "home" ? "hidden md:flex" : "flex"} flex-shrink-0 z-10`}
       >
-        <ProfileInfo forceStatic={effectivelyAnimated} isEdgeToEdge={isEdgeToEdge} />
+        <ProfileInfo forceStatic={effectivelyAnimated || activeTab === "home"} isEdgeToEdge={isEdgeToEdge} />
       </motion.div>
 
       <motion.div
         layout
-        initial={!effectivelyAnimated ? { opacity: 0, x: 50 } : false}
+        initial={!effectivelyAnimated && activeTab !== "home" ? { opacity: 0, x: 50 } : false}
         animate={{ 
           opacity: 1, 
           x: 0,
@@ -961,7 +975,7 @@ const PortfolioClient: React.FC = () => {
           ease: "linear",
           layout: { duration: 0.22, ease: "linear" },
         }}
-        className={`flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md ${isEdgeToEdge ? "rounded-none" : "rounded-xl md:rounded-l-none"} shadow-[0_12px_34px_rgba(15,23,42,0.07)] border border-gray-100 dark:border-gray-800 overflow-hidden transition-all duration-500 ease-[0.23,1,0.32,1] ${
+        className={`flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md ${isEdgeToEdge ? "rounded-none" : "rounded-xl md:rounded-l-none"} shadow-[0_12px_34px_rgba(15,23,42,0.07)] border border-gray-100 dark:border-gray-800 overflow-hidden ${mounted ? 'transition-all duration-500 ease-[0.23,1,0.32,1]' : ''} ${
           activeTab === "home" ? "md:-ml-[380px]" : "ml-0"
         }`}
       >
@@ -1061,7 +1075,7 @@ const PortfolioClient: React.FC = () => {
               <motion.div
                 key={activeTab}
                 variants={pageVariants}
-                initial={effectivelyAnimated ? "animate" : "initial"}
+                initial={activeTab === "home" ? "animate" : (effectivelyAnimated ? "animate" : "initial")}
                 animate="animate"
                 exit="exit"
                 className={`${isEdgeToEdge && activeTab === "home" ? "p-0" : "p-4 md:p-6"} w-full`}
@@ -1069,13 +1083,13 @@ const PortfolioClient: React.FC = () => {
                 {activeTab === "home" && (
                   <motion.div
                     variants={containerVariants}
-                    initial="hidden"
+                    initial={activeTab === "home" ? "show" : "hidden"}
                     animate="show"
                     className={`${isEdgeToEdge ? "" : "-mx-4 md:-mx-6 -mt-4 md:-mt-6 -mb-4 md:-mb-6"} relative`}
                   >
                     {/* Hero Section */}
                     <section className="sticky top-0 min-h-screen flex flex-col justify-center py-20 px-4 bg-gray-100 dark:bg-gray-950 z-[1] overflow-hidden">
-                      <MatrixRain startDelayMs={3200} revealDirection="ltr" />
+                      {mounted && <MatrixRain startDelayMs={3200} revealDirection="ltr" />}
                       <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
                         <motion.div
                           variants={avatarVariants}
