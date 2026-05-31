@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { ContentItem } from "../types";
-import { subscribeToContent } from "../firebase";
+import { subscribeToContent, getContentOnce } from "../firebase";
 
 interface ContentContextType {
   projects: ContentItem[];
@@ -19,12 +19,25 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = subscribeToContent((data) => {
-      setItems(data);
-      setIsLoading(false);
-    });
+    let mounted = true;
+    (async () => {
+      try {
+        const data = await getContentOnce();
+        if (!mounted) return;
+        setItems(data);
+      } catch (e) {
+        // fallback to empty
+        if (!mounted) return;
+        setItems([]);
+      } finally {
+        if (!mounted) return;
+        setIsLoading(false);
+      }
+    })();
 
-    return () => unsubscribe();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const projects = items.filter((item) => item.type === "project");

@@ -9,6 +9,7 @@ import {
   update,
   increment,
 } from "firebase/database";
+import { get } from "firebase/database";
 import { ContentItem, Note, ActivityLog, PortfolioSettings, CloudinaryImage } from "./types";
 
 const firebaseConfig = {
@@ -238,6 +239,22 @@ export const subscribeToPortfolioSettings = (
   });
 };
 
+export const getPortfolioSettings = async (): Promise<PortfolioSettings> => {
+  const settingsRef = ref(db, "portfolio_settings");
+  try {
+    const snapshot = await get(settingsRef);
+    const data = snapshot.val() as Partial<PortfolioSettings> | null;
+    if (!data) {
+      await set(settingsRef, defaultPortfolioSettings);
+      return defaultPortfolioSettings;
+    }
+    return mergePortfolioSettings(data);
+  } catch (error) {
+    // On error (network, DNS), fall back to defaults
+    return defaultPortfolioSettings;
+  }
+};
+
 // Media Functions (Cloudinary Image Tracking)
 export const saveMediaRef = async (image: Omit<CloudinaryImage, "id">) => {
   const mediaRef = ref(db, "media");
@@ -435,6 +452,24 @@ export const subscribeToContent = (
       callback([]);
     }
   });
+};
+
+export const getContentOnce = async (): Promise<ContentItem[]> => {
+  const contentRef = ref(db, "content");
+  try {
+    const snapshot = await get(contentRef);
+    const data = snapshot.val();
+    if (data) {
+      const items = Object.keys(data).map((key) => ({
+        ...data[key],
+        id: key,
+      }));
+      return items.reverse();
+    }
+    return [];
+  } catch (error) {
+    return [];
+  }
 };
 
 // Notes Functions

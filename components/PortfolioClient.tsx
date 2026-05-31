@@ -7,7 +7,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence, Variants, LazyMotion, domAnimation } from "framer-motion";
 import { ContentItem, TabType, PortfolioSettings, GrindCounterCard, GrindStatRow, SkillsetGroup, SkillBadge, ExperienceItem } from "../lib/types";
 import { INITIAL_CERTIFICATES } from "../lib/constants";
-import { incrementLikes, incrementViews, subscribeToPortfolioSettings } from "../lib/firebase";
+import { incrementLikes, incrementViews, subscribeToPortfolioSettings, getPortfolioSettings } from "../lib/firebase";
 import { sanitizeRichHtml } from "../lib/sanitize";
 import { useTheme } from "../lib/context/ThemeContext";
 import { useContent } from "../lib/context/ContentContext";
@@ -524,15 +524,26 @@ const PortfolioClient: React.FC = () => {
   const isDetailView = !!viewingDetail || !!selectedCertificate;
 
   useEffect(() => {
-    const unsubscribe = subscribeToPortfolioSettings((settings) => {
-      setPortfolioSettings(settings);
-      setGrindCards(settings.grindCards);
-      setGrindRatings(settings.grindRatings);
-      setGrindGithubStats(settings.grindGithubStats);
-      setIsTabConfigLoading(false);
-    });
+    let mounted = true;
+    (async () => {
+      try {
+        const settings = await getPortfolioSettings();
+        if (!mounted) return;
+        setPortfolioSettings(settings);
+        setGrindCards(settings.grindCards);
+        setGrindRatings(settings.grindRatings);
+        setGrindGithubStats(settings.grindGithubStats);
+      } catch (e) {
+        // fallback to defaults are handled in getPortfolioSettings
+      } finally {
+        if (!mounted) return;
+        setIsTabConfigLoading(false);
+      }
+    })();
 
-    return () => unsubscribe();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const visibleTabs = useMemo<TabType[]>(() => {
