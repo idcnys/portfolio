@@ -1100,7 +1100,7 @@ const PortfolioClient: React.FC = () => {
                         >
                           <div className="space-y-4">
                             <h2 className="text-2xl text-amber-600 dark:text-[#FFDB14] font-playwrite">About Me</h2>
-                            <p className="text-xl md:text-2xl lg:text-2xl text-gray-900 dark:text-gray-100 font-bold leading-tight">
+                            <p className="text-xl md:text-2xl lg:text-2xl text-gray-900 dark:text-gray-100 leading-tight">
                               {portfolioSettings?.homeSettings?.summary || "I'm a Computer Science student at RUET. I love turning ideas into real products and have a deep interest in Artificial Intelligence and Cyber Security."}
                             </p>
                           </div>
