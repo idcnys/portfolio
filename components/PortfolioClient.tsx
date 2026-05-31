@@ -699,6 +699,7 @@ const PortfolioClient: React.FC = () => {
     () => ({
       home: [],
       certificates: [],
+      experience: [],
       projects,
       activity: activities,
       grind: [],
