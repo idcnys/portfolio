@@ -15,7 +15,7 @@ interface TabSwitcherProps {
   homeActions?: ReactNode;
 }
 
-const TABS: TabType[] = ["home", "certificates", "projects", "activity", "grind", "skillset"];
+const TABS: TabType[] = ["home", "certificates", "experience", "projects", "activity", "grind", "skillset"];
 
 const mobileActiveTabVariants: Variants = {
   enter: (direction: 1 | -1) => ({

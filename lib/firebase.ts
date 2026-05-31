@@ -178,6 +178,7 @@ const defaultPortfolioSettings: PortfolioSettings = {
   tabVisibility: {
     home: true,
     certificates: true,
+    experience: true,
     projects: true,
     activity: true,
     grind: true,

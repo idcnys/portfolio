@@ -44,7 +44,7 @@ export interface ActivityLog {
   ipAddress?: string;
 }
 
-export type TabType = "home" | "certificates" | "projects" | "activity" | "grind" | "skillset";
+export type TabType = "home" | "certificates" | "experience" | "projects" | "activity" | "grind" | "skillset";
 
 export interface GrindUsernames {
   codeforces: string;
@@ -81,6 +81,7 @@ export interface SkillsetGroup {
 export interface TabVisibilityConfig {
   home: boolean;
   certificates: boolean;
+  experience: boolean;
   projects: boolean;
   activity: boolean;
   grind: boolean;

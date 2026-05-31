@@ -160,6 +160,53 @@ const EDUCATION_DATA = [
   },
 ];
 
+const EXPERIENCE_ITEMS = [
+  {
+    id: "exp-1",
+    period: "2025 - Present",
+    role: "Frontend Engineer",
+    company: "Nebula Labs",
+    description:
+      "Leading development of a component-driven portfolio platform with realtime publishing workflows, polished motion design, and strong accessibility defaults.",
+    stack: ["Next.js", "TypeScript", "Tailwind", "Framer Motion", "Firebase"],
+    thumbnail: "/certificates/cs50x.png",
+    latest: true,
+  },
+  {
+    id: "exp-2",
+    period: "2024 - 2025",
+    role: "Product Engineering Intern",
+    company: "Orbit Systems",
+    description:
+      "Built internal dashboard modules, reduced render costs through memoized view models, and shipped admin tooling used by cross-functional stakeholders.",
+    stack: ["React", "Node.js", "PostgreSQL", "Zod", "Vercel"],
+    thumbnail: "/certificates/jsb.png",
+    latest: false,
+  },
+  {
+    id: "exp-3",
+    period: "2023 - 2024",
+    role: "Freelance Web Developer",
+    company: "Independent Clients",
+    description:
+      "Delivered portfolio and landing page projects with CMS-backed content, conversion-focused layouts, and maintainable design systems.",
+    stack: ["Next.js", "Tailwind", "Cloudinary", "SEO", "Figma"],
+    thumbnail: "/certificates/psb.png",
+    latest: false,
+  },
+  {
+    id: "exp-4",
+    period: "2022 - 2023",
+    role: "Competitive Programming Mentor",
+    company: "Campus Coding Circle",
+    description:
+      "Mentored beginner cohorts in data structures and algorithms while creating practice roadmaps, solution notes, and weekly contests.",
+    stack: ["C++", "Python", "Problem Solving", "Teaching"],
+    thumbnail: "/certificates/pyb.png",
+    latest: false,
+  },
+];
+
 
 const CODE_BLOCK_REGEX =
   /<pre[^>]*>\s*<code([^>]*)>([\s\S]*?)<\/code>\s*<\/pre>/gi;
@@ -535,13 +582,15 @@ const PortfolioClient: React.FC = () => {
   }, []);
 
   const visibleTabs = useMemo<TabType[]>(() => {
-    const order: TabType[] = ["home", "certificates", "projects", "activity", "grind", "skillset"];
+    const order: TabType[] = ["home", "certificates", "experience", "projects", "activity", "grind", "skillset"];
     const visibility = portfolioSettings?.tabVisibility;
     if (!visibility) {
       return order;
     }
 
-    const filtered = order.filter((tab) => tab === "home" || visibility[tab as keyof typeof visibility]);
+    const filtered = order.filter((tab) =>
+      (tab === "home") || ((visibility as any)[tab] ?? true),
+    );
     return filtered.length > 0 ? filtered : ["home"];
   }, [portfolioSettings]);
 
@@ -737,6 +786,7 @@ const PortfolioClient: React.FC = () => {
     const allowedTabs: TabType[] = [
       "home",
       "certificates",
+      "experience",
       "projects",
       "activity",
       "grind",
@@ -1276,6 +1326,97 @@ const PortfolioClient: React.FC = () => {
                       </div>
                     </section>
                   </motion.div>
+                )}
+
+                {activeTab === "experience" && (
+                  <motion.section
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="show"
+                    className="space-y-4"
+                    aria-label="Experience Timeline"
+                  >
+                    <motion.div
+                      variants={cardVariants}
+                      className="flex items-center justify-between"
+                    >
+                      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+                        Experience
+                      </h2>
+                      <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                        Timeline
+                      </span>
+                    </motion.div>
+
+                    <motion.div variants={containerVariants} className="relative pl-6 sm:pl-8">
+                      <div className="pointer-events-none absolute left-[7px] top-2 bottom-2 w-px bg-gray-200 dark:bg-gray-700" />
+
+                      <ol className="space-y-3" aria-label="Experience items">
+                        {EXPERIENCE_ITEMS.map((item, index) => (
+                          <motion.li key={item.id} variants={cardVariants} className="relative">
+                            <span
+                              className={`absolute -left-6 sm:-left-8 top-6 h-3.5 w-3.5 rounded-full border-2 ${
+                                item.latest
+                                  ? "border-gray-900 bg-gray-900 dark:border-gray-100 dark:bg-gray-100"
+                                  : "border-gray-400 bg-white dark:border-gray-500 dark:bg-gray-900"
+                              }`}
+                              aria-hidden="true"
+                            />
+
+                            <article
+                              className={`rounded-2xl border bg-white p-3.5 sm:p-4 transition-all dark:bg-gray-900 ${
+                                item.latest
+                                  ? "border-gray-300 shadow-[0_10px_26px_rgba(15,23,42,0.08)] dark:border-gray-600"
+                                  : "border-gray-200 hover:border-gray-300 hover:shadow-[0_8px_20px_rgba(15,23,42,0.06)] dark:border-gray-700 dark:hover:border-gray-600"
+                              }`}
+                            >
+                              <header className="mb-2 space-y-1">
+                                <time className="block text-[11px] font-medium uppercase abcdefgh abcdefghijwide text-gray-500 dark:text-gray-400">
+                                  {item.period}
+                                </time>
+                                <h3 className="text-base sm:text-[17px] font-semibold text-gray-900 dark:text-gray-100 leading-snug">
+                                  {item.role}
+                                </h3>
+                                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                                  {item.company}
+                                </p>
+                              </header>
+
+                              <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 items-start">
+                                <div className="space-y-2">
+                                  <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-300 line-clamp-3">
+                                    {item.description}
+                                  </p>
+
+                                  <ul className="flex flex-wrap gap-1.5" aria-label={`${item.role} technologies`}>
+                                    {item.stack.map((tag) => (
+                                      <li
+                                        key={`${item.id}-${tag}`}
+                                        className="rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                                      >
+                                        {tag}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+
+                                <div className="hidden sm:block w-20 h-14 lg:w-24 lg:h-16 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 shrink-0">
+                                  <Image
+                                    src={item.thumbnail}
+                                    alt={`${item.role} preview`}
+                                    width={192}
+                                    height={128}
+                                    className="h-full w-full object-cover opacity-80"
+                                    loading={index === 0 ? "eager" : "lazy"}
+                                  />
+                                </div>
+                              </div>
+                            </article>
+                          </motion.li>
+                        ))}
+                      </ol>
+                    </motion.div>
+                  </motion.section>
                 )}
 
 
@@ -2089,11 +2230,6 @@ const ContentCard: React.FC<{ item: ContentItem; onReadMore: () => void }> = ({
 }) => {
   return (
     <motion.div
-      whileHover={{
-        scale: 1.01,
-        boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-        transition: { duration: 0.2 },
-      }}
       whileTap={{ scale: 0.98 }}
       className="flex flex-col sm:flex-row gap-0 p-0 rounded-lg border-2 border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 transition-all bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm shadow-[0_6px_22px_rgba(15,23,42,0.05)] cursor-pointer overflow-hidden"
       onClick={onReadMore}

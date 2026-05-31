@@ -119,6 +119,7 @@ interface DashboardProps {
 
 const TAB_ORDER: TabType[] = [
   "certificates",
+  "experience",
   "projects",
   "activity",
   "grind",
