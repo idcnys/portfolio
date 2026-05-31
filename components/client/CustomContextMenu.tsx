@@ -27,7 +27,7 @@ export default function CustomContextMenu() {
     },
     {
       name: "Twitter",
-      url: "https://twitter.com/bittosaha21",
+      url: "https://twitter.com/idcnys",
       icon: "/icons/icons8-twitter-bird.svg",
       color: "hover:bg-sky-50 dark:hover:bg-sky-900/20",
     },

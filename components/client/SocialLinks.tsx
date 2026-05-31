@@ -32,7 +32,7 @@ export default function SocialLinks() {
     const urls: Record<string, string> = {
       LinkedIn: "https://www.linkedin.com/in/bittosaha",
       GitHub: "https://github.com/idcnys",
-      Twitter: "https://twitter.com/bittosaha21",
+      Twitter: "https://twitter.com/idcnys",
       Facebook: "https://www.facebook.com/biiitto",
       Email: "mailto:bittosaaha@gmail.com",
     };

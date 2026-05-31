@@ -1203,7 +1203,7 @@ const PortfolioClient: React.FC = () => {
                           {[
                             { Icon: GithubIcon, label: "GitHub", url: "https://github.com/idcnys" },
                             { Icon: LinkedinIcon, label: "LinkedIn", url: "https://linkedin.com/in/bittosaha" },
-                            { Icon: TwitterIcon, label: "Twitter", url: "https://twitter.com/bittosaha" },
+                            { Icon: TwitterIcon, label: "Twitter", url: "https://twitter.com/idcnys" },
                           ].map((social) => (
                             <motion.a
                               key={social.label}
