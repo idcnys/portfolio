@@ -74,7 +74,7 @@ const MatrixRain: React.FC<MatrixRainProps> = ({ startDelayMs = 0, revealDirecti
                     drops[i] = 0;
                 }
 
-                drops[i] += 1.15;
+                drops[i]++;
             }
         };
 
