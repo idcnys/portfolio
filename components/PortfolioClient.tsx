@@ -452,10 +452,43 @@ const PortfolioClient: React.FC = () => {
   const [hasEntranceAnimated, setHasEntranceAnimated] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isEdgeToEdge, setIsEdgeToEdge] = useState(false);
+  const [showEdgeHighlight, setShowEdgeHighlight] = useState(false);
+  const [showResizeToggle, setShowResizeToggle] = useState(true);
+  const hasAutoFullscreenRef = useRef(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!mounted || hasAutoFullscreenRef.current) {
+      return;
+    }
+
+    hasAutoFullscreenRef.current = true;
+    const timer = window.setTimeout(() => {
+      setIsEdgeToEdge(true);
+      window.setTimeout(() => {
+        setShowResizeToggle(false);
+      }, 900);
+    }, 2000);
+
+    return () => window.clearTimeout(timer);
+  }, [mounted]);
+
+  useEffect(() => {
+    if (!isEdgeToEdge) {
+      setShowEdgeHighlight(false);
+      return;
+    }
+
+    setShowEdgeHighlight(true);
+    const timer = window.setTimeout(() => {
+      setShowEdgeHighlight(false);
+    }, 1000);
+
+    return () => window.clearTimeout(timer);
+  }, [isEdgeToEdge]);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
@@ -829,9 +862,13 @@ const PortfolioClient: React.FC = () => {
   return (
     <LazyMotion features={domAnimation}>
       <motion.div
+        layout
         variants={pageVariants}
         initial="initial"
         animate="animate"
+        transition={{
+          layout: { duration: 0.22, ease: "linear" },
+        }}
         className={`min-h-screen md:h-screen bg-gray-100 dark:bg-gray-950 flex flex-col md:flex-row ${isEdgeToEdge ? "p-0" : "p-2 md:p-3 lg:p-4"} max-w-screen transition-all duration-500 ease-[0.22,1,0.36,1] md:overflow-hidden relative`}
       >
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -839,7 +876,31 @@ const PortfolioClient: React.FC = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-500/10 blur-[120px] dark:bg-blue-600/5" />
       </div>
       <CustomContextMenu />
+      <AnimatePresence>
+        {showEdgeHighlight && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.75, ease: "linear" }}
+            className="pointer-events-none fixed inset-0 z-[120]"
+            style={{
+              backgroundImage: [
+                "linear-gradient(90deg, rgba(255,219,20,1), rgba(96,165,250,0.95), rgba(255,219,20,1))",
+                "linear-gradient(90deg, rgba(255,219,20,0.95), rgba(255,255,255,0.35), rgba(255,219,20,0.95))",
+                "linear-gradient(180deg, rgba(255,219,20,1), rgba(96,165,250,0.95), rgba(255,219,20,1))",
+                "linear-gradient(180deg, rgba(255,219,20,0.95), rgba(255,255,255,0.35), rgba(255,219,20,0.95))",
+              ].join(", "),
+              backgroundSize: "100% 2px, 100% 2px, 2px 100%, 2px 100%",
+              backgroundPosition: "top left, bottom left, top left, top right",
+              backgroundRepeat: "no-repeat",
+              filter: "blur(0px) saturate(1.45)",
+            }}
+          />
+        )}
+      </AnimatePresence>
       <motion.div
+        layout
         initial={!effectivelyAnimated ? { opacity: 0, x: -50 } : false}
         animate={{ 
           opacity: activeTab === "home" ? 0 : 1, 
@@ -853,8 +914,9 @@ const PortfolioClient: React.FC = () => {
           }
         }}
         transition={{ 
-          duration: 0.4, 
-          ease: [0.23, 1, 0.32, 1] // Decelerate ease
+          duration: 0.22, 
+          ease: "linear",
+          layout: { duration: 0.22, ease: "linear" },
         }}
         className={`w-full md:w-[380px] md:h-full flex flex-col md:overflow-y-hidden custom-scrollbar pr-0 md:pr-0 ${isDetailView || activeTab === "home" ? "hidden md:flex" : "flex"} flex-shrink-0 z-10`}
       >
@@ -862,14 +924,16 @@ const PortfolioClient: React.FC = () => {
       </motion.div>
 
       <motion.div
+        layout
         initial={!effectivelyAnimated ? { opacity: 0, x: 50 } : false}
         animate={{ 
           opacity: 1, 
           x: 0,
         }}
         transition={{ 
-          duration: 0.4, 
-          ease: [0.23, 1, 0.32, 1] 
+          duration: 0.22, 
+          ease: "linear",
+          layout: { duration: 0.22, ease: "linear" },
         }}
         className={`flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md ${isEdgeToEdge ? "rounded-none" : "rounded-xl md:rounded-l-none"} shadow-[0_12px_34px_rgba(15,23,42,0.07)] border border-gray-100 dark:border-gray-800 overflow-hidden transition-all duration-500 ease-[0.23,1,0.32,1] ${
           activeTab === "home" ? "md:-ml-[380px]" : "ml-0"
@@ -885,25 +949,50 @@ const PortfolioClient: React.FC = () => {
           homeActions={
             activeTab === "home" ? (
               <>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsEdgeToEdge(!isEdgeToEdge)}
-                  className="w-9 h-9 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  title={isEdgeToEdge ? "Collapse Layout" : "Expand Layout"}
-                >
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={isEdgeToEdge ? "minimize" : "maximize"}
-                      initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
-                      animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                      exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
-                      transition={{ duration: 0.2 }}
+                <AnimatePresence mode="wait">
+                  {showResizeToggle && (
+                    <motion.button
+                      key="resize-toggle"
+                      whileHover={{
+                        scale: 1.04,
+                        rotate: 0,
+                        transition: { duration: 0.08, ease: "linear" },
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      initial={{ opacity: 0, scale: 0.96, y: 0, filter: "blur(0px)" }}
+                      animate={{
+                        opacity: 1,
+                        scale: 1,
+                        y: 0,
+                        filter: "blur(0px)",
+                        transition: { delay: 0.12, duration: 0.12, ease: "linear" },
+                      }}
+                      exit={{
+                        opacity: 0,
+                        scale: 0.2,
+                        y: -12,
+                        x: 16,
+                        filter: "blur(12px)",
+                        transition: { duration: 0.28, ease: "easeIn" },
+                      }}
+                      onClick={() => setIsEdgeToEdge(!isEdgeToEdge)}
+                      className="w-9 h-9 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      title={isEdgeToEdge ? "Collapse Layout" : "Expand Layout"}
                     >
-                      {isEdgeToEdge ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-                    </motion.div>
-                  </AnimatePresence>
-                </motion.button>
+                      <AnimatePresence mode="wait">
+                        <motion.div
+                          key={isEdgeToEdge ? "minimize" : "maximize"}
+                          initial={{ opacity: 0, scale: 0.9, rotate: 0 }}
+                          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                          exit={{ opacity: 0, scale: 0.9, rotate: 0 }}
+                          transition={{ duration: 0.08, ease: "linear" }}
+                        >
+                          {isEdgeToEdge ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                        </motion.div>
+                      </AnimatePresence>
+                    </motion.button>
+                  )}
+                </AnimatePresence>
                 <ThemeToggle className="w-9 h-9 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-center" />
               </>
             ) : undefined
@@ -960,7 +1049,7 @@ const PortfolioClient: React.FC = () => {
                   >
                     {/* Hero Section */}
                     <section className="sticky top-0 min-h-screen flex flex-col justify-center py-20 px-4 bg-gray-100 dark:bg-gray-950 z-[1] overflow-hidden">
-                      <MatrixRain startDelayMs={1500} />
+                      <MatrixRain startDelayMs={4200} revealDirection="ltr" />
                       <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
                         <motion.div
                           variants={avatarVariants}

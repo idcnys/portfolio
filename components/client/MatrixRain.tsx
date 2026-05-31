@@ -5,9 +5,10 @@ import { useTheme } from '@/lib/context/ThemeContext';
 
 interface MatrixRainProps {
     startDelayMs?: number;
+    revealDirection?: "corner" | "ltr";
 }
 
-const MatrixRain: React.FC<MatrixRainProps> = ({ startDelayMs = 0 }) => {
+const MatrixRain: React.FC<MatrixRainProps> = ({ startDelayMs = 0, revealDirection = "corner" }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { isDarkMode } = useTheme();
     const [isRevealed, setIsRevealed] = useState(startDelayMs === 0);
@@ -41,7 +42,7 @@ const MatrixRain: React.FC<MatrixRainProps> = ({ startDelayMs = 0 }) => {
 
         let animationFrameId: number;
         let lastTime = 0;
-        const fps = 14; // Slower frame rate for a smoother, more laminar feel
+        const fps = 18; // Slightly faster frame rate while keeping the laminar feel
         const interval = 1000 / fps;
 
         const draw = (timestamp: number) => {
@@ -73,7 +74,7 @@ const MatrixRain: React.FC<MatrixRainProps> = ({ startDelayMs = 0 }) => {
                     drops[i] = 0;
                 }
 
-                drops[i]++;
+                drops[i] += 1.15;
             }
         };
 
@@ -104,9 +105,13 @@ const MatrixRain: React.FC<MatrixRainProps> = ({ startDelayMs = 0 }) => {
             className="absolute inset-0 w-full h-full pointer-events-none"
             style={{ 
                 opacity: isDarkMode ? 0.26 : 0.5,
-                clipPath: isRevealed ? 'circle(150% at 0% 0%)' : 'circle(0% at 0% 0%)',
+                clipPath: isRevealed
+                    ? (revealDirection === "ltr" ? 'inset(0 0 0 0)' : 'circle(150% at 0% 0%)')
+                    : (revealDirection === "ltr" ? 'inset(0 100% 0 0)' : 'circle(0% at 0% 0%)'),
                 transform: isRevealed ? 'scale(1)' : 'scale(0.97)',
-                transition: 'clip-path 1200ms cubic-bezier(0.22, 1, 0.36, 1), transform 1200ms cubic-bezier(0.22, 1, 0.36, 1), opacity 900ms ease-out',
+                transition: revealDirection === "ltr"
+                    ? 'clip-path 900ms linear, transform 900ms linear, opacity 700ms ease-out'
+                    : 'clip-path 1200ms cubic-bezier(0.22, 1, 0.36, 1), transform 1200ms cubic-bezier(0.22, 1, 0.36, 1), opacity 900ms ease-out',
             }}
         />
     );

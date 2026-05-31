@@ -228,7 +228,7 @@ export default function ProfileInfo({
             transition={{ type: "spring", stiffness: 300 }}
           />
           <span className="inline-block px-2 py-0.5 bg-[#FFDB14] dark:bg-[#FFDB14] text-[10px] font-bold rounded mb-1 text-gray-900">
-            2025 - Present
+            Present
           </span>
           <h4 className="font-bold text-sm text-gray-900 dark:text-gray-100">
             Bachelor's in CSE
@@ -244,7 +244,7 @@ export default function ProfileInfo({
             transition={{ type: "spring", stiffness: 300 }}
           />
           <span className="inline-block px-2 py-0.5 bg-[#FFDB14] dark:bg-[#FFDB14] text-[10px] font-bold rounded mb-1 text-gray-900">
-            2022 - 2024
+            2024
           </span>
           <h4 className="font-bold text-sm text-gray-800 dark:text-gray-200">
             Higher Secondary Certificate (HSC)
