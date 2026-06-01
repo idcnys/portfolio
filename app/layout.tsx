@@ -4,7 +4,6 @@ import { Patrick_Hand } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ThemeProvider } from "../lib/context/ThemeContext";
-import { cookies } from "next/headers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -60,7 +59,6 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://img.shields.io" crossOrigin="" />
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="" />
         <link rel="preload" href="/avatar.png" as="image" fetchPriority="high" />
-
       </head>
       <body
         className={`${inter.className} ${patrickHand.variable} ${jersey.variable} antialiased`}>
