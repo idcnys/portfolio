@@ -61,18 +61,12 @@ export default function PortfolioClientSSR() {
 
   return (
     <div id="portfolio-ssr">
-      <div className="min-h-screen md:h-screen bg-gray-100 dark:bg-gray-950 flex flex-col md:flex-row p-0 max-w-screen relative font-pixel">
-        <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#FFDB14]/10 blur-[120px]" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-500/10 blur-[120px] dark:bg-blue-600/5" />
-        </div>
+      
 
         <div className="flex-1 h-auto md:h-full flex flex-col min-w-0 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md rounded-none shadow-[0_12px_34px_rgba(15,23,42,0.07)] border border-gray-100 dark:border-gray-800 overflow-hidden">
-          <div className="w-full p-4 md:p-6">
+          <div className="w-full">
             <div className="relative">
-              {/* Placeholder for MatrixRain background (client will replace) */}
-              <div className="absolute inset-0" aria-hidden />
-
+             
               <section className="sticky top-0 min-h-screen flex flex-col justify-center py-20 px-4 bg-gray-100 dark:bg-gray-950 z-[1] overflow-hidden">
                 <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
 
@@ -90,6 +84,6 @@ export default function PortfolioClientSSR() {
           </div>
         </div>
       </div>
-    </div>
+  
   );
 }
