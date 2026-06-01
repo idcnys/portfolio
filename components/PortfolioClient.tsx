@@ -1256,8 +1256,8 @@ const PortfolioClient: React.FC = () => {
                       <div className="max-w-4xl mx-auto text-center space-y-8 md:space-y-10">
                         <div className="space-y-3 md:space-y-4 mt-20">
                           <h2 className="text-xl md:text-2xl text-amber-600 dark:text-[#FFDB14] font-playwrite">Let's Connect</h2>
-                          <p className="text-2xl md:text-5xl font-black text-gray-900 dark:text-gray-100 italic">
-                            Hire me for your next <span className="text-amber-600 dark:text-[#FFDB14]">Big transformation</span>
+                          <p className="text-2xl md:text-5xl font-pixel font-black text-gray-900 dark:text-gray-100">
+                            Let’s connect and channel curiosity into cutting-edge <span className="text-amber-600 dark:text-[#FFDB14]">solutions.</span>
                           </p>
                         </div>
                         <div className="flex flex-wrap justify-center gap-3 md:gap-4">
