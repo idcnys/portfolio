@@ -22,6 +22,10 @@ export interface ContentItem {
 export interface Certificate {
   id: string;
   imageUrl: string;
+  duration?: string;
+  topics?: string;
+  issuer?: string;
+  onlineUrl?:string;
 }
 
 export interface Note {

@@ -5,7 +5,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence, Variants, LazyMotion, domAnimation } from "framer-motion";
-import { ContentItem, TabType, PortfolioSettings, GrindCounterCard, GrindStatRow, SkillsetGroup, SkillBadge, ExperienceItem } from "../lib/types";
+import { Certificate, ContentItem, TabType, PortfolioSettings, GrindCounterCard, GrindStatRow, SkillsetGroup, SkillBadge, ExperienceItem } from "../lib/types";
 import { INITIAL_CERTIFICATES } from "../lib/constants";
 import { incrementLikes, incrementViews, subscribeToPortfolioSettings, getPortfolioSettings } from "../lib/firebase";
 import { sanitizeRichHtml } from "../lib/sanitize";
@@ -486,7 +486,7 @@ const PortfolioClient: React.FC = () => {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<TabType>("home");
   const [viewingDetail, setViewingDetail] = useState<ContentItem | null>(null);
-  const [selectedCertificate, setSelectedCertificate] = useState<string | null>(
+  const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(
     null,
   );
   const [hasAnimatedProjectsTab, setHasAnimatedProjectsTab] = useState(false);
@@ -1102,7 +1102,11 @@ const PortfolioClient: React.FC = () => {
                 className="w-full"
               >
                 <CertificateDetailView
-                  imageUrl={selectedCertificate}
+                  imageUrl={selectedCertificate.imageUrl}
+                  duration={selectedCertificate.duration}
+                  topics={selectedCertificate.topics}
+                  issuer={selectedCertificate.issuer}
+                  onlineUrl={selectedCertificate.onlineUrl}
                 />
               </motion.div>
             ) : (
@@ -1503,7 +1507,7 @@ const PortfolioClient: React.FC = () => {
                           whileHover="hover"
                           whileTap={{ scale: 0.95 }}
                           className="overflow-hidden rounded border border-gray-100 dark:border-gray-800 group cursor-pointer bg-gray-50 dark:bg-gray-800 transition-colors hover:border-[#FFDB14]"
-                          onClick={() => setSelectedCertificate(cert.imageUrl)}
+                          onClick={() => setSelectedCertificate(cert)}
                         >
                           <Image
                             src={cert.imageUrl}
