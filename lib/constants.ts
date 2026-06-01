@@ -8,6 +8,7 @@ export const INITIAL_CERTIFICATES: Certificate[] = [
     topics: 'Computer Science, Algorithms, Data Structures',
     issuer: 'Harvard University (edX)',
     onlineUrl : "#",
+    desc:"null",
   },
   {
     id: 'c2',
@@ -16,6 +17,7 @@ export const INITIAL_CERTIFICATES: Certificate[] = [
     topics: 'JavaScript Basics, DOM, ES6',
     issuer: 'freeCodeCamp',
     onlineUrl : "#",
+     desc:"null",
   },
   {
     id: 'c3',
@@ -24,6 +26,7 @@ export const INITIAL_CERTIFICATES: Certificate[] = [
     topics: 'Problem Solving, Data Structures, Python',
     issuer: 'InterviewBit Academy',
     onlineUrl : "#",
+     desc:"null",
   },
   {
     id: 'c4',
@@ -32,6 +35,7 @@ export const INITIAL_CERTIFICATES: Certificate[] = [
     topics: 'Python Programming, OOP, Scripting',
     issuer: 'Coursera',
     onlineUrl : "#",
+     desc:"null",
   },
   {
     id: 'c5',
@@ -40,6 +44,7 @@ export const INITIAL_CERTIFICATES: Certificate[] = [
     topics: 'REST APIs, Authentication, Backend Design',
     issuer: 'Udemy',
     onlineUrl : "#",
+     desc:"null",
   },
   {
     id: 'c6',
@@ -48,5 +53,6 @@ export const INITIAL_CERTIFICATES: Certificate[] = [
     topics: 'SQL Queries, Database Design, Optimization',
     issuer: 'Pluralsight',
     onlineUrl : "#",
+     desc:"null",
   },
 ];

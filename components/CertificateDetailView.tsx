@@ -11,7 +11,8 @@ const CertificateDetailView: React.FC<{
   topics?: string;
   issuer?: string;
   onlineUrl?: string;
-}> = ({ imageUrl, duration, topics, issuer, onlineUrl }) => {
+  desc?:string;
+}> = ({ imageUrl, duration, topics, issuer, onlineUrl ,desc}) => {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -27,7 +28,7 @@ const CertificateDetailView: React.FC<{
         className="flex-1 p-4 md:p-6 flex items-center justify-center"
       >
         <div className="w-full max-w-4xl">
-          <p className="p-2 mb-5">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fugit facilis, libero recusandae error fuga id quo totam necessitatibus officia esse optio facere impedit voluptate possimus eos, nulla corrupti consequuntur assumenda ab itaque.</p>
+          <p className="p-2 mb-5">{desc || "Nothing"}</p>
           <div className="grid gap-4 md:grid-cols-3 mb-6">
             <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-950/80 p-4">
               <p className="text-xs  text-gray-500 dark:text-gray-400 mb-2">Course duration</p>
@@ -42,7 +43,7 @@ const CertificateDetailView: React.FC<{
               <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{issuer ?? "N/A"}</p>
             </div>
           </div>
-          <Link href={onlineUrl ?? "#"} className=" text-[#00f] underline">Check Online Certification Id</Link>
+          <Link href={onlineUrl ?? "#"} className=" text-[#00f] dark:text-[#fff] underline">Check Online Certification Id</Link>
           <motion.div
             className="mt-10 min-w-[250px] h-auto min-h-[400px] relative rounded-lg shadow-lg overflow-hidden"
             whileHover={{ scale: 1.01 }}

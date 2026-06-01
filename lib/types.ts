@@ -26,6 +26,7 @@ export interface Certificate {
   topics?: string;
   issuer?: string;
   onlineUrl?:string;
+  desc?:string;
 }
 
 export interface Note {
