@@ -222,11 +222,11 @@ export default function ProfileInfo({
       </motion.h3>
       <motion.div
         variants={containerVariants}
-        className="space-y-4 relative border-l-2 border-amber-600/40 dark:border-gray-700 ml-2 pl-6"
+        className="space-y-4 relative border-l-2 border-gray-300 dark:border-gray-700 ml-2 pl-6"
       >
         <motion.div variants={timelineVariants} className="relative">
           <motion.span
-            className="absolute -left-[31px] top-1.5 w-3 h-3 bg-[#FFDB14] dark:bg-[#FFDB14] rounded-full border-2 border-amber-600 dark:border-gray-900"
+            className="absolute -left-[31px] top-1.5 w-3 h-3 bg-[#FFDB14] dark:bg-[#FFDB14] rounded-full border-2 border-gray-800 dark:border-gray-900"
             whileHover={{ scale: 1.08 }}
             transition={{ type: "spring", stiffness: 300 }}
           />

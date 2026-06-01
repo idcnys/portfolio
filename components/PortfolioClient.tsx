@@ -191,7 +191,7 @@ const EDUCATION_DATA = [
   {
     year: "Present",
     degree: "Bachelor's in CSE",
-    result: "N/A",
+    result: "...",
     institution: "Rajshahi University Of Engineering & Technology, Rajshahi",
   },
   {
@@ -1230,13 +1230,13 @@ const PortfolioClient: React.FC = () => {
                               >
                                 {/* Year Label (Left) */}
                                 <div className="w-[80px] md:w-[120px] pt-6 pr-6 text-right shrink-0">
-                                  <span className="text-[11px] md:text-xs font-black text-gray-400 dark:text-gray-500 abcdefgh abcdefghijtighter">
+                                  <span className="text-[11px] md:text-xs font-black text-gray-800 dark:text-gray-300 abcdefgh abcdefghijtighter">
                                     {item.year}
                                   </span>
                                 </div>
 
                                 {/* Dot */}
-                                <div className="absolute left-[80px] md:left-[120px] top-7 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-amber-600 dark:border-[#FFDB14] bg-gray-950 dark:bg-gray-950 z-10 transition-transform group-hover:scale-125" />
+                                <div className="absolute left-[80px] md:left-[120px] top-7 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-[#FFDB14] dark:border-[#FFDB14] bg-[#fff] dark:bg-gray-950 z-10 transition-transform group-hover:scale-125" />
 
                                 {/* Content (Right) */}
                                 <div className={`flex-1 pt-6 pb-5 pl-5 md:pl-5 ${index !== EDUCATION_DATA.length - 1 ? 'border-b border-dashed border-gray-800 dark:border-gray-800' : ''}`}>
@@ -1244,8 +1244,8 @@ const PortfolioClient: React.FC = () => {
                                   <h4 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 font-pixel">
                                     {item.degree}
                                   </h4>
-                                  <span className="text-sm md:text-base font-medium text-[#fff] bg-[#238cfc] dark:bg-[#fff] pl-2 pr-2 rounded dark:text-[#238cfc] ">
-                                    Result: {item.result}
+                                  <span className="text-sm md:text-base font-medium text-[#fff] bg-[#238cfc]  pl-2 pr-2 rounded ">
+                                    {item.result}
                                   </span>
                                   
                                   <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 font-medium">
