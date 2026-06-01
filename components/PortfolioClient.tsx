@@ -191,16 +191,19 @@ const EDUCATION_DATA = [
   {
     year: "Present",
     degree: "Bachelor's in CSE",
+    result: "N/A",
     institution: "Rajshahi University Of Engineering & Technology, Rajshahi",
   },
   {
     year: "2024",
     degree: "Higher Secondary Certificate (HSC)",
+    result: "GPA 5.00, Board Scholarship",
     institution: "Rajshahi College, Rajshahi",
   },
   {
     year: "2022",
     degree: "Senior School Certificate (SSC)",
+    result: "GPA 5.00, Board Scholarship",
     institution: "Dhunat Govt. N. U. Pilot Model High School, Bogura",
   },
 ];
@@ -1170,8 +1173,8 @@ const PortfolioClient: React.FC = () => {
                         >
                           <div className="space-y-4">
                             <h2 className="text-2xl text-amber-600 dark:text-[#FFDB14] font-playwrite">About Me</h2>
-                            <p className="text-xl md:text-2xl lg:text-2xl text-gray-900 dark:text-gray-100 leading-tight">
-                              {portfolioSettings?.homeSettings?.summary || "I'm a Computer Science student at RUET. I love turning ideas into real products and have a deep interest in Artificial Intelligence and Cyber Security."}
+                            <p className="text-xl md:text-2xl lg:text-2xl text-gray-900 dark:text-gray-100 leading-tight font-pixel">
+                              I'm a Computer Science student at RUET. I love turning ideas into real products and have a deep interest in <span className="text-[#fff] bg-[#238cfc] dark:bg-[#fff] pl-2 pr-2 rounded dark:text-[#238cfc]">Artificial Intelligence</span> and <span className="text-[#fff] bg-[#238cfc] dark:bg-[#fff] pl-2 pr-2 rounded dark:text-[#238cfc]">Cyber Security</span>.
                             </p>
                           </div>
                           <div className="w-16 h-1 bg-amber-600 dark:bg-[#FFDB14] rounded-full" />
@@ -1236,10 +1239,15 @@ const PortfolioClient: React.FC = () => {
                                 <div className="absolute left-[80px] md:left-[120px] top-7 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-amber-600 dark:border-[#FFDB14] bg-gray-950 dark:bg-gray-950 z-10 transition-transform group-hover:scale-125" />
 
                                 {/* Content (Right) */}
-                                <div className={`flex-1 pt-6 pb-10 pl-8 md:pl-12 ${index !== EDUCATION_DATA.length - 1 ? 'border-b border-dashed border-gray-800 dark:border-gray-800' : ''}`}>
-                                  <h4 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 abcdefghijtight">
+                                <div className={`flex-1 pt-6 pb-5 pl-5 md:pl-5 ${index !== EDUCATION_DATA.length - 1 ? 'border-b border-dashed border-gray-800 dark:border-gray-800' : ''}`}>
+
+                                  <h4 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 font-pixel">
                                     {item.degree}
                                   </h4>
+                                  <span className="text-sm md:text-base font-medium text-[#fff] bg-[#238cfc] dark:bg-[#fff] pl-2 pr-2 rounded dark:text-[#238cfc] ">
+                                    Result: {item.result}
+                                  </span>
+                                  
                                   <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 font-medium">
                                     {item.institution}
                                   </p>
@@ -1466,9 +1474,6 @@ const PortfolioClient: React.FC = () => {
                     </motion.div>
                   </motion.section>
                 )}
-
-
-
 
                 {activeTab === "certificates" && (
                   <motion.div
