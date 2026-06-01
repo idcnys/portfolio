@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Jersey_10 } from "next/font/google";
 import { Patrick_Hand } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
@@ -16,6 +16,12 @@ const patrickHand = Patrick_Hand({
   variable: "--font-playwrite",
   weight: "400",
   display: "swap",
+});
+const jersey = Jersey_10({
+  subsets: ["latin"],
+  variable: "--font-pixel",
+  weight:"400",
+  display:"swap",
 });
 
 export const metadata: Metadata = {
@@ -109,7 +115,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${inter.className} ${patrickHand.variable} antialiased`}
+        className={`${inter.className} ${patrickHand.variable} ${jersey.variable} antialiased`}
         style={{
           backgroundColor: "var(--loading-bg, #ffffff)",
           color: "var(--loading-gear-color, #263238)",

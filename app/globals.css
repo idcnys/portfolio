@@ -3,6 +3,7 @@
 @theme {
   --color-*: initial;
   --font-playwrite: "Patrick Hand", cursive;
+  --font-pixel : "Jersey 10",sans-serif;
   --color-gray-50: #f9fafb;
   --color-gray-100: #f3f4f6;
   --color-gray-200: #e5e7eb;
