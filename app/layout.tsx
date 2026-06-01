@@ -60,65 +60,10 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://img.shields.io" crossOrigin="" />
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="" />
         <link rel="preload" href="/avatar.png" as="image" fetchPriority="high" />
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              html, body {
-                --loading-bg: #ffffff;
-                --loading-gear-bg: #fff;
-                --loading-gear-color: #263238;
-                background-color: var(--loading-bg);
-                color: var(--loading-gear-color);
-              }
 
-              .dark,
-              .dark body {
-                --loading-bg: #0f0f0f;
-                --loading-gear-bg: #1f1f1f;
-                --loading-gear-color: #ffffff;
-                background-color: var(--loading-bg);
-                color: var(--loading-gear-color);
-              }
-              
-              .fade-in {
-                opacity: 0;
-                animation: fadeIn 0.6s ease forwards;
-              }
-              
-              @keyframes fadeIn {
-                from { opacity: 0; }
-                to { opacity: 1; }
-              }
-              
-              .custom-context-menu {
-                animation: fadeIn 0.1s ease-out;
-                backdrop-filter: blur(8px);
-                -webkit-backdrop-filter: blur(8px);
-                background: rgba(255, 255, 255, 0.85);
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-              }
-              
-              .dark .custom-context-menu {
-                background: rgba(31, 41, 55, 0.85);
-                border: 1px solid rgba(75, 85, 99, 0.3);
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.2);
-              }
-              
-              .custom-context-menu button:hover {
-                transform: translateX(2px);
-              }
-            `,
-          }}
-        />
       </head>
       <body
-        className={`${inter.className} ${patrickHand.variable} ${jersey.variable} antialiased`}
-        style={{
-          backgroundColor: "var(--loading-bg, #ffffff)",
-          color: "var(--loading-gear-color, #263238)",
-        }}
-      >
+        className={`${inter.className} ${patrickHand.variable} ${jersey.variable} antialiased`}>
         <ThemeProvider>{children}</ThemeProvider>
         <Analytics />
       </body>
