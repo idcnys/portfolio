@@ -53,11 +53,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const themeCookie = (await cookies()).get("theme")?.value;
-  const initialHtmlClass = themeCookie === "light" ? "" : "dark";
 
   return (
-    <html lang="en" className={initialHtmlClass}>
+    <html lang="en" className="dark">
       <head>
         <link rel="preconnect" href="https://img.shields.io" crossOrigin="" />
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="" />
