@@ -73,24 +73,64 @@ export default function TabSwitcher({
     [activeIndex, tabs],
   );
 
+  const [disableMotion, setDisableMotion] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 639px) and (max-height: 700px)");
+    const handleChange = () => setDisableMotion(query.matches);
+
+    handleChange();
+    if (query.addEventListener) {
+      query.addEventListener("change", handleChange);
+    } else {
+      query.addListener(handleChange);
+    }
+
+    return () => {
+      if (query.removeEventListener) {
+        query.removeEventListener("change", handleChange);
+      } else {
+        query.removeListener(handleChange);
+      }
+    };
+  }, []);
+
+  const Container: any = disableMotion ? "div" : motion.div;
+  const containerProps = disableMotion
+    ? {}
+    : {
+        initial: { opacity: 0, y: -20 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.5 },
+      };
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+    <Container
+      {...containerProps}
       className="flex flex-col gap-2 p-2 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm shadow-[0_10px_24px_rgba(15,23,42,0.06)] shrink-0 sticky top-0 z-10 transition-all duration-300 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center"
     >
       <div className="flex w-full min-w-0 items-center gap-2 sm:col-start-1 sm:justify-self-start">
         {showBackButton && onBack && (
-          <motion.button
-            onClick={onBack}
-            className="h-9 px-3 rounded-md bg-white dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
-            whileHover={{ x: -1 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <ArrowLeft className="w-3 h-3" />
-            <span className="text-sm font-semibold">Back</span>
-          </motion.button>
+          disableMotion ? (
+            <button
+              onClick={onBack}
+              className="h-9 px-3 rounded-md bg-white dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+              type="button"
+            >
+              <ArrowLeft className="w-3 h-3" />
+              <span className="text-sm font-semibold">Back</span>
+            </button>
+          ) : (
+            <motion.button
+              onClick={onBack}
+              className="h-9 px-3 rounded-md bg-white dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+              whileHover={{ x: -1 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <ArrowLeft className="w-3 h-3" />
+              <span className="text-sm font-semibold">Back</span>
+            </motion.button>
+          )
         )}
 
         {!showBackButton && (
@@ -106,42 +146,75 @@ export default function TabSwitcher({
             ) : (
               <>
                 <div className="sm:hidden flex items-center gap-2 w-full">
-                  <motion.button
-                    onClick={() => onTabChange(prevTab)}
-                    className="h-10 flex-1 min-w-0 rounded-md bg-gray-50 dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] px-2 text-xs font-semibold abcdefgh abcdefghijwide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
-                    whileTap={{ scale: 0.98 }}
-                    aria-label={`Previous tab: ${prevTab}`}
-                  >
-                    {prevTab}
-                  </motion.button>
+                  {disableMotion ? (
+                    <button
+                      type="button"
+                      onClick={() => onTabChange(prevTab)}
+                      className="h-10 flex-1 min-w-0 rounded-md bg-gray-50 dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] px-2 text-xs font-semibold abcdefgh abcdefghijwide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
+                      aria-label={`Previous tab: ${prevTab}`}
+                    >
+                      {prevTab}
+                    </button>
+                  ) : (
+                    <motion.button
+                      onClick={() => onTabChange(prevTab)}
+                      className="h-10 flex-1 min-w-0 rounded-md bg-gray-50 dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] px-2 text-xs font-semibold abcdefgh abcdefghijwide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
+                      whileTap={{ scale: 0.98 }}
+                      aria-label={`Previous tab: ${prevTab}`}
+                    >
+                      {prevTab}
+                    </motion.button>
+                  )}
 
                   <div className="relative h-10 flex-[1.35] min-w-0 overflow-hidden rounded-md bg-[#FFDB14] shadow-[0_6px_16px_rgba(234,179,8,0.34)]">
-                    <AnimatePresence mode="wait" initial={false} custom={slideDirection}>
-                      <motion.button
-                        key={activeTab}
-                        custom={slideDirection}
-                        variants={mobileActiveTabVariants}
-                        initial="enter"
-                        animate="center"
-                        exit="exit"
-                        transition={{ duration: 0.2, ease: "easeOut" }}
+                    {disableMotion ? (
+                      <button
+                        type="button"
                         className="absolute inset-0 z-10 px-2 text-sm font-bold capitalize text-gray-900 truncate"
                         onClick={() => onTabChange(activeTab)}
                         aria-current="page"
                       >
                         {activeTab}
-                      </motion.button>
-                    </AnimatePresence>
+                      </button>
+                    ) : (
+                      <AnimatePresence mode="wait" initial={false} custom={slideDirection}>
+                        <motion.button
+                          key={activeTab}
+                          custom={slideDirection}
+                          variants={mobileActiveTabVariants}
+                          initial="enter"
+                          animate="center"
+                          exit="exit"
+                          transition={{ duration: 0.2, ease: "easeOut" }}
+                          className="absolute inset-0 z-10 px-2 text-sm font-bold capitalize text-gray-900 truncate"
+                          onClick={() => onTabChange(activeTab)}
+                          aria-current="page"
+                        >
+                          {activeTab}
+                        </motion.button>
+                      </AnimatePresence>
+                    )}
                   </div>
 
-                  <motion.button
-                    onClick={() => onTabChange(nextTab)}
-                    className="h-10 flex-1 min-w-0 rounded-md bg-gray-50 dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] px-2 text-xs font-semibold abcdefgh abcdefghijwide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
-                    whileTap={{ scale: 0.98 }}
-                    aria-label={`Next tab: ${nextTab}`}
-                  >
-                    {nextTab}
-                  </motion.button>
+                  {disableMotion ? (
+                    <button
+                      type="button"
+                      onClick={() => onTabChange(nextTab)}
+                      className="h-10 flex-1 min-w-0 rounded-md bg-gray-50 dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] px-2 text-xs font-semibold abcdefgh abcdefghijwide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
+                      aria-label={`Next tab: ${nextTab}`}
+                    >
+                      {nextTab}
+                    </button>
+                  ) : (
+                    <motion.button
+                      onClick={() => onTabChange(nextTab)}
+                      className="h-10 flex-1 min-w-0 rounded-md bg-gray-50 dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] px-2 text-xs font-semibold abcdefgh abcdefghijwide text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors truncate"
+                      whileTap={{ scale: 0.98 }}
+                      aria-label={`Next tab: ${nextTab}`}
+                    >
+                      {nextTab}
+                    </motion.button>
+                  )}
                 </div>
 
               </>
@@ -154,32 +227,50 @@ export default function TabSwitcher({
         <div className="hidden sm:flex sm:col-start-2 sm:justify-self-center">
           <div className="hidden sm:inline-flex rounded-lg bg-gray-100 dark:bg-gray-800 p-1 shadow-[0_8px_20px_rgba(15,23,42,0.1)] relative">
             {tabs.map((tab) => (
-              <motion.button
-                key={tab}
-                onClick={() => onTabChange(tab)}
-                className={`relative px-6 py-2 text-sm font-bold capitalize transition-colors z-10 ${
-                  activeTab === tab
-                    ? "text-gray-900 dark:text-gray-900"
-                    : "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                }`}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ duration: 0.15, ease: "easeInOut" }}
-              >
-                {activeTab === tab && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-[#FFDB14] rounded-md shadow-md"
-                    transition={{
-                      type: "spring",
-                      stiffness: 500,
-                      damping: 30,
-                      duration: 0.2,
-                    }}
-                  />
-                )}
-                <span className="relative z-10">{tab}</span>
-              </motion.button>
+              disableMotion ? (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => onTabChange(tab)}
+                  className={`relative px-6 py-2 text-sm font-bold capitalize transition-colors z-10 ${
+                    activeTab === tab
+                      ? "text-gray-900 dark:text-gray-900"
+                      : "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  }`}
+                >
+                  {activeTab === tab && (
+                    <div className="absolute inset-0 bg-[#FFDB14] rounded-md shadow-md" />
+                  )}
+                  <span className="relative z-10">{tab}</span>
+                </button>
+              ) : (
+                <motion.button
+                  key={tab}
+                  onClick={() => onTabChange(tab)}
+                  className={`relative px-6 py-2 text-sm font-bold capitalize transition-colors z-10 ${
+                    activeTab === tab
+                      ? "text-gray-900 dark:text-gray-900"
+                      : "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  }`}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ duration: 0.15, ease: "easeInOut" }}
+                >
+                  {activeTab === tab && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute inset-0 bg-[#FFDB14] rounded-md shadow-md"
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 30,
+                        duration: 0.2,
+                      }}
+                    />
+                  )}
+                  <span className="relative z-10">{tab}</span>
+                </motion.button>
+              )
             ))}
           </div>
         </div>
@@ -218,6 +309,6 @@ export default function TabSwitcher({
           {homeActions}
         </div>
       )}
-    </motion.div>
+    </Container>
   );
 }
