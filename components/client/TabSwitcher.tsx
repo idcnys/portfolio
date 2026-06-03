@@ -13,6 +13,7 @@ interface TabSwitcherProps {
   visibleTabs?: TabType[];
   isLoading?: boolean;
   homeActions?: ReactNode;
+  detailActions?: ReactNode;
 }
 
 const TABS: TabType[] = ["home", "certificates", "experience", "projects", "activity", "grind", "skillset"];
@@ -40,6 +41,7 @@ export default function TabSwitcher({
   visibleTabs,
   isLoading = false,
   homeActions,
+  detailActions,
 }: TabSwitcherProps) {
   const tabs = visibleTabs && visibleTabs.length > 0 ? visibleTabs : TABS;
   const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
@@ -190,6 +192,18 @@ export default function TabSwitcher({
             <div className="h-9 w-24 rounded-md bg-gray-200 dark:bg-gray-700" />
             <div className="h-9 w-24 rounded-md bg-gray-200 dark:bg-gray-700" />
           </div>
+        </div>
+      )}
+
+      {showBackButton && detailActions && !isLoading && (
+        <div className="hidden sm:flex sm:col-start-3 sm:justify-self-end sm:justify-end gap-2">
+          {detailActions}
+        </div>
+      )}
+
+      {showBackButton && detailActions && !isLoading && (
+        <div className="flex w-full justify-end gap-2 sm:hidden">
+          {detailActions}
         </div>
       )}
 

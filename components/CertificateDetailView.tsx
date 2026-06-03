@@ -28,7 +28,8 @@ const CertificateDetailView: React.FC<{
         className="flex-1 p-4 md:p-6 flex items-center justify-center"
       >
         <div className="w-full max-w-4xl">
-          <p className="p-2 mb-5">{desc || "Nothing"}</p>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">Viewing certificate</h2>
+          <p className="p-2 mb-5">{desc || "No Description Provided"}</p>
           <div className="grid gap-4 md:grid-cols-3 mb-6">
             <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-950/80 p-4">
               <p className="text-xs  text-gray-500 dark:text-gray-400 mb-2">Course duration</p>
@@ -43,7 +44,7 @@ const CertificateDetailView: React.FC<{
               <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{issuer ?? "N/A"}</p>
             </div>
           </div>
-          <Link href={onlineUrl ?? "#"} className=" text-[#00f] dark:text-[#fff] underline">Check Online Certification Id</Link>
+          <Link href={onlineUrl ?? "#"} className="block text-center text-[#00f] dark:text-[#fff] underline">Check Online Certificate here</Link>
           <motion.div
             className="mt-10 min-w-[250px] h-auto min-h-[400px] relative rounded-lg shadow-lg overflow-hidden"
             whileHover={{ scale: 1.01 }}

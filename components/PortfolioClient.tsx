@@ -571,6 +571,41 @@ const PortfolioClient: React.FC = () => {
   );
   const isDetailView = !!viewingDetail || !!selectedCertificate;
 
+  const currentCertificateIndex = selectedCertificate
+    ? INITIAL_CERTIFICATES.findIndex((cert) => cert.id === selectedCertificate.id)
+    : -1;
+
+  const hasPrevCertificate = currentCertificateIndex > 0;
+  const hasNextCertificate = currentCertificateIndex !== -1 && currentCertificateIndex < INITIAL_CERTIFICATES.length - 1;
+
+  const handlePrevCertificate = () => {
+    if (!hasPrevCertificate) return;
+
+    const prevCert = INITIAL_CERTIFICATES[currentCertificateIndex - 1];
+    setSelectedCertificate(prevCert);
+
+    const mainContentArea = document.querySelector(".md\\:overflow-y-auto");
+    if (mainContentArea) {
+      (mainContentArea as HTMLElement).scrollTo({ top: 0, behavior: "instant" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  };
+
+  const handleNextCertificate = () => {
+    if (!hasNextCertificate) return;
+
+    const nextCert = INITIAL_CERTIFICATES[currentCertificateIndex + 1];
+    setSelectedCertificate(nextCert);
+
+    const mainContentArea = document.querySelector(".md\\:overflow-y-auto");
+    if (mainContentArea) {
+      (mainContentArea as HTMLElement).scrollTo({ top: 0, behavior: "instant" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  };
+
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -1020,6 +1055,28 @@ const PortfolioClient: React.FC = () => {
           onBack={handleBack}
           visibleTabs={visibleTabs}
           isLoading={isTabConfigLoading}
+          detailActions={
+            selectedCertificate && activeTab === "certificates" ? (
+              <>
+                <button
+                  type="button"
+                  onClick={handlePrevCertificate}
+                  disabled={!hasPrevCertificate}
+                  className="h-9 px-3 rounded-md bg-white dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:cursor-not-allowed disabled:text-gray-400 dark:disabled:text-gray-500 disabled:hover:bg-transparent"
+                >
+                  {"<- Previous"}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNextCertificate}
+                  disabled={!hasNextCertificate}
+                  className="h-9 px-3 rounded-md bg-white dark:bg-gray-800 shadow-[0_4px_14px_rgba(15,23,42,0.08)] text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:cursor-not-allowed disabled:text-gray-400 dark:disabled:text-gray-500 disabled:hover:bg-transparent"
+                >
+                  {"Next ->"}
+                </button>
+              </>
+            ) : undefined
+          }
           homeActions={
             activeTab === "home" ? (
               <>
@@ -1430,15 +1487,15 @@ const PortfolioClient: React.FC = () => {
                               }`}
                             >
                               <header className="mb-2 space-y-1">
-                                <time className="block text-[11px] font-medium uppercase abcdefgh abcdefghijwide text-gray-500 dark:text-gray-400">
+                                <time className="block text-[11px] font-medium text-gray-500 dark:text-gray-400">
                                   {item.period}
                                 </time>
                                 <h3 className="text-base sm:text-[17px] font-semibold text-gray-900 dark:text-gray-100 leading-snug">
                                   {item.role}
                                 </h3>
-                                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                                <span className=" text-[#fff]  bg-[#238cfc] p-1 rounded">
                                   {item.company}
-                                </p>
+                                </span>
                               </header>
 
                               <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 items-start">
