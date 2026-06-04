@@ -89,81 +89,81 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4 transition-colors">
-      <div className="max-w-md w-full bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-4 py-16 transition-colors">
+      <div className="max-w-md w-full bg-white dark:bg-slate-950 border border-slate-200/70 dark:border-slate-800/70 shadow-sm p-8 rounded-[28px]">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-[#FFDB14] rounded-2xl flex items-center justify-center font-black text-2xl text-gray-900 shadow-lg ring-4 ring-yellow-400/20 mx-auto mb-4">
-            B
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+       
+          <h1 className="text-3xl font-semibold text-slate-900 dark:text-white">
             Admin Login
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-2">
-            Enter credentials to access dashboard
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+            Sign in to manage your dashboard.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm font-medium flex items-center">
-              <AlertTriangle className="w-4 h-4 mr-2" />
+            <div className="bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-300 p-3 rounded-2xl text-sm flex items-center gap-2 ring-1 ring-rose-200/70 dark:ring-rose-800/70">
+              <AlertTriangle className="w-4 h-4" />
               {error}
             </div>
           )}
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">
               Username
             </label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#FFDB14] focus:border-transparent outline-none transition-all"
+              className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-4 py-3 focus:border-slate-400 dark:focus:border-slate-600 focus:ring-2 focus:ring-slate-300/50 outline-none transition"
               placeholder="Enter username"
               required
               disabled={isLoading}
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">
               Password
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#FFDB14] focus:border-transparent outline-none transition-all"
+              className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-4 py-3 focus:border-slate-400 dark:focus:border-slate-600 focus:ring-2 focus:ring-slate-300/50 outline-none transition"
               placeholder="Enter password"
               required
               disabled={isLoading}
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              Captcha Verification
-            </label>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-black text-lg abcdefghijwide min-w-[120px] text-center">
+          <div className="space-y-3">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between gap-3">
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">
+                  Captcha Verification
+                </label>
+                <button
+                  type="button"
+                  onClick={() => void regenerateCaptcha()}
+                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-200 px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-900 transition"
+                  aria-label="Refresh captcha"
+                  disabled={isLoading}
+                >
+                  <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                </button>
+              </div>
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm font-semibold px-4 py-3 text-center">
                 {captchaQuestion}
               </div>
-              <button
-                type="button"
-                onClick={() => void regenerateCaptcha()}
-                className="px-3 py-3 rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                aria-label="Refresh captcha"
-                disabled={isLoading}
-              >
-                <RefreshCw className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
-              </button>
             </div>
             <input
               type="number"
               value={captchaInput}
               onChange={(e) => setCaptchaInput(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#FFDB14] focus:border-transparent outline-none transition-all"
+              className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-4 py-3 focus:border-slate-400 dark:focus:border-slate-600 focus:ring-2 focus:ring-slate-300/50 outline-none transition"
               placeholder="Enter captcha answer"
               required
               disabled={isLoading}
@@ -173,28 +173,28 @@ const Login: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-[#FFDB14] text-gray-900 font-bold py-4 rounded-xl hover:bg-[#e6c512] transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            className="w-full rounded-2xl bg-slate-950 text-white font-semibold py-3 hover:bg-slate-800 transition disabled:cursor-not-allowed disabled:opacity-60 flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                Signing In...
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Signing in...
               </>
             ) : (
               <>
-                <LogIn className="w-5 h-5 mr-2" />
-                Sign In
+                <LogIn className="w-5 h-5" />
+                Sign in
               </>
             )}
           </button>
         </form>
 
-        <div className="mt-8 text-center">
+        <div className="mt-8 text-center text-sm text-slate-500 dark:text-slate-400">
           <Link
             href="/"
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-sm flex items-center justify-center"
+            className="inline-flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-100 transition"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="w-4 h-4" />
             Back to Portfolio
           </Link>
         </div>

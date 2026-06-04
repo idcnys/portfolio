@@ -1493,7 +1493,7 @@ const PortfolioClient: React.FC = () => {
                                 <h3 className="text-base sm:text-[17px] font-semibold text-gray-900 dark:text-gray-100 leading-snug">
                                   {item.role}
                                 </h3>
-                                <span className=" text-[#fff]  bg-[#238cfc] p-1 rounded">
+                                <span className=" text-[#fff]  bg-[#238cfc] pl-2 pr-2 rounded">
                                   {item.company}
                                 </span>
                               </header>
