@@ -1404,7 +1404,9 @@ const PortfolioClient: React.FC = () => {
                               <span className="">idcnys</span>
                             </a>
                           </div>
-                        </div>
+                          
+
+                           </div>
 
                         <div className="flex flex-col items-center gap-1">
                           <p className="opacity-80 abcdefghijwide">

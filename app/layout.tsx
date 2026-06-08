@@ -59,6 +59,7 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://img.shields.io" crossOrigin="" />
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="" />
         <link rel="preload" href="/avatar.png" as="image" fetchPriority="high" />
+                    
       </head>
       <body
         className={`${inter.className} ${patrickHand.variable} ${jersey.variable} antialiased`}>

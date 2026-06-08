@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const { execSync } = require('child_process');
+const { hostname } = require('os');
 
 const getCommitId = () => {
   try {
@@ -25,17 +26,23 @@ const nextConfig = {
       { protocol: "https", hostname: "fastly.picsum.photos" },
       { protocol: "https", hostname: "img.freepik.com" },
       { protocol: "https", hostname: "encrypted-tbn0.gstatic.com" },
+      {protocol:"https", hostname: "app.cal.com"},
+      {protocol:"https", hostname: "va.vercel-scripts.com"},
+     
     ],
   },
   async headers() {
     const csp = [
       "default-src 'self'",
+      // 1. Added Powr.io to script-src
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.cal.com https://*.firebaseio.com https://va.vercel-scripts.com",
+      // 2. Added Powr.io to script-src-elem
       "script-src-elem 'self' 'unsafe-inline' https://app.cal.com https://*.firebaseio.com https://va.vercel-scripts.com",
       "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com",
       "img-src 'self' data: blob: https:",
       "font-src 'self' data: https://cdnjs.cloudflare.com https://fonts.gstatic.com",
-      "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebaseapp.com https://*.gstatic.com https://app.cal.com https://codeforces.com https://api.github.com https://img.shields.io https://api.cloudinary.com",
+      // 3. Added Powr.io to connect-src so the widget can fetch data/assets
+      "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebaseapp.com https://*.gstatic.com https://app.cal.com https://codeforces.com https://api.github.com https://img.shields.io https://api.cloudinary.com https://www.powr.io https://*.powr.io",
       "frame-src 'self' https:",
       "object-src 'none'",
       "base-uri 'self'",
