@@ -1032,6 +1032,8 @@ const PortfolioClient: React.FC = () => {
         <ProfileInfo forceStatic={effectivelyAnimated || activeTab === "home"} isEdgeToEdge={isEdgeToEdge} />
       </motion.div>
 
+      
+
       <motion.div
         layout
         initial={!effectivelyAnimated && activeTab !== "home" ? { opacity: 0, x: 50 } : false}
@@ -1048,7 +1050,15 @@ const PortfolioClient: React.FC = () => {
           activeTab === "home" ? "md:-ml-[380px]" : "ml-0"
         }`}
       >
-        <TabSwitcher
+       
+
+        <div 
+          ref={scrollContainerRef}
+          className="flex-1 h-auto md:overflow-y-auto custom-scrollbar relative overscroll-none"
+        >
+
+
+           <TabSwitcher
           activeTab={activeTab}
           onTabChange={handleTabChange}
           showBackButton={isDetailView}
@@ -1130,10 +1140,7 @@ const PortfolioClient: React.FC = () => {
           }
         />
 
-        <div 
-          ref={scrollContainerRef}
-          className="flex-1 h-auto md:overflow-y-auto custom-scrollbar relative overscroll-none"
-        >
+          
           <AnimatePresence mode="wait" initial={false}>
             {viewingDetail ? (
               <motion.div
@@ -1182,240 +1189,240 @@ const PortfolioClient: React.FC = () => {
                     animate="show"
                     className={`${isEdgeToEdge ? "" : "-mx-4 md:-mx-6 -mt-4 md:-mt-6 -mb-4 md:-mb-6"} relative`}
                   >
-                    {/* Hero Section */}
-                    <section className="sticky top-0 min-h-screen flex flex-col justify-center py-20 px-4 bg-gray-100 dark:bg-gray-950 z-[1] overflow-hidden">
-                      {mounted && <MatrixRain startDelayMs={3200} revealDirection="ltr" />}
-                      <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
-                        <motion.div
-                          variants={avatarVariants}
-                          className="w-40 h-40 md:w-56 md:h-56 mx-auto rounded-full overflow-hidden border-4 border-amber-600 dark:border-[#FFDB14] shadow-2xl relative"
-                          whileHover={{ scale: 1.05, rotate: 2 }}
-                        >
-                          <Image
-                            src="/avatar.png"
-                            alt="Bitto Saha"
-                            width={224}
-                            height={224}
-                            sizes="(max-width: 768px) 160px, 224px"
-                            className="w-full h-full object-cover"
-                            priority
-                            fetchPriority="high"
-                          />
-                        </motion.div>
-                        
-                        <div className="space-y-4">
-                          <motion.h1 
-                            variants={cardVariants}
-                            className="text-4xl md:text-6xl font-black text-gray-900 dark:text-gray-100 abcdefghijtight"
-                          >
-                            Bitto Saha
-                          </motion.h1>
-                          <motion.div 
-                            variants={cardVariants}
-                            className="text-xl md:text-2xl font-medium text-amber-600 dark:text-[#FFDB14]"
-                          >
-                            <AppearingTextAnimation forceStatic={true} className="justify-center" />
-                          </motion.div>
-                        </div>
+                    
+                   {/* Hero Section */}
+<section className="sticky top-0 min-h-screen w-full flex flex-col justify-center py-12 md:py-20 px-4 bg-gray-100 dark:bg-gray-950 z-[1] shrink-0 overflow-hidden">
+  {mounted && <MatrixRain startDelayMs={3200} revealDirection="ltr" />}
+  <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
+    <motion.div
+      variants={avatarVariants}
+      className="w-40 h-40 md:w-56 md:h-56 mx-auto rounded-full overflow-hidden border-4 border-amber-600 dark:border-[#FFDB14] shadow-2xl relative"
+      whileHover={{ scale: 1.05, rotate: 2 }}
+    >
+      <Image
+        src="/avatar.png"
+        alt="Bitto Saha"
+        width={224}
+        height={224}
+        sizes="(max-width: 768px) 160px, 224px"
+        className="w-full h-full object-cover"
+        priority
+        fetchPriority="high"
+      />
+    </motion.div>
+    
+    <div className="space-y-4">
+      <motion.h1 
+        variants={cardVariants}
+        className="text-4xl md:text-6xl font-black text-gray-900 dark:text-gray-100 tracking-tight"
+      >
+        Bitto Saha
+      </motion.h1>
+      <motion.div 
+        variants={cardVariants}
+        className="text-xl md:text-2xl font-medium text-amber-600 dark:text-[#FFDB14]"
+      >
+        <AppearingTextAnimation forceStatic={true} className="justify-center" />
+      </motion.div>
+    </div>
 
-                        <motion.div variants={cardVariants} className="flex justify-center">
-                          <ActionButtons forceStatic={true} />
-                        </motion.div>
-                      </div>
-                    </section>
+    <motion.div variants={cardVariants} className="flex justify-center">
+      <ActionButtons forceStatic={true} />
+    </motion.div>
+  </div>
+</section>
 
-                    {/* About & Tech Stack Section */}
-                    <section className="sticky top-0 min-h-screen flex flex-col items-stretch bg-gray-50 dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 z-[2] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)] overflow-hidden">
-                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2">
-                        {/* About Side */}
-                        <motion.div 
-                          variants={cardVariants}
-                          className="flex flex-col justify-center p-8 md:p-12 lg:p-20 space-y-8 bg-gray-50/50 dark:bg-gray-800/10"
-                        >
-                          <div className="space-y-4">
-                            <h2 className="text-2xl text-amber-600 dark:text-[#FFDB14] font-playwrite">About Me</h2>
-                            <p className="text-xl md:text-2xl lg:text-2xl text-gray-900 dark:text-gray-100 leading-tight font-pixel">
-                              I'm a Computer Science student at RUET. I love turning ideas into real products and have a deep interest in <span className="text-[#fff] bg-[#238cfc] dark:bg-[#fff] pl-2 pr-2 rounded dark:text-[#238cfc]">Artificial Intelligence</span> and <span className="text-[#fff] bg-[#238cfc] dark:bg-[#fff] pl-2 pr-2 rounded dark:text-[#238cfc]">Cyber Security</span>.
-                            </p>
-                          </div>
-                          <div className="w-16 h-1 bg-amber-600 dark:bg-[#FFDB14] rounded-full" />
-                        </motion.div>
+{/* About & Tech Stack Section */}
+<section className="sticky top-0 min-h-screen lg:h-screen w-full flex flex-col shrink-0 bg-gray-50 dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 z-[2] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)] overflow-y-auto lg:overflow-hidden">
+  <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 h-full">
+    {/* About Side */}
+    <motion.div 
+      variants={cardVariants}
+      className="flex flex-col justify-center p-6 md:p-10 lg:p-16 space-y-6 bg-gray-50/50 dark:bg-gray-800/10"
+    >
+      <div className="space-y-4">
+        <h2 className="text-2xl text-amber-600 dark:text-[#FFDB14] font-playwrite">About Me</h2>
+        <p className="text-lg md:text-xl lg:text-2xl text-gray-900 dark:text-gray-100 leading-snug font-pixel">
+          I'm a Computer Science student at RUET. I love turning ideas into real products and have a deep interest in <span className="text-[#fff] bg-[#238cfc] dark:bg-[#fff] px-2 rounded dark:text-[#238cfc]">Artificial Intelligence</span> and <span className="text-[#fff] bg-[#238cfc] dark:bg-[#fff] px-2 rounded dark:text-[#238cfc]">Cyber Security</span>.
+        </p>
+      </div>
+      <div className="w-16 h-1 bg-amber-600 dark:bg-[#FFDB14] rounded-full" />
+    </motion.div>
 
-                        {/* Tech Stack Side */}
-                        <motion.div 
-                          variants={cardVariants}
-                          className="flex flex-col justify-center p-8 md:p-12 lg:p-20 space-y-10 bg-gray-50 dark:bg-gray-950"
-                        >
-                           <h2 className="text-2xl text-amber-600 dark:text-[#FFDB14] font-playwrite">Skillset</h2>
-                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                              {SKILLSET_GROUPS.map(group => (
-                                <div key={group.id} className="space-y-3">
-                                  <h3 className="text-xs font-black text-amber-600 dark:text-[#FFDB14] abcdefgh abcdefghijwidest border-b border-gray-100 dark:border-gray-800 pb-2">{group.title}</h3>
-                                  <div className="flex flex-wrap gap-2">
-                                    {group.badges.map(badge => (
-                                      <span key={badge.label} className="px-2.5 py-1 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-md text-[10px] md:text-xs font-bold text-gray-700 dark:text-gray-300 shadow-sm">
-                                        {badge.label}
-                                      </span>
-                                    ))}
-                                  </div>
-                                </div>
-                              ))}
-                           </div>
-                        </motion.div>
-                      </div>
-                    </section>
+    {/* Tech Stack Side */}
+    <motion.div 
+      variants={cardVariants}
+      className="flex flex-col justify-center p-6 md:p-10 lg:p-16 space-y-8 bg-gray-50 dark:bg-gray-950"
+    >
+      <h2 className="text-2xl text-amber-600 dark:text-[#FFDB14] font-playwrite">Skillset</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
+        {SKILLSET_GROUPS.map(group => (
+          <div key={group.id} className="space-y-2 md:space-y-3">
+            <h3 className="text-xs font-black text-amber-600 dark:text-[#FFDB14] tracking-widest border-b border-gray-100 dark:border-gray-800 pb-2">{group.title}</h3>
+            <div className="flex flex-wrap gap-2">
+              {group.badges.map(badge => (
+                <span key={badge.label} className="px-2.5 py-1 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-md text-[10px] md:text-xs font-bold text-gray-700 dark:text-gray-300 shadow-sm">
+                  {badge.label}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  </div>
+</section>
 
-                    {/* Education Section */}
-                    <section className="sticky top-0 min-h-screen flex flex-col justify-center py-12 px-4 bg-gray-50 dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 z-[3] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)]">
-                      <div className="max-w-4xl mx-auto w-full space-y-12">
-                        <motion.h3 
-                          variants={cardVariants}
-                          className="text-2xl text-center text-amber-600 dark:text-[#FFDB14] font-playwrite mb-4"
-                        >
-                          Education Journey
-                        </motion.h3>
-                        
-                        <div className="relative max-w-3xl mx-auto">
-                          {/* Vertical Line */}
-                          <div className="absolute left-[80px] md:left-[120px] top-0 bottom-0 w-[2px] bg-[#000]/30 dark:bg-[#FFDB14]/30" />
-                          
-                          <div className="space-y-0 relative">
-                            {EDUCATION_DATA.map((item, index) => (
-                              <motion.div
-                                key={index}
-                                initial={{ opacity: 0, x: 20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true, margin: "-50px" }}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                className="relative flex group"
-                              >
-                                {/* Year Label (Left) */}
-                                <div className="w-[80px] md:w-[120px] pt-6 pr-6 text-right shrink-0">
-                                  <span className="text-[11px] md:text-xs font-black text-gray-800 dark:text-gray-300 abcdefgh abcdefghijtighter">
-                                    {item.year}
-                                  </span>
-                                </div>
+{/* Education Section */}
+<section className="sticky top-0 min-h-screen lg:h-screen w-full flex flex-col justify-center py-12 px-4 shrink-0 bg-gray-50 dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 z-[3] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)] overflow-y-auto lg:overflow-hidden">
+  <div className="max-w-4xl mx-auto w-full space-y-8 md:space-y-12 my-auto">
+    <motion.h3 
+      variants={cardVariants}
+      className="text-2xl text-center text-amber-600 dark:text-[#FFDB14] font-playwrite mb-4"
+    >
+      Education Journey
+    </motion.h3>
+    
+    <div className="relative max-w-3xl mx-auto">
+      {/* Vertical Line */}
+      <div className="absolute left-[80px] md:left-[120px] top-0 bottom-0 w-[2px] bg-[#000]/30 dark:bg-[#FFDB14]/30" />
+      
+      <div className="space-y-0 relative">
+        {EDUCATION_DATA.map((item, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            className="relative flex group"
+          >
+            {/* Year Label (Left) */}
+            <div className="w-[80px] md:w-[120px] pt-4 md:pt-6 pr-4 md:pr-6 text-right shrink-0">
+              <span className="text-[11px] md:text-xs font-black text-gray-800 dark:text-gray-300 tracking-tighter">
+                {item.year}
+              </span>
+            </div>
 
-                                {/* Dot */}
-                                <div className="absolute left-[80px] md:left-[120px] top-7 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-[#FFDB14] dark:border-[#FFDB14] bg-[#fff] dark:bg-gray-950 z-10 transition-transform group-hover:scale-125" />
+            {/* Dot */}
+            <div className="absolute left-[80px] md:left-[120px] top-5 md:top-7 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-[#FFDB14] dark:border-[#FFDB14] bg-[#fff] dark:bg-gray-950 z-10 transition-transform group-hover:scale-125" />
 
-                                {/* Content (Right) */}
-                                <div className={`flex-1 pt-6 pb-5 pl-5 md:pl-5 ${index !== EDUCATION_DATA.length - 1 ? 'border-b border-dashed border-gray-800 dark:border-gray-800' : ''}`}>
+            {/* Content (Right) */}
+            <div className={`flex-1 pt-4 md:pt-6 pb-4 md:pb-5 pl-4 md:pl-5 ${index !== EDUCATION_DATA.length - 1 ? 'border-b border-dashed border-gray-800 dark:border-gray-800' : ''}`}>
+              <h4 className="text-lg md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1 md:mb-2 font-pixel">
+                {item.degree}
+              </h4>
+              <span className="text-xs md:text-base font-medium text-[#fff] bg-[#238cfc] px-2 rounded inline-block mb-1">
+                {item.result}
+              </span>
+              
+              <p className="text-xs md:text-base text-gray-500 dark:text-gray-400 font-medium">
+                {item.institution}
+              </p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
 
-                                  <h4 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 font-pixel">
-                                    {item.degree}
-                                  </h4>
-                                  <span className="text-sm md:text-base font-medium text-[#fff] bg-[#238cfc]  pl-2 pr-2 rounded ">
-                                    {item.result}
-                                  </span>
-                                  
-                                  <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 font-medium">
-                                    {item.institution}
-                                  </p>
-                                </div>
-                              </motion.div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </section>
+{/* Connect Section */}
+<section className="sticky top-0 min-h-screen lg:h-screen w-full flex flex-col justify-between pt-12 md:pt-20 pb-12 px-4 shrink-0 bg-gray-50 dark:bg-gray-950 border-t border-[#FFDB14]/20 z-[4] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)] overflow-hidden">
+  <div className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 my-auto">
+    <div className="space-y-3 md:space-y-4">
+      <h2 className="text-xl md:text-2xl text-amber-600 dark:text-[#FFDB14] font-playwrite">Let's Connect</h2>
+      <p className="text-2xl md:text-5xl font-pixel font-black text-gray-900 dark:text-gray-100">
+        Let’s connect and channel curiosity into cutting-edge <span className="text-[#1480FF] dark:text-[#FFDB14]">solutions.</span>
+      </p>
+    </div>
+    <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+      {[
+        { Icon: GithubIcon, label: "GitHub", url: "https://github.com/idcnys" },
+        { Icon: LinkedinIcon, label: "LinkedIn", url: "https://linkedin.com/in/bittosaha" },
+        { Icon: TwitterIcon, label: "Twitter", url: "https://twitter.com/idcnys" },
+      ].map((social) => (
+        <motion.a
+          key={social.label}
+          href={social.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          whileHover={{ scale: 1.02 }}
+          className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-md bg-transparent border border-transparent text-sm font-semibold text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-gray-200 dark:hover:border-gray-700"
+        >
+          <social.Icon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+          <span className="leading-none">{social.label}</span>
+        </motion.a>
+      ))}
+    </div>
+  </div>
 
-                    {/* Connect Section */}
-                    <section className="sticky top-0 min-h-screen flex flex-col justify-start pt-16 md:pt-24 pb-20 px-4 bg-gray-50 dark:bg-gray-950 border-t border-[#FFDB14]/20 z-[4] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)]">
-                      <div className="max-w-4xl mx-auto text-center space-y-8 md:space-y-10">
-                        <div className="space-y-3 md:space-y-4 mt-20">
-                          <h2 className="text-xl md:text-2xl text-amber-600 dark:text-[#FFDB14] font-playwrite">Let's Connect</h2>
-                          <p className="text-2xl md:text-5xl font-pixel font-black text-gray-900 dark:text-gray-100">
-                            Let’s connect and channel curiosity into cutting-edge <span className="text-[#1480FF] dark:text-[#FFDB14]">solutions.</span>
-                          </p>
-                        </div>
-                        <div className="flex flex-wrap justify-center gap-3 md:gap-4">
-                          {[
-                            { Icon: GithubIcon, label: "GitHub", url: "https://github.com/idcnys" },
-                            { Icon: LinkedinIcon, label: "LinkedIn", url: "https://linkedin.com/in/bittosaha" },
-                            { Icon: TwitterIcon, label: "Twitter", url: "https://twitter.com/idcnys" },
-                          ].map((social) => (
-                            <motion.a
-                              key={social.label}
-                              href={social.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              whileHover={{ scale: 1.02 }}
-                              className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-md bg-transparent border border-transparent text-sm font-semibold text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-gray-200 dark:hover:border-gray-700"
-                            >
-                              <social.Icon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                              <span className="leading-none">{social.label}</span>
-                            </motion.a>
-                          ))}
-                        </div>
-                      </div>
+  {/* Bottom Container: Tech Marquee & Footer Info */}
+  <div className="w-full space-y-6 pt-6">
+    {/* Tech Marquee */}
+    <div className="w-full overflow-hidden border-y border-gray-100/50 dark:border-gray-800/50 bg-gray-50/30 dark:bg-gray-900/20 backdrop-blur-sm py-3 pointer-events-none">
+      <div className="text-center mb-2">
+        <p className="text-xs md:text-sm text-amber-600 dark:text-[#FFDB14] font-playwrite opacity-90">
+          Technologies powering this website
+        </p>
+      </div>
+      <div className="animate-marquee whitespace-nowrap flex items-center">
+        {[...TECH_LOGOS, ...TECH_LOGOS].map((logo, index) => (
+          <img 
+            key={`${logo.name}-${index}`} 
+            src={logo.url} 
+            alt={logo.name}
+            className="h-6 md:h-8 object-contain opacity-100 mx-8 md:mx-12"
+          />
+        ))}
+      </div>
+    </div>
 
-                      {/* Tech Marquee */}
-                      <div className="absolute bottom-32 left-0 right-0 overflow-hidden border-y border-gray-100/50 dark:border-gray-800/50 bg-gray-50/30 dark:bg-gray-900/20 backdrop-blur-sm py-4 pointer-events-none">
-                        <div className="text-center mb-4">
-                          <p className="text-sm md:text-base text-amber-600 dark:text-[#FFDB14] font-playwrite opacity-90">
-                            Technologies powering this website
-                          </p>
-                        </div>
-                        <div className="animate-marquee whitespace-nowrap flex items-center">
-                          {[...TECH_LOGOS, ...TECH_LOGOS].map((logo, index) => (
-                            <img 
-                              key={`${logo.name}-${index}`} 
-                              src={logo.url} 
-                              alt={logo.name}
-                              className="h-6 md:h-8 object-contain opacity-100 mx-8 md:mx-12"
-                            />
-                          ))}
-                        </div>
-                      </div>
+    {/* Footer Info */}
+    <div className="w-full px-4 flex flex-col items-center gap-3 text-[10px] md:text-xs font-medium text-gray-400 dark:text-gray-500">
+      <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2">
+        <div className="flex items-center gap-2">
+          <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="tracking-widest text-[9px]">System Operational</span>
+        </div>
+        <span className="hidden md:block w-px h-3 bg-gray-200 dark:bg-gray-800" />
+        <div className="flex items-center gap-1.5">
+          <GitBranch className="w-3 h-3 opacity-70" />
+          <span className="font-mono">v{process.env.NEXT_PUBLIC_COMMIT_ID || "dev"}</span>
+        </div>
+        <span className="hidden md:block w-px h-3 bg-gray-200 dark:bg-gray-800" />
+        <div className="flex items-center gap-1.5">
+          <Clock className="w-3 h-3 opacity-70" />
+          <span>Deployed {mounted ? getRelativeTime(process.env.NEXT_PUBLIC_BUILD_TIME) : "Just now"}</span>
+        </div>
+        <span className="hidden md:block w-px h-3 bg-gray-200 dark:bg-gray-800" />
+        <div className="flex items-center gap-1.5">
+          <GitBranch className="w-3 h-3 opacity-70" />
+          <span>main</span>
+        </div>
+        <span className="hidden md:block w-px h-3 bg-gray-200 dark:bg-gray-800" />
+        <div className="flex items-center gap-1.5">
+          <a
+            href="https://github.com/idcnys"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            title="GitHub: idcnys"
+          >
+            <UserIcon className="w-3 h-3 opacity-70" />
+            <span>idcnys</span>
+          </a>
+        </div>
+      </div>
 
-                      {/* Footer Info */}
-                      <div className="absolute bottom-6 left-0 right-0 px-4 flex flex-col items-center gap-3 text-[10px] md:text-xs font-medium text-gray-400 dark:text-gray-500">
-                        <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2">
-                          <div className="flex items-center gap-2">
-                            <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                            <span className="abcdefgh abcdefghijwidest text-[9px]">System Operational</span>
-                          </div>
-                          <span className="hidden md:block w-px h-3 bg-gray-200 dark:bg-gray-800" />
-                          <div className="flex items-center gap-1.5">
-                            <GitBranch className="w-3 h-3 opacity-70" />
-                            <span className="font-mono">v{process.env.NEXT_PUBLIC_COMMIT_ID || "dev"}</span>
-                          </div>
-                          <span className="hidden md:block w-px h-3 bg-gray-200 dark:bg-gray-800" />
-                          <div className="flex items-center gap-1.5">
-                            <Clock className="w-3 h-3 opacity-70" />
-                            <span>Deployed {mounted ? getRelativeTime(process.env.NEXT_PUBLIC_BUILD_TIME) : "Just now"}</span>
-                          </div>
-                          <span className="hidden md:block w-px h-3 bg-gray-200 dark:bg-gray-800" />
-                          <div className="flex items-center gap-1.5">
-                            <GitBranch className="w-3 h-3 opacity-70" />
-                            <span>main</span>
-                          </div>
-                          <span className="hidden md:block w-px h-3 bg-gray-200 dark:bg-gray-800" />
-                          <div className="flex items-center gap-1.5">
-                            <a
-                              href="https://github.com/idcnys"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-1 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
-                              title="GitHub: idcnys"
-                            >
-                              <UserIcon className="w-3 h-3 opacity-70" />
-                              <span className="">idcnys</span>
-                            </a>
-                          </div>
-                          
-
-                           </div>
-
-                        <div className="flex flex-col items-center gap-1">
-                          <p className="opacity-80 abcdefghijwide">
-                            &copy; {mounted ? new Date().getFullYear() : "2024"} <span className="text-gray-600 dark:text-gray-300">Bitto Saha</span> — Built with Code & Coffee
-                          </p>
-                          
-                        </div>
-                      </div>
-                    </section>
+      <div className="flex flex-col items-center gap-1">
+        <p className="opacity-80 tracking-wide">
+          &copy; {mounted ? new Date().getFullYear() : "2024"} <span className="text-gray-600 dark:text-gray-300">Bitto Saha</span> — Built with Code & Coffee
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
                   </motion.div>
                 )}
 
