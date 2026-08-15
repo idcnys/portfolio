@@ -1,6 +1,6 @@
-# Bitto Saha — Portfolio
+<div align="center">
 
-A personal portfolio and blog built with **Next.js 16** (App Router), featuring animated tab navigation, a full admin CMS with rich-text editing, and Firebase-backed content management.
+  # Bitto Saha — Portfolio
 
 🔗 **Live:** [bitto.is-a.dev](https://bitto.is-a.dev)
 
@@ -9,6 +9,11 @@ A personal portfolio and blog built with **Next.js 16** (App Router), featuring 
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=flat&logo=tailwind-css)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat&logo=typescript)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat)
+
+</div>
+
+A personal portfolio and blog built with **Next.js 16** (App Router), featuring animated tab navigation, a full admin CMS with rich-text editing, and Firebase-backed content management.
+
 
 ---
 
