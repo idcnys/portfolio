@@ -7,6 +7,7 @@ import { motion, AnimatePresence, LazyMotion, domAnimation } from "framer-motion
 import { Certificate, ContentItem, TabType, PortfolioSettings, GrindCounterCard, GrindStatRow, ExperienceItem } from "../lib/types";
 import { INITIAL_CERTIFICATES } from "../lib/constants";
 import { incrementViews, getPortfolioSettings } from "../lib/firebase";
+import { useTheme } from "../lib/context/ThemeContext";
 import { useContent } from "../lib/context/ContentContext";
 import { Maximize2, Minimize2 } from "lucide-react";
 
@@ -61,6 +62,8 @@ const incrementViewsIfUnique = async (itemId: string): Promise<void> => {
 
 const PortfolioClient: React.FC = () => {
   const { projects, activities, isLoading } = useContent();
+  const { isTransitioning } = useTheme();
+  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -78,7 +81,7 @@ const PortfolioClient: React.FC = () => {
   const [projectViewMode, setProjectViewMode] = useState<ProjectViewMode>("card");
   const [portfolioSettings, setPortfolioSettings] = useState<PortfolioSettings | null>(null);
   const [isTabConfigLoading, setIsTabConfigLoading] = useState(true);
-
+  const [isNavigating, setIsNavigating] = useState(false);
   const [hasEntranceAnimated, setHasEntranceAnimated] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isEdgeToEdge, setIsEdgeToEdge] = useState(true);
@@ -119,7 +122,14 @@ const PortfolioClient: React.FC = () => {
   const paginatedProjects = useMemo(() => filteredProjects.slice(0, projectsPage * ITEMS_PER_PAGE), [filteredProjects, projectsPage]);
   const paginatedActivities = useMemo(() => activities.slice(0, activitiesPage * ITEMS_PER_PAGE), [activities, activitiesPage]);
 
+  const contentByTab = useMemo<Record<TabType, ContentItem[]>>(() => ({
+    home: [], certificates: [], experience: [], projects, activity: activities, grind: [], skillset: [],
+  }), [projects, activities]);
 
+  const featuredProjects = useMemo(() => {
+    const ids = portfolioSettings?.homeSettings?.featuredProjectIds || [];
+    return projects.filter((p) => ids.includes(p.id)).slice(0, 2);
+  }, [projects, portfolioSettings?.homeSettings?.featuredProjectIds]);
 
   const currentCertificateIndex = selectedCertificate
     ? INITIAL_CERTIFICATES.findIndex((cert) => cert.id === selectedCertificate.id)

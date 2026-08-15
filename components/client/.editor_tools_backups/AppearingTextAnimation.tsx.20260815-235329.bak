@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function AppearingTextAnimation({ forceStatic: _forceStatic = false, className = "" }: { forceStatic?: boolean, className?: string }) {
+export default function AppearingTextAnimation({ forceStatic = false, className = "" }: { forceStatic?: boolean, className?: string }) {
   const titles = [
     "Undergrad Student",
     "Problem Solver",

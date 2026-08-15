@@ -11,7 +11,7 @@ import {
   subscribeToPortfolioSettings,
   subscribeToMedia,
 } from "../../../lib/firebase";
-import { ThemeProvider } from "../../../lib/context/ThemeContext";
+import { ThemeProvider, useTheme } from "../../../lib/context/ThemeContext";
 import ThemeToggle from "../../../components/client/ThemeToggle";
 import NotepadTab from "../../../components/admin/NotepadTab";
 import PublishContentTab from "../../../components/admin/PublishContentTab";
@@ -58,6 +58,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   const [activeTab, setActiveTab] = useState<DashboardTab>("notepad");
   const [message, setMessage] = useState({ text: "", type: "" });
   const [logs, setLogs] = useState<ActivityLog[]>([]);
+  const { isDarkMode } = useTheme();
 
   // Domain hooks
   const content = useContentManager(setMessage);

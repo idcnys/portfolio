@@ -2,6 +2,7 @@
 
 import React, { useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { ContentItem, TabType } from "../lib/types";
 import { incrementLikes } from "../lib/firebase";
 import { sanitizeRichHtml } from "../lib/sanitize";

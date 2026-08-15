@@ -6,11 +6,14 @@ import React from "react";
 const PortfolioClient = dynamic(() => import("./PortfolioClient"), { ssr: false });
 
 export default function ClientLoader() {
+  const [visible, setVisible] = React.useState(false);
   const wrapperRef = React.useRef<HTMLDivElement | null>(null);
 
   React.useEffect(() => {
     // Fade in the client wrapper to smoothly cover the SSR placeholder.
     const el = wrapperRef.current;
+    // ensure the client is painted before starting the fade to avoid a visible jump
+    requestAnimationFrame(() => requestAnimationFrame(() => setVisible(true)));
 
     const handleTransitionEnd = (e?: TransitionEvent) => {
       // ensure transitionend is for opacity

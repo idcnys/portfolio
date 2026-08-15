@@ -11,7 +11,7 @@ import {
   subscribeToPortfolioSettings,
   subscribeToMedia,
 } from "../../../lib/firebase";
-import { ThemeProvider } from "../../../lib/context/ThemeContext";
+import { ThemeProvider, useTheme } from "../../../lib/context/ThemeContext";
 import ThemeToggle from "../../../components/client/ThemeToggle";
 import NotepadTab from "../../../components/admin/NotepadTab";
 import PublishContentTab from "../../../components/admin/PublishContentTab";

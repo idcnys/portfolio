@@ -1,0 +1,346 @@
+"use client";
+
+import React from "react";
+import CodeMirror from "@uiw/react-codemirror";
+import { javascript } from "@codemirror/lang-javascript";
+import { html } from "@codemirror/lang-html";
+import { oneDark } from "@codemirror/theme-one-dark";
+import { useTheme } from "../../lib/context/ThemeContext";
+import {
+  Folder,
+  FileText,
+} from "lucide-react";
+
+interface RepoEntry {
+  name: string;
+  path: string;
+  type: "file" | "dir";
+}
+
+interface CodespaceTabProps {
+  githubTokenInput: string;
+  codespaceCode: string;
+  githubUser: { login: string } | null;
+  repoList: Array<{ id: number; name: string; full_name: string; private: boolean }>;
+  selectedRepo: string;
+  repoEntries: RepoEntry[];
+  repoPath: string;
+  repoNameInput: string;
+  repoVisibility: "public" | "private";
+  filePathInput: string;
+  commitMessage: string;
+  codespaceBusy: boolean;
+  hasSavedToken: boolean;
+  onGithubTokenInputChange: (value: string) => void;
+  onSaveGithubToken: () => void;
+  onClearGithubToken: () => void;
+  onLoadRepos: () => void;
+  onSelectRepo: (value: string) => void;
+  onRepoNameInputChange: (value: string) => void;
+  onRepoVisibilityChange: (value: "public" | "private") => void;
+  onCreateRepo: () => void;
+  onFilePathInputChange: (value: string) => void;
+  onCommitMessageChange: (value: string) => void;
+  onLoadFile: () => void;
+  onSaveFile: () => void;
+  onLoadRepoEntries: (path: string) => void;
+  onLoadFileByPath: (path: string, notify?: boolean) => void;
+  onCodespaceCodeChange: (value: string) => void;
+}
+
+const CodespaceTab: React.FC<CodespaceTabProps> = ({
+  githubTokenInput,
+  codespaceCode,
+  repoList,
+  selectedRepo,
+  repoEntries,
+  repoPath,
+  repoNameInput,
+  repoVisibility,
+  filePathInput,
+  commitMessage,
+  codespaceBusy,
+  hasSavedToken,
+  onGithubTokenInputChange,
+  onSaveGithubToken,
+  onClearGithubToken,
+  onLoadRepos,
+  onSelectRepo,
+  onRepoNameInputChange,
+  onRepoVisibilityChange,
+  onCreateRepo,
+  onFilePathInputChange,
+  onCommitMessageChange,
+  onLoadFile,
+  onSaveFile,
+  onLoadRepoEntries,
+  onLoadFileByPath,
+  onCodespaceCodeChange,
+}) => {
+  const { isDarkMode } = useTheme();
+  const tokenAvailable = hasSavedToken || !!githubTokenInput.trim();
+
+  return (
+    <div className="flex-1 p-3">
+      <div className="w-[100%] mx-auto space-y-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-0">
+          {/* Sidebar */}
+          <div className="xl:col-span-1 bg-white shadow-lg border border-gray-100 p-6 space-y-6 dark:bg-gray-900 dark:border-gray-800">
+            <div>
+              <h3 className="text-lg font-black text-gray-900 dark:text-gray-100">
+                GitHub Access
+              </h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Store a GitHub token to create repos and push code.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <label className="block text-[10px] font-black text-gray-400 tracking-[0.3em] dark:text-gray-500">
+                Personal Access Token
+              </label>
+              <input
+                type="password"
+                value={githubTokenInput}
+                onChange={(event) => onGithubTokenInputChange(event.target.value)}
+                placeholder={hasSavedToken ? "Token saved" : "ghp_..."}
+                className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:bg-white focus:border-[#FFDB14] text-sm text-gray-900 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100 dark:focus:bg-gray-900"
+              />
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={onSaveGithubToken}
+                  disabled={codespaceBusy}
+                  className="bg-[#FFDB14] text-gray-900 px-4 py-2 rounded-lg text-xs font-black tracking-wide tracking-wider hover:bg-yellow-400 transition-all shadow-sm disabled:opacity-50"
+                >
+                  Save Token
+                </button>
+                {hasSavedToken && (
+                  <button
+                    type="button"
+                    onClick={onClearGithubToken}
+                    disabled={codespaceBusy}
+                    className="px-4 py-2 rounded-lg border border-gray-200 text-xs font-black tracking-wide tracking-wider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all shadow-sm disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                  >
+                    Clear Token
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-gray-100 space-y-4 dark:border-gray-800">
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm font-black text-gray-900 dark:text-gray-100">
+                  Repositories
+                </h4>
+                <button
+                  type="button"
+                  onClick={onLoadRepos}
+                  disabled={codespaceBusy || !tokenAvailable}
+                  className="px-3 py-1 rounded-md border border-gray-200 text-[10px] font-black tracking-wide tracking-wider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all shadow-sm disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                >
+                  Load Repos
+                </button>
+              </div>
+
+              <select
+                value={selectedRepo}
+                onChange={(event) => onSelectRepo(event.target.value)}
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 text-sm text-gray-900 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100"
+              >
+                <option value="">Select a repo</option>
+                {repoList.map((repo) => (
+                  <option key={repo.id} value={repo.full_name}>
+                    {repo.full_name} {repo.private ? "(private)" : ""}
+                  </option>
+                ))}
+              </select>
+
+              <div className="space-y-2">
+                <label className="block text-[10px] font-black text-gray-400 tracking-[0.3em] dark:text-gray-500">
+                  Create Repository
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={repoNameInput}
+                    onChange={(event) => onRepoNameInputChange(event.target.value)}
+                    placeholder="new-repo"
+                    className="flex-1 px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 text-sm text-gray-900 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100"
+                  />
+                  <select
+                    value={repoVisibility}
+                    onChange={(event) =>
+                      onRepoVisibilityChange(
+                        event.target.value as "public" | "private",
+                      )
+                    }
+                    className="px-2 py-2 rounded-lg bg-gray-50 border border-gray-100 text-xs font-bold text-gray-600 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-200"
+                  >
+                    <option value="public">Public</option>
+                    <option value="private">Private</option>
+                  </select>
+                </div>
+                <button
+                  type="button"
+                  onClick={onCreateRepo}
+                  disabled={codespaceBusy || !tokenAvailable}
+                  className="w-full bg-gray-900 text-white px-4 py-2 rounded-lg text-xs font-black tracking-wide tracking-wider hover:bg-black transition-all shadow-sm disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+                >
+                  Create Repo
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Editor Area */}
+          <div className="xl:col-span-2 bg-white shadow-lg border border-gray-100 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
+            <div className="p-4 border-b border-gray-100 dark:border-gray-800">
+              <div className="grid grid-cols-1 md:grid-cols-[1.1fr_1.2fr_auto] gap-3 items-end">
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 tracking-[0.3em] mb-2 dark:text-gray-500">
+                    File Path
+                  </label>
+                  <input
+                    type="text"
+                    value={filePathInput}
+                    onChange={(event) => onFilePathInputChange(event.target.value)}
+                    placeholder="README.md"
+                    className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 text-sm text-gray-900 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 tracking-[0.3em] mb-2 dark:text-gray-500">
+                    Commit Message
+                  </label>
+                  <input
+                    type="text"
+                    value={commitMessage}
+                    onChange={(event) => onCommitMessageChange(event.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 text-sm text-gray-900 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={onLoadFile}
+                    disabled={codespaceBusy || !tokenAvailable || !selectedRepo}
+                    className="px-4 py-2 rounded-lg border border-gray-200 text-xs font-black tracking-wide tracking-wider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all shadow-sm disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                  >
+                    Load File
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onSaveFile}
+                    disabled={codespaceBusy || !tokenAvailable || !selectedRepo}
+                    className="bg-[#FFDB14] text-gray-900 px-4 py-2 rounded-lg text-xs font-black tracking-wide tracking-wider hover:bg-yellow-400 transition-all shadow-sm disabled:opacity-50"
+                  >
+                    Save File
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] p-4">
+              {/* File Browser */}
+              <div className="bg-gray-50 border border-gray-100 rounded-2xl p-3 space-y-3 dark:bg-gray-900 dark:border-gray-800">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-black tracking-[0.3em] text-gray-400 dark:text-gray-500">
+                      Files
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {repoPath || "/"}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => onLoadRepoEntries("")}
+                      disabled={codespaceBusy || !selectedRepo}
+                      className="px-2 py-1 rounded-md border border-gray-200 text-[10px] font-black tracking-wide tracking-wider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                    >
+                      Root
+                    </button>
+                    {repoPath && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onLoadRepoEntries(
+                            repoPath.split("/").slice(0, -1).join("/"),
+                          )
+                        }
+                        disabled={codespaceBusy}
+                        className="px-2 py-1 rounded-md border border-gray-200 text-[10px] font-black tracking-wide tracking-wider text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                      >
+                        Up
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="max-h-[420px] overflow-y-auto space-y-1">
+                  {repoEntries
+                    .slice()
+                    .sort((a, b) =>
+                      a.type === b.type
+                        ? a.name.localeCompare(b.name)
+                        : a.type === "dir"
+                          ? -1
+                          : 1,
+                    )
+                    .map((entry) => (
+                      <button
+                        key={entry.path}
+                        type="button"
+                        onClick={() => {
+                          if (entry.type === "dir") {
+                            onLoadRepoEntries(entry.path);
+                          } else {
+                            onLoadFileByPath(entry.path, true);
+                          }
+                        }}
+                        className="w-full flex items-center gap-2 text-left px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-white transition-all dark:text-gray-200 dark:hover:bg-gray-800"
+                      >
+                        {entry.type === "dir" ? (
+                          <Folder className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
+                        ) : (
+                          <FileText className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
+                        )}
+                        <span className="truncate">{entry.name}</span>
+                      </button>
+                    ))}
+
+                  {repoEntries.length === 0 && selectedRepo && (
+                    <p className="text-xs text-gray-400 text-center py-4 dark:text-gray-500">
+                      No files found
+                    </p>
+                  )}
+                  {!selectedRepo && (
+                    <p className="text-xs text-gray-400 text-center py-4 dark:text-gray-500">
+                      Select a repository
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Code Editor */}
+              <div className="border border-gray-100 rounded-2xl overflow-hidden ml-0 lg:ml-3 dark:border-gray-800">
+                <CodeMirror
+                  value={codespaceCode}
+                  height="500px"
+                  theme={isDarkMode ? oneDark : "light"}
+                  extensions={[javascript(), html()]}
+                  onChange={onCodespaceCodeChange}
+                  className="text-sm"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CodespaceTab;

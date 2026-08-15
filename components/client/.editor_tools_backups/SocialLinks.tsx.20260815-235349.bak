@@ -69,7 +69,7 @@ export default function SocialLinks() {
       animate="visible"
       className="flex gap-4 mb-2"
     >
-      {socialLinks.map((social) => (
+      {socialLinks.map((social, index) => (
         <motion.li
           key={social.platform}
           variants={socialVariants}

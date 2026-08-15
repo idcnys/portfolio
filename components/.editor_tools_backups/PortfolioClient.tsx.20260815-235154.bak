@@ -7,6 +7,7 @@ import { motion, AnimatePresence, LazyMotion, domAnimation } from "framer-motion
 import { Certificate, ContentItem, TabType, PortfolioSettings, GrindCounterCard, GrindStatRow, ExperienceItem } from "../lib/types";
 import { INITIAL_CERTIFICATES } from "../lib/constants";
 import { incrementViews, getPortfolioSettings } from "../lib/firebase";
+import { useTheme } from "../lib/context/ThemeContext";
 import { useContent } from "../lib/context/ContentContext";
 import { Maximize2, Minimize2 } from "lucide-react";
 

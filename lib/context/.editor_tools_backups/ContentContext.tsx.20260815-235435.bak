@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { ContentItem } from "../types";
-import { getContentOnce } from "../firebase";
+import { subscribeToContent, getContentOnce } from "../firebase";
 
 interface ContentContextType {
   projects: ContentItem[];

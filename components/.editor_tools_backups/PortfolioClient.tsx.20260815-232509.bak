@@ -2,13 +2,14 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
 import { Certificate, ContentItem, TabType, PortfolioSettings, GrindCounterCard, GrindStatRow, ExperienceItem } from "../lib/types";
 import { INITIAL_CERTIFICATES } from "../lib/constants";
 import { incrementViews, getPortfolioSettings } from "../lib/firebase";
+import { useTheme } from "../lib/context/ThemeContext";
 import { useContent } from "../lib/context/ContentContext";
-import { Maximize2, Minimize2 } from "lucide-react";
+import { Maximize2, Minimize2, GitBranch, Clock, User } from "lucide-react";
 
 import ProfileInfo from "./server/ProfileInfo";
 import TabSwitcher from "./client/TabSwitcher";
@@ -22,7 +23,12 @@ import GrindTab from "./client/tabs/GrindTab";
 import SkillsetTab from "./client/tabs/SkillsetTab";
 import { SKILLSET_GROUPS, GRIND_COUNTER_CARDS, GRIND_RATING_STATS, GRIND_GITHUB_STATS } from "../lib/data/portfolio-data";
 import { ProjectViewMode, stripHtmlTags, formatNumber } from "../lib/utils/portfolio-helpers";
-import { pageVariants } from "../lib/animations/variants";
+import { pageVariants, containerVariants, cardVariants } from "../lib/animations/variants";
+
+const MatrixRain = dynamic(() => import("./client/MatrixRain"), {
+  ssr: false,
+  loading: () => null,
+});
 
 const CertificateDetailView = dynamic(() => import("./CertificateDetailView"), {
   ssr: false,
@@ -61,6 +67,8 @@ const incrementViewsIfUnique = async (itemId: string): Promise<void> => {
 
 const PortfolioClient: React.FC = () => {
   const { projects, activities, isLoading } = useContent();
+  const { isTransitioning } = useTheme();
+  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -78,7 +86,7 @@ const PortfolioClient: React.FC = () => {
   const [projectViewMode, setProjectViewMode] = useState<ProjectViewMode>("card");
   const [portfolioSettings, setPortfolioSettings] = useState<PortfolioSettings | null>(null);
   const [isTabConfigLoading, setIsTabConfigLoading] = useState(true);
-
+  const [isNavigating, setIsNavigating] = useState(false);
   const [hasEntranceAnimated, setHasEntranceAnimated] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isEdgeToEdge, setIsEdgeToEdge] = useState(true);
@@ -91,41 +99,6 @@ const PortfolioClient: React.FC = () => {
   const showResizeToggle = false;
   const isDetailView = !!viewingDetail || !!selectedCertificate;
   const effectivelyAnimated = isHydrated && hasEntranceAnimated;
-
-  // ── Memos ──────────────────────────────────────────────────────────────
-
-  const visibleTabs = useMemo<TabType[]>(() => {
-    const order: TabType[] = ["home", "certificates", "experience", "projects", "activity", "grind", "skillset"];
-    const visibility = portfolioSettings?.tabVisibility;
-    if (!visibility) return order;
-    const filtered = order.filter((tab) => tab === "home" || ((visibility as any)[tab] ?? true));
-    return filtered.length > 0 ? filtered : ["home"];
-  }, [portfolioSettings]);
-
-  const experienceItems = useMemo<ExperienceItem[]>(() => {
-    const source = portfolioSettings?.experiences || [];
-    return [...source].sort((a, b) => Number(!!b.latest) - Number(!!a.latest));
-  }, [portfolioSettings?.experiences]);
-
-  const filteredProjects = useMemo(() => {
-    const query = projectSearchQuery.trim().toLowerCase();
-    if (!query) return projects;
-    return projects.filter((item) => {
-      const haystack = [item.title, stripHtmlTags(item.description), item.tags?.join(" ") || ""].join(" ").toLowerCase();
-      return haystack.includes(query);
-    });
-  }, [projects, projectSearchQuery]);
-
-  const paginatedProjects = useMemo(() => filteredProjects.slice(0, projectsPage * ITEMS_PER_PAGE), [filteredProjects, projectsPage]);
-  const paginatedActivities = useMemo(() => activities.slice(0, activitiesPage * ITEMS_PER_PAGE), [activities, activitiesPage]);
-
-
-
-  const currentCertificateIndex = selectedCertificate
-    ? INITIAL_CERTIFICATES.findIndex((cert) => cert.id === selectedCertificate.id)
-    : -1;
-  const hasPrevCertificate = currentCertificateIndex > 0;
-  const hasNextCertificate = currentCertificateIndex !== -1 && currentCertificateIndex < INITIAL_CERTIFICATES.length - 1;
 
   // ── Effects ────────────────────────────────────────────────────────────
 
@@ -300,6 +273,48 @@ const PortfolioClient: React.FC = () => {
     if (activeTab === "projects" && !hasAnimatedProjectsTab) setHasAnimatedProjectsTab(true);
     if (activeTab === "activity" && !hasAnimatedActivityTab) setHasAnimatedActivityTab(true);
   }, [activeTab, hasAnimatedProjectsTab, hasAnimatedActivityTab]);
+
+  // ── Memos ──────────────────────────────────────────────────────────────
+
+  const visibleTabs = useMemo<TabType[]>(() => {
+    const order: TabType[] = ["home", "certificates", "experience", "projects", "activity", "grind", "skillset"];
+    const visibility = portfolioSettings?.tabVisibility;
+    if (!visibility) return order;
+    const filtered = order.filter((tab) => tab === "home" || ((visibility as any)[tab] ?? true));
+    return filtered.length > 0 ? filtered : ["home"];
+  }, [portfolioSettings]);
+
+  const experienceItems = useMemo<ExperienceItem[]>(() => {
+    const source = portfolioSettings?.experiences || [];
+    return [...source].sort((a, b) => Number(!!b.latest) - Number(!!a.latest));
+  }, [portfolioSettings?.experiences]);
+
+  const filteredProjects = useMemo(() => {
+    const query = projectSearchQuery.trim().toLowerCase();
+    if (!query) return projects;
+    return projects.filter((item) => {
+      const haystack = [item.title, stripHtmlTags(item.description), item.tags?.join(" ") || ""].join(" ").toLowerCase();
+      return haystack.includes(query);
+    });
+  }, [projects, projectSearchQuery]);
+
+  const paginatedProjects = useMemo(() => filteredProjects.slice(0, projectsPage * ITEMS_PER_PAGE), [filteredProjects, projectsPage]);
+  const paginatedActivities = useMemo(() => activities.slice(0, activitiesPage * ITEMS_PER_PAGE), [activities, activitiesPage]);
+
+  const contentByTab = useMemo<Record<TabType, ContentItem[]>>(() => ({
+    home: [], certificates: [], experience: [], projects, activity: activities, grind: [], skillset: [],
+  }), [projects, activities]);
+
+  const featuredProjects = useMemo(() => {
+    const ids = portfolioSettings?.homeSettings?.featuredProjectIds || [];
+    return projects.filter((p) => ids.includes(p.id)).slice(0, 2);
+  }, [projects, portfolioSettings?.homeSettings?.featuredProjectIds]);
+
+  const currentCertificateIndex = selectedCertificate
+    ? INITIAL_CERTIFICATES.findIndex((cert) => cert.id === selectedCertificate.id)
+    : -1;
+  const hasPrevCertificate = currentCertificateIndex > 0;
+  const hasNextCertificate = currentCertificateIndex !== -1 && currentCertificateIndex < INITIAL_CERTIFICATES.length - 1;
 
   // ── Handlers ───────────────────────────────────────────────────────────
 

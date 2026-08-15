@@ -1,0 +1,53 @@
+import { User } from "lucide-react";
+
+export const GithubIcon = (props: any) => (
+  <img
+    {...props}
+    src="/icons/icons8-github-50.svg"
+    alt="GitHub"
+    width={24}
+    height={24}
+  />
+);
+
+export const LinkedinIcon = (props: any) => (
+  <img
+    {...props}
+    src="/icons/icons8-linkedin-50.svg"
+    alt="LinkedIn"
+    width={24}
+    height={24}
+  />
+);
+
+export const TwitterIcon = (props: any) => (
+  <img
+    {...props}
+    src="/icons/icons8-twitter-bird.svg"
+    alt="Twitter"
+    width={24}
+    height={24}
+  />
+);
+
+export const InstagramIcon = (props: any) => (
+  <img
+    {...props}
+    src="/icons/instagram.png"
+    alt="Instagram"
+    width={24}
+    height={24}
+  />
+);
+
+export const YoutubeIcon = (props: any) => (
+  <img
+    {...props}
+    src="/icons/icons8-youtube-50.svg"
+    alt="YouTube"
+    width={24}
+    height={24}
+  />
+);
+
+export const UserIcon = (props: any) => <User {...props} />;

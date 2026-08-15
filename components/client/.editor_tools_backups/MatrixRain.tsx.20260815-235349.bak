@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { useTheme } from '@/lib/context/ThemeContext';
 
 interface MatrixRainProps {
     startDelayMs?: number;
+    revealDirection?: "corner" | "ltr";
 }
 
-const MatrixRain: React.FC<MatrixRainProps> = ({ startDelayMs = 0 }) => {
+const MatrixRain: React.FC<MatrixRainProps> = ({ startDelayMs = 0, revealDirection = "corner" }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { isDarkMode } = useTheme();
     const [isRevealed, setIsRevealed] = useState(startDelayMs === 0);
