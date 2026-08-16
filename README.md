@@ -93,19 +93,6 @@ lib/
 - A Firebase project (Firestore)
 - A Cloudinary account (for media uploads)
 
-### Setup
-
-```bash
-git clone https://github.com/idcnys/bittosaha-portfolio.git
-cd bittosaha-portfolio
-npm install
-```
-
-Copy the example env and fill in your values:
-
-```bash
-cp .env.example .env.local
-```
 
 | Variable | Description |
 |----------|-------------|
@@ -116,14 +103,6 @@ cp .env.example .env.local
 | `CLOUDINARY_API_KEY` | Cloudinary API key |
 | `CLOUDINARY_API_SECRET` | Cloudinary API secret |
 | `CLOUDINARY_URL` | Full Cloudinary connection URL |
-
-Run the dev server:
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
